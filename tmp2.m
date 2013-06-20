@@ -1,0 +1,7 @@
+
+open bconv_cmp_LW_may_mean.fig
+open bconv_cmp_MW_may_mean.fig
+open bconv_cmp_SW_may_mean.fig
+open bconv_cmp_LW_global_mean_night.fig
+open bconv_cmp_MW_global_mean_night.fig
+open bconv_cmp_SW_global_mean_night.fig
