@@ -1,0 +1,43 @@
+#
+# airs_decon git ignore file
+#
+# png, fig, and pdf files should be unignored in doc
+#
+
+# data & misc
+*.h5
+*.mat
+*.fig
+*.log
+*.core
+
+# tex & xfig
+*.aux
+*.toc
+*.snm
+*.nav
+*.out
+*.pdf
+*.png
+
+# archives and packages
+*.gz
+*.tgz
+*.tar
+*.zip
+
+# libs and object files
+*.a
+*.o
+*.so
+
+# backup files
+*.bak
+*~
+
+# working and temporary
+data/
+figures/
+sconv_test4/
+zold/
+

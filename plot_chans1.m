@@ -10,10 +10,9 @@
 % - figure 3 shows airs channels and diffs by sorted frequency
 % 
 
-addpath /asl/matlab/h4tools
+addpath /home/motteler/mot2008/hdf/h4tools
 
-% sfile = '/asl/data/airs/srf/srftablesV10.hdf';
-sfile = '/asl/matlab/srftest/srftables_m140f_withfake_mar08.hdf';
+sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 
 % read the srf data
 [alist, fattr] = h4sdread(sfile);

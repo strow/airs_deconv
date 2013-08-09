@@ -54,7 +54,7 @@ if nargin < 3
   afile = [name,'.mat'];
 end
 
-addpath /asl/matlab/h4tools
+addpath /home/motteler/mot2008/hdf/h4tools
 
 % read the srf data
 [alist, fattr] = h4sdread(sfile);

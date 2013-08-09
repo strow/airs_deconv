@@ -26,11 +26,13 @@
 figtype = 'fig';  % plot data type
 fignote = '1c';   % plot file suffix
 
-% use my versions of HDF tools
+% use my bcast utils and HDF libs
+addpath /home/motteler/cris/bcast/source
+addpath /home/motteler/cris/bcast/motmsc/utils
 addpath /home/motteler/mot2008/hdf/h4tools
 
 % specify HDF SRF tabulation files
-hfile1 = '/asl/matlab/srftest/srftables_m140f_withfake_mar08.hdf';
+hfile1 = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 hfile2 = 'fake_srf1.hdf';
 
 % specify the convolution mat files
@@ -82,7 +84,7 @@ B1 = load(bfile1);
 B2 = load(bfile2);
 
 % match kcarta and S1 convolution matrix column indices
-[ixk, ixs] = seq_isect(d1.w, S1.Cfin);
+[ixk, ixs] = seq_match(d1.w, S1.Cfin);
 vkc = d1.w(ixk);   % kcarta common frequencies
 rkc = d1.r(ixk);   % kcarta common radiances
 
@@ -96,7 +98,7 @@ isequal(A1.afrq, vc1)
 clear S1
 
 % match kcarta and S2 convolution matrix column indices
-[ixk, ixs] = seq_isect(d1.w, S2.Cfin);
+[ixk, ixs] = seq_match(d1.w, S2.Cfin);
 vkc = d1.w(ixk);   % kcarta common frequencies
 rkc = d1.r(ixk);   % kcarta common radiances
 
@@ -119,7 +121,7 @@ Binv = pinv(B);
 rc1d = Binv * rc1;
 vc1d = B1.Cfin;
 vc2d = B2.Cfin;
-[ix1,ix2] = seq_isect(vc1d, vc2d);
+[ix1,ix2] = seq_match(vc1d, vc2d);
 rc2r = B2.Cmat(A2.sind, ix2) * rc1d(ix1);
 
 % get brighness temps for plots and stats
