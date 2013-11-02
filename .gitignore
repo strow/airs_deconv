@@ -1,8 +1,6 @@
 #
 # airs_decon git ignore file
 #
-# png, fig, and pdf files should be unignored in doc
-#
 
 # data & misc
 *.h5
