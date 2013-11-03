@@ -1,0 +1,124 @@
+
+----
+
+Consider the equation A*b = c, analogous to S*r1 = c1 above.  Given
+"A" and c, we can solve for b.
+
+Informally, this is a sort of deconvolution.  Formally, if the
+columns of A are linearly independent it is change of basis--we 
+are representing c as a linear combination of the channel imulse
+response functions.
+
+This signal b is the input to the CrIS convolution for the current
+AIRS to CrIS transform, but it is also significant for AIRS.
+
+Suppose we want to shift AIRS to a reference grid and set of SRFs.
+
+spse we have real instrument, w/ SRFs S1, and model instrument
+with SRFs S2.  (Similarly A1 and A2.)
+
+[ how to relate this to AIRS channel shifts? ]
+
+what does it mean to shift AIRS to a set of reference SRFs?
+
+spse we have real instrument, w/ SRFs S1, and model instrument
+with SRFs S2.  (Similarly A1 and A2.)
+
+Then inv(A1)*c1 = b, and A2*b = c2 give channel radiances wrt
+new basis.
+
+----
+as the rows of an nchan x k matrix S, and if "b" is a k-vector
+of zeros with a single 1 at position j, representing an impulse at
+v(j), then S*b is a column of S, and a good model for the impulse
+response of the AIRS instrument at v(j).
+
+Impulses at AIRS channel frequencies are just a special case of
+the above.  If "A" is the S matrix with rows AIRS SRFs and columns
+tabulated at AIRS channels frequencies rather some finer grid, and
+"c" is an nchan impulse vector at some AIRS channel frequency, then
+the impulse response is still A*c = r as above.  And given such an
+impluse response r, c = inv(A)*r gives us back the impulse.
+
+The convolution operator "A" is uniquely determined by its action on
+impulses (which we can represent as an nchan x nchan identity matrix)
+and so the deconvolution operator inv(A) is also unique, as long as
+"A" is well-conditioned.
+
+
+(2) physical meaning of AIRS deconvolutions
+
+One way to think of the physical meaning of the "A" deconvolution
+matrix below is that it gives one particular member of the set of
+possible inputs that give rise to a particular channel spectra as
+measured by AIRS.
+
+In terms of the notation below, if r1 is some real continuous high
+res spectra, then S*r1 = c, the associated AIRS channel radiances.
+
+Now if we take inv(A)*c = r2, we get something at the channel grid.
+We can embed r2 into the finer grid of r1--just match the closest
+frequencys of r1 and leave the rest zeros.  Call this embedded fake
+high res signal r3.
+
+Now we have two signals, r1 and r3, real and fake, that give rise to
+the same observed AIRS channel radiances c.
+
+This is why it's not meaningful to talk about the response function
+of r2--like r1, it's an input to the system.  But that's exactly what
+we want for a reconvolution.
+
+We'd like to do a proper fourier interpolation of r1 to CrIS specs,
+but we don't have it.  So we take r3 instead.  How well that works
+is an interesting question.  AIRS can't distinguish the two signals,
+and to the extent that CrIS can't either, it should work.
+
+In practice I expect CrIS can distinguish r1 and r3, and that the
+"A" transform will be more useful for AIRS reconvolution than CrIS
+translations.
+
+That makes the whole translation setup so far somewhat bogus, and
+only interesting as an intermediate step.  What I'm actually doing
+now is interpolating r2 to a finer dv grid rather than embedding it
+in the r3 grid, but this is still suspect.  What I'd hoped to do was
+find a pseudo-inverse for "S" directly, so that pinv(S)*c = r4, with
+r4 a better substitute (than r3) for r1, for fourier interpolation
+to the CrIS specs.
+
+I'd spent some time on this earlier, looking at various pseudo
+inverses and stabilizing constraints, but didn't have much luck.
+I suspect now this was because I hadn't hit on the key idea of
+trimming the too-close channels to improve the condition of "A".
+That made a huge difference, inv(A) went from garbage to a well-
+behaved inverse, and may be what I need to get a useful pseudo-
+inverse of S.
+
+(1) AIRS_CrIS_LW_trop_cold.fig from Sept. 4
+
+> Here is my question.  The SA-1 matrix turns the resulting radiance
+> for CrIS into a "perfect" sinc function for the SRF.  What does
+> the AIRS SA-1 matrix turn the AIRS radiances into?  Some kind of
+> average SRF?  What shape?  Is there any way to find out for sure?
+
+One way to think about this is to continue the CrIS analogy
+and ask what the behavior of the instrument is given an impulse
+or monochromatic input.
+
+If we tabulate the AIRS SRFs at a high resolution (say the kcarta
+dv) as the rows of an nchan x k matrix S, and if "b" is a k-vector
+of zeros with a single 1 at position j, representing an impulse at
+v(j), then S*b is a column of S, and a good model for the impulse
+response of the AIRS instrument at v(j).
+
+Impulses at AIRS channel frequencies are just a special case of
+the above.  If "A" is the S matrix with rows AIRS SRFs and columns
+tabulated at AIRS channels frequencies rather some finer grid, and
+"c" is an nchan impulse vector at some AIRS channel frequency, then
+the impulse response is still A*c = r as above.  And given such an
+impluse response r, c = inv(A)*r gives us back the impulse.
+
+The convolution operator "A" is uniquely determined by its action on
+impulses (which we can represent as an nchan x nchan identity matrix)
+and so the deconvolution operator inv(A) is also unique, as long as
+"A" is well-conditioned.
+

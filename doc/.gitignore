@@ -1,0 +1,7 @@
+#
+# cris_sim/doc git ignore file
+#
+
+!*.fig
+!*.png
+

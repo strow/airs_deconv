@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\title{AIRS Deconvolution \\ 
+\\
+{***} FIRST DRAFT {***}}
+\author{H.~Motteler, L.~Strow, S.~Hannon}
+\date{\today}
+
+\begin{document}
+\maketitle
+\section{AIRS spectral response functions}
+
+The AIRS spectral response functions model instrument response over
+a frequency inverval $V$, and associate channels with nominal channel
+frequencies.  Each AIRS channel $i$ has an associated spectral
+response function (SRF) $s_i(v)$ such that the channel radiance $c_i
+= \int_V s_i(v)r(v)\,dv$.  The center or peak of this function is
+the nominal channel frequency.
+
+Suppose we have $n$ channels and a frequency grid of $k$ points
+spanning the domains of the functions $s_i(v)$.  For our
+applications the grid step size will often be $dv_k =
+0.0025\ 1/\hbox{cm}$, the kcarta resolution.  Let $S_k$ be an
+$n\times k$ array where row $i$ is $s_i(v)$ tabulated at the $dv_k$
+grid and normalized so the row sum is 1.  If the channel centers are
+in increasing order $S_k$ is banded, and if the channel centers are
+not too close the rows are linearly independent.  $S_k$ is a linear
+transform whose domain is radiance at the $dv_k$ grid and range is
+channel signals.  If $r$ is a radiance vector at the $dv_k$ grid, $c
+= S_k r$ gives a good approximation of the channel signals $c_i =
+\int_V s_i(v)r(v)\,dv$.
+
+In practice this is how we convolve kcarta radiances to AIRS 
+channel radiances, and transmittances for our fast transmittance
+models.  We construct $S_k$ either explicitly or implicitly from 
+our AIRS SRF tabulations.  The matrix $S_k$ in this case is large
+but managable with the Matlab sparse representation.
+
+Suppose we know $S_k$ and the channel radiances $c_i$, but not the
+original $r$, and would like to find it---that is, to deconvolve
+$c$.  Consider the linear system $S_k x = c$.  Since $n < k$ with
+the fine $dv_k$ grid, the system $S_k x = c$ is underdetermined,
+with infinitely many solutions.  We could add constraints, take a
+pseudo-inverse, consider $S$ with columns tabulated at some coarser
+grid, or some combination of the above.  We begin with two cases,
+$S_a$ with SRFs tabulated at the channel grid, and $S_b$ with SRFs
+tabulated at an intermediate grid, typically around $0.1$ 1/cm and
+approximately the accuracy of their original measurements.  We then
+consider deconvolution to a principle component representation, and
+conclude with some applications.
+
+\section{Deconvolution to the AIRS channel grid}
+
+Let $v_a = v_1,v_2,\ldots,v_n$ be channel center frequencies
+associated with a set of SRFs.  Similar to $S_k$, let $S_a$ be an
+$n\times n$ array where row $i$ is $s_i(v)$ tabulated at the $v_a$
+grid, with rows normalized to 1.  If the channel centers are in
+increasing order and a small number of close channels are dropped,
+so that the minimum channel spacing fits a simple linear function,
+then $S_a$ is banded and the rows are linearly independent.  
+The domain of $S_a$ is frequency and the range is channel signals.
+If $r$ is a radiance vector at the $v_a$ grid, $c = S_a r$ is still
+an approximation of $\int_V s_i(v)r(v)\,dv$, though not as good an
+approximation as for the high-resolution case.
+
+Consider the linear system $S_a x = c$, similar to the case $S_k x =
+c$ above, where we are given $S_a$ and channel signals $c$ and want
+to find radiances $x$ can give rise to $c$.  Since $S_a$ is an $n
+\times n$ matrix with linearly independent rows, we might hope to
+solve the system for a unique $x$.
+
+However in practice there are problems.  If we take $v_a$ as the
+usual AIRS L1b channel set, we find $S_a$ is poorly conditioned,
+without a usable inverse.  This turns out to be due to the 1b
+channel spacing, which due to module overlaps is quite variable,
+with the closest channels only $0.0036 1/\hbox{cm}$ apart.
+
+If use the the linear function $g(v) = 4\times 10^{-4} v - 0.04$,
+where $v$ is frequency, as a lower bound on the acceptable channel
+step size, we drop about 64 out of 2378 and $\hbox{cond}(S_a)$ is
+much improved, to around 30.  With the partly synthetic 1c channel
+set, $g(v)$ drops 4 channels and $\hbox{cond}(S_a)$ is about 250,
+still low enough for a useful inverse.
+
+\section{Deconvolution to the SRF tabulation grid}
+
+\section{An eigenvector basis for the intermediate grid}
+
+\section{Applications}
+
+\end{document}
+
