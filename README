@@ -2,6 +2,12 @@
 Test Scripts
 -------------
 
+cris_test3 -- cris_test2 reworked to process all the fitting
+    profiles and plot the means of residuals
+
+cris_test2 -- cris_test_1 with airs_decon split off and improved
+    caching of the pseudo-inverse matrix
+
 cris_test1 -- compare CrIS reference truth ("true CrIS") with AIRS
     deconvolution followed by CrIS convolution ("AIRS CrIS")
 
@@ -28,11 +34,17 @@ interp_test2 -- demo using finterp to take AIRS 1b or 1c to CrIS
 Functions and Support
 ----------------------
 
+airs_decon -- deconvolve AIRS radiances
+
+mksconv2   -- build a sparse AIRS convolution matrix
+
+kc2cris    -- convolve kcarta to cris channel radiances
+
 trim_chans -- drop close neighbors from an AIRS channel set
 
-fake_srf -- make a fake AIRS SRF file from a real one
+fake_srf   -- make a fake AIRS SRF file from a real one
 
-getcfreq -- return 1b channel frequencies from an AIRS SRF file
+getcfreq   -- return 1b channel frequencies from an AIRS SRF file
 
 plot_chans1 -- find a lower bound for AIRS 1b channel step size
 
