@@ -20,7 +20,7 @@ addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
 band = 'MW';            % cris band
-bfile = 'bconv.mat';    % deconvolution temp file
+bfile = 'bconv2.mat';    % deconvolution temp file
 dvb = 0.1;              % deconvolution frequency step
 fig = 'png';            % plot type
 
@@ -55,7 +55,7 @@ rad2 = sconv * rkc(ix);
 frq2 = ofreq;
 
 % deconvolve the AIRS radiances
-[rad3, bfreq] = airs_decon(sfile, cfreq, rad2, bfile, dvb);
+[rad3, bfreq] = airs_decon(rad2, cfreq, sfile, bfile, dvb);
 
 % try an extra smoothing step
 % rad3 = mkhamm(length(rad3)) * rad3;

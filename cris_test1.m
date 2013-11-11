@@ -17,7 +17,7 @@ addpath /home/motteler/mot2008/hdf/h4tools
 
 % bconv temp file, saves binv, bconv, bfreq, and fx, and depends
 % on sfile, cfreq, dvb, so delete it delete if any of these change
-bfile = 'bconv.mat';
+bfile = 'bconv1.mat';
 
 % plot type
 fig = 'png';   

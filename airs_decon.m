@@ -3,27 +3,34 @@
 %   airs_decon -- deconvolve AIRS radiances
 %
 % SYNOPSIS
-%   [rad3, bfreq] = airs_decon(sfile, cfreq, rad2, bfile, dvb)
+%   [brad, bfrq] = airs_decon(arad, afrq, sfile, bfile, dvb)
 %
 % INPUTS
-%   sfile  - SRF tabulation file
-%   rad2   - channel radiances
-%   cfreq  - channel frequencies
+%   arad   - AIRS channel radiances, m x k array
+%   afrq   - AIRS channel frequencies, m-vector
+%   sfile  - AIRS HDF4 SRF tabulation file
 %   bfile  - cache for deconvolution matrix
 %   dvb    - deconvolution frequency step
 %
 % OUTPUTS
-%   rad3   - deconvolved radiances
-%   bfreq  - deconvolution frequency grid
+%   brad   - deconvolved radiances
+%   bfrq   - deconvolution frequency grid
 %
 % DISCUSSION
-%    derived from cris_test1, calls mksconv2
+%   airs_decon deconvolves AIRS radiances to an intermediate grid.  
+%   This is done by taking the pseudo-inverse of the SRF convolution
+%   matrix and applying this to the AIRS channel radiances.
+%
+%   Calculating the pseudo-inverse matrix for the deconvolution is
+%   relatively slow so this data is saved in a file.  The matrix is
+%   a function of the SRF tabulation file, channel frequencies, and
+%   deconvolution grid step, and is updated if any of these change.
 %
 % AUTHOR
 %  H. Motteler, 30 Oct 2013
 %
 
-function [rad3, bfreq] = airs_decon(sfile, cfreq, rad2, bfile, dvb)
+function [brad, bfrq] = airs_decon(arad, afrq, sfile, bfile, dvb)
 
 % default deconvolution matrix cache
 if nargin < 4
@@ -38,8 +45,8 @@ end
 % check if cache exists and is up-to-date
 bok = 0;
 if exist(bfile) == 2
-  d = load(bfile, 'sfile', 'cfreq', 'dvb');
-  if strcmp(d.sfile, sfile) && isequal(d.cfreq, cfreq) && isequal(d.dvb, dvb)
+  d = load(bfile, 'sfile', 'afrq', 'dvb');
+  if strcmp(d.sfile, sfile) && isequal(d.afrq, afrq) && isequal(d.dvb, dvb)
     load(bfile)
     bok = 1;
   end
@@ -48,11 +55,11 @@ end
 % if not, recalculate and save the pseudo-inverse
 if ~bok
   fprintf(1, 'recalculating the pseudo-inverse...\n')
-  [bconv, bfreq, fx] = mksconv2(sfile, cfreq, dvb);
+  [bconv, bfrq, fx] = mksconv2(sfile, afrq, dvb);
   binv = pinv(full(bconv));
-  save(bfile, 'binv', 'bconv', 'bfreq', 'sfile', 'cfreq', 'dvb')
+  save(bfile, 'binv', 'bconv', 'bfrq', 'sfile', 'afrq', 'dvb')
 end
 
 % apply the deconvolution
-rad3 = binv * rad2;
+brad = binv * arad;
 
