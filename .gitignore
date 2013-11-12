@@ -4,6 +4,7 @@
 
 # data & misc
 *.h5
+*.hdf
 *.mat
 *.fig
 *.log
@@ -32,10 +33,4 @@
 # backup files
 *.bak
 *~
-
-# working and temporary
-data/
-figures/
-sconv_test4/
-zold/
 

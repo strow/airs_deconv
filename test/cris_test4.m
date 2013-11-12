@@ -1,5 +1,5 @@
 % 
-% cris_test3
+% cris_test4
 % 
 % reference truth: start with kcarta radiances, convolve these to 
 % CrIS radiances at the user grid, and call the result “true CrIS”.
@@ -10,8 +10,8 @@
 % (“AIRS Cris”).  Then compare AIRS CrIS vs true CrIS for various
 % profiles and any of the three CrIS bands
 %
-% derived from cris_test2, this version processes all the fitting
-% profiles and plots the means of residuals.
+% derived cris_test3, processes all the fitting profiles and plots
+% the means of residuals.
 %
 
 %-----------------
@@ -25,9 +25,10 @@ addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
 band = 'SW';            % cris band
-bfile = 'bconv3.mat';   % deconvolution temp file
+bfile = 'bconv4.mat';   % deconvolution temp file
 dvb = 0.1;              % deconvolution frequency step
 fig = 'fig';            % plot type
+dohamm = 1;
 
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
@@ -86,18 +87,25 @@ clear d1 vkc rkc
 % convolution and interpolation
 %-------------------------------
 
+opt1.dvb = dvb;
+opt1.bfile = bfile;
+
+[rad4, frq4, opt2] = airs2cris(rad2, frq2, sfile, opt1);
+rad3 = opt2.brad;
+bfrq = opt2.bfrq;
+
 % deconvolve the AIRS radiances
-[rad3, bfrq] = airs_decon(rad2, cfreq, sfile, bfile, dvb);
+% [rad3, bfrq] = airs_decon(rad2, cfreq, sfile, bfile, dvb);
 
 % try an extra smoothing step
 % rad3 = mkhamm(length(rad3)) * rad3;
 
 % apply the bandpass filter
-rad3 = bandpass(bfrq, rad3, tv1, tv2, user.vr);
+% rad3 = bandpass(bfrq, rad3, tv1, tv2, user.vr);
 
 % reconvolve to CrIS
-[rad4, frq4] = finterp(rad3, bfrq, user.dv);
-frq4 = frq4(:);
+% [rad4, frq4] = finterp(rad3, bfrq, user.dv);
+% frq4 = frq4(:);
 
 % AIRS direct interpolation to CrIS
 rad5 = interp1(frq2, rad2, frq1, 'spline', 'extrap');
@@ -122,6 +130,16 @@ switch upper(band)
   case 'SW', dt1 = 2; dt2 = 2;
 end
 
+% option for apodization
+if dohamm
+  rad1 = hamm_app(rad1);
+  rad2 = hamm_app(rad2);
+  rad3 = hamm_app(rad3);
+  rad4 = hamm_app(rad4);
+  rad5 = hamm_app(rad5);
+  rad6 = hamm_app(rad6);
+end
+
 % take radiances to brightness temps
 bt1 = real(rad2bt(frq1, rad1));   % true CrIS
 bt2 = real(rad2bt(frq2, rad2));   % true AIRS
@@ -138,7 +156,7 @@ legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
 xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('AIRS 1C and CrIS %s profile %d', band, j));
 grid on; zoom on
-saveas(gcf, sprintf('test3_fig_1_%s', band), fig)
+% saveas(gcf, sprintf('test3_fig_1_%s', band), fig)
 
 % residuals for real CrIS and AIRS CrIS
 figure(2); clf
@@ -148,7 +166,7 @@ ax(1)=tv1; ax(2)=tv2; ax(3)=-dt1; ax(4)=dt1; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('AIRS CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test3_fig_2_%s', band), fig)
+% saveas(gcf, sprintf('test3_fig_2_%s', band), fig)
 
 % residuals for real CrIS and interpolated AIRS
 figure(3); clf
@@ -157,7 +175,7 @@ ax(1)=tv1; ax(2)=tv2; ax(3)=-dt2; ax(4)=dt2; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interpolated CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test3_fig_3_%s', band), fig)
+% saveas(gcf, sprintf('test3_fig_3_%s', band), fig)
 
 % residuals for real CrIS and interpolated convolved AIRS
 [j1, j6] = seq_match(frq1, frq6);
@@ -168,5 +186,5 @@ ax(1)=tv1; ax(2)=tv2; ax(3)=-dt2; ax(4)=dt2; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interpolated convolved CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test3_fig_4_%s', band), fig)
+% saveas(gcf, sprintf('test3_fig_4_%s', band), fig)
 

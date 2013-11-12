@@ -20,7 +20,7 @@ addpath /home/motteler/mot2008/hdf/h4tools
 bfile = 'bconv1.mat';
 
 % plot type
-fig = 'png';   
+fig = 'fig';   
 
 % load kcarta test radiance
 kcfile = '/home/motteler/cris/sergio/JUNK2012/convolved_kcarta1.mat';
@@ -103,7 +103,7 @@ legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
 xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('AIRS 1C and CrIS %s comparison', band));
 grid on; zoom on
-saveas(gcf, sprintf('decon_fig_1_%s', band), fig)
+% saveas(gcf, sprintf('decon_fig_1_%s', band), fig)
 
 % residuals for real CrIS and AIRS CrIS
 [i1, i4] = seq_match(frq1, frq4);
@@ -113,7 +113,7 @@ ax(1)=user.v1; ax(2)=user.v2; ax(3)=-2; ax(4)=2; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('AIRS CrIS minus true CrIS %s comparison', band));
 grid on; zoom on
-saveas(gcf, sprintf('decon_fig_2_%s', band), fig)
+% saveas(gcf, sprintf('decon_fig_2_%s', band), fig)
 
 % residuals for real CrIS and interpolated CrIS
 figure(3); clf
@@ -122,7 +122,7 @@ ax(1)=user.v1; ax(2)=user.v2; ax(3)=-8; ax(4)=8; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interpolated CrIS minus true CrIS %s comparison', band));
 grid on; zoom on
-saveas(gcf, sprintf('decon_fig_3_%s', band), fig)
+% saveas(gcf, sprintf('decon_fig_3_%s', band), fig)
 
 % residuals for real CrIS and AIRS CrIS
 [j1, j6] = seq_match(frq1, frq6);
@@ -132,5 +132,5 @@ ax(1)=user.v1; ax(2)=user.v2; ax(3)=-8; ax(4)=8; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interp-conv CrIS minus true CrIS %s comparison', band));
 grid on; zoom on
-saveas(gcf, sprintf('decon_fig_4_%s', band), fig)
+% saveas(gcf, sprintf('decon_fig_4_%s', band), fig)
 

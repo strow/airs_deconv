@@ -1,107 +1,62 @@
 
-Test Scripts
--------------
+airs_decon v 0.9, beta release
+-------------------------------
 
-cris_test3 -- cris_test2 reworked to process all the fitting
-    profiles and plot the means of residuals
-
-cris_test2 -- cris_test_1 with airs_decon split off and improved
-    caching of the pseudo-inverse matrix
-
-cris_test1 -- compare CrIS reference truth ("true CrIS") with AIRS
-    deconvolution followed by CrIS convolution ("AIRS CrIS")
-
-bconv_test1 -- translate AIRS to CrIS with an inverse convolution
-    matrix, via deconvolution to the SRF tabulation grid.  derived
-    from aconv_test2 and sconv_test4, reports results similar to
-    aconv_test2.  Works well with 1c channel sets.
-
-sconv_test4 -- AIRS channel deconvolution to SRF tabulation grid.
-    gives significant improvement except at edges of band gaps.
-    also, compares the column sum of B1 vs the row sum of B1 inv
-    Works well with 1c channel sets
-
-aconv_test2 -- translate AIRS to CrIS with an inverse convolution
-    matrix, version for 1c data, AIRS and CrIS Bt data.  4-way
-    comparison of true AIRS, AIRS deconvolved, AIRS deconvolved and
-    interpolated to CrIS, and true CrIS
-
-interp_test2 -- demo using finterp to take AIRS 1b or 1c to CrIS
-    radiances.  finterp does a linear interpolation to the dv1
-    spacing and then a fourier interpolation to dv2.
+H. Motteler, 12 Sep 2013
 
 
-Functions and Support
+Overview
+---------
+
+This is a "beta" release.  It is working well with simulated AIRS 1c
+data but not much else, so far.  In particular it needs to be tested
+with real 1c data.  The user interface is source/airs2cris.m, see the 
+help there for more info.
+
+There is more code in the test than the source directory--testing and
+validation are a key part of the package.
+
+Documentation is sparse--this file, test/README, and comments in many
+of the individual procedures, but not much else.  There is a start on
+a latex write-up, just an intro section for now, in airs_decon/doc.
+
+
+Top Level Directories
 ----------------------
 
-airs_decon -- deconvolve AIRS radiances
-
-mksconv2   -- build a sparse AIRS convolution matrix
-
-kc2cris    -- convolve kcarta to cris channel radiances
-
-trim_chans -- drop close neighbors from an AIRS channel set
-
-fake_srf   -- make a fake AIRS SRF file from a real one
-
-getcfreq   -- return 1b channel frequencies from an AIRS SRF file
-
-plot_chans1 -- find a lower bound for AIRS 1b channel step size
-
-mkaconv2 -- build an nchan x nchan AIRS convolution matrix, drops
-    close neighbors, works with 1b or 1c SRF sets.  derived from
-    mksconv, which reads an HDF SRF file and builds a sparse matrix
-    for applying AIRS convolutions to high res data
-
-mksconv -- build a sparse SRF convolution matrix (15 Jan 02)
+  doc      - documentation
+  source   - user source directory
+  test     - test source directory
 
 
-Older tests  (mostly in zold)
-------------------------------
+User Paths
+-----------
 
-sconv_test5 -- AIRS channel deconvolution to SRF tabulation grid.
-    this version adds fake SRFs at the edges of the band gaps, and
-    did not work very well.  an earlier version added smoothing
-    constraints and also did not work well.
+  /asl/packages/airs_decon/source
+  /asl/packages/ccast/source
 
-sconv_test3 -- AIRS channel deconvolution to kcarta grid test.
-    would like to try a Moore–Penrose or generalized pseudoinverse,
-    but S1 is too big, even with the sparse SVD libs.  The code runs
-    with a right-inverse but with lousy results
+The ccast path provides bandpass.m, finterp.m, inst_params.m, and
+also rad2bt.m and bt2rad.m.  The functions mkhamm.m and seq_match.m
+in airs_decon/source are copied from ccast/motmsc/utils.  
 
-sconv_test2 -- AIRS channel deconvolution to channel grid test.
-    this runs OK but the results are similar to or slightly worse
-    than with spline interpolation.
-
-aconv_test1 -- translate AIRS to CrIS with an inverse convolution
-    matrix from mkaconv1, for 1b data only
-
-aconv_test3 -- translate AIRS to CrIS with an inverse convolution
-    matrix, version for AIRS 1b radiance data.  3-way comparison of
-    true AIRS, AIRS deconvolved, and AIRS deconvolved and interpolated
-    to CrIS
-
-interp_test1 -- demo using finterp to take AIRS to CrIS radiances,
-    finterp does a linear interpolation to dv1 and then a fourier
-    interpolation to dv2.
-
-sconv_test1 -- initial tests of inverting the full-sized convolution
-    matrix from mksconv, from /home/motteler/sconv
+If things are set up right users should not need the airs_decon/test
+path.
 
 
-older function (mostly in zold)
---------------------------------
+User Functions
+---------------
 
-chanstep -- set a lower bound on AIRS channel step size
+  airs2cris   - translate AIRS to CrIS radiances
+  airs_decon  - deconvolve AIRS radiances
+  mksconv2    - build a sparse AIRS convolution matrix
+  seq_match   - find the matchinb subsequence of two sequences
+  trim_chans  - drop close neighbors from an AIRS channel set
 
-seq_isect -- return the indices of the intersection of 2 grids.
+  mkhamm      - sparse hamming convolution matrix 
+  hamm_app    - spectral space forward hamming 
+  hamm_inv    - spectral space inverse hamming
 
-gap_chans -- make a list of fake channel centers for gap edges
+The hamming functions are not needed by the current of airs2cris,
+but may be useful for some user applications.
 
-damp_pinv -- produce a set of smoothed pseudo-SRFs
-
-mkaconv3 -- early verion of mkaconv1 without channel trimming
-
-mkaconv1 -- build an nchan x nchan AIRS convolution matrix, early
-    version for 1b data only, derived from mksconv
 

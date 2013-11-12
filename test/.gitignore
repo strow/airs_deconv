@@ -1,0 +1,8 @@
+#
+# airs_decon/test git ignore file
+# 
+
+# working and temporary
+data/
+figures/
+sconv_test4/
