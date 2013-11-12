@@ -20,11 +20,11 @@
 
 % use my bcast utils and HDF libs
 addpath /home/motteler/cris/bcast/source
-addpath /home/motteler/cris/bcast/motmsc/utils
+addpath /home/motteler/cris/airs_decon/source
 addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
-band = 'SW';            % cris band
+band = 'LW';            % cris band
 bfile = 'bconv4.mat';   % deconvolution temp file
 dvb = 0.1;              % deconvolution frequency step
 fig = 'fig';            % plot type

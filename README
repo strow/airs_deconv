@@ -31,9 +31,10 @@ Top Level Directories
 
 User Paths
 -----------
-
-  /asl/packages/airs_decon/source
+  
+  /asl/matlib/h4tools
   /asl/packages/ccast/source
+  /asl/packages/airs_decon/source
 
 The ccast path provides bandpass.m, finterp.m, inst_params.m, and
 also rad2bt.m and bt2rad.m.  The functions mkhamm.m and seq_match.m
@@ -49,7 +50,7 @@ User Functions
   airs2cris   - translate AIRS to CrIS radiances
   airs_decon  - deconvolve AIRS radiances
   mksconv2    - build a sparse AIRS convolution matrix
-  seq_match   - find the matchinb subsequence of two sequences
+  seq_match   - find the matching subsequence of two sequences
   trim_chans  - drop close neighbors from an AIRS channel set
 
   mkhamm      - sparse hamming convolution matrix 
