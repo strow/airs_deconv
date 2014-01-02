@@ -18,7 +18,7 @@
 %   opt2    - selected internal values
 %
 % DISCUSSION
-%   derived from the setup and reference path parts of igm_test2,
+%   derived from the setup and reference path parts of cris_igm2.m,
 %   from the cris_sim package
 %
 % reference path
@@ -131,7 +131,7 @@ rad3 = rad3(ix);
 frq3 = frq3(ix);
 
 % option to return more data
-if nargout == 2
+if nargout == 3
   opt2 = struct;
   opt2.N = N;
   opt2.N3 = N3;

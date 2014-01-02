@@ -24,6 +24,12 @@
 %   only matches where the distance between pairs is less than or
 %   equal to d are kept.
 %
+%   seq_match works by finding all fixed-points of the nearest-
+%   neighbor relation starting from every point in A, and as a
+%   check from every point in B.  It converges quickly for most
+%   sequences.  If d is not specified, seq_match always returns 
+%   at least one matching pair, even for disjoint sequences.
+%
 % AUTHOR
 %  H. Motteler, 2 June 2013
 %
@@ -69,17 +75,11 @@ while ~isequal(j, jx)
   jc = jc + 1;
 end
 
-% if ic > 3 || jc > 3
-%   fprintf(1, 'a len %d, b len %d, ic %d, jc %d, match len %d\n', ...
-%               length(a), length(b), ic, jc, length(i))
-% end
-
 % check the match
 jx = ib(i); 
 ix = ia(j);
 if ~isequal(jx, j) || ~isequal(ix, i)
-  fprintf(1, 'seq_match ERROR: mismatch after convergence\n')
-  keyboard
+  fprintf(1, 'seq_match WARNING: mismatch after convergence\n')
 end
 
 % drop matches greater than d
@@ -88,4 +88,7 @@ if nargin == 3
   i = i(iok);
   j = j(iok);
 end
+
+% check loop counts
+% fprintf(1, 'seq_match loops: ic = %d, jc = %d\n', ic, jc);
 

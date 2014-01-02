@@ -8,17 +8,16 @@ H. Motteler, 12 Sep 2013
 Overview
 ---------
 
-This is a "beta" release.  It is working well with simulated AIRS 1c
-data but not much else, so far.  In particular it needs to be tested
-with real 1c data.  The user interface is source/airs2cris.m, see the 
-help there for more info.
+This is a "beta" release.  It works well with simulated AIRS 1c
+data but hasn't been tested with real 1c data.  The user interface
+is source/airs2cris.m, see the help there for more info.
 
-There is more code in the test than the source directory--testing and
-validation are a key part of the package.
+There is more code in the test than the source directory--testing
+and validation are key parts of the package.
 
-Documentation is sparse--this file, test/README, and comments in many
-of the individual procedures, but not much else.  There is a start on
-a latex write-up, just an intro section for now, in airs_decon/doc.
+Documentation is sparse--this file, test/README, and comments in
+many of the individual procedures, but not much else.  There is the
+start of a latex write-up, just an intro for now, in airs_decon/doc.
 
 
 Top Level Directories
@@ -57,7 +56,6 @@ User Functions
   hamm_app    - spectral space forward hamming 
   hamm_inv    - spectral space inverse hamming
 
-The hamming functions are not needed by the current of airs2cris,
-but may be useful for some user applications.
-
+The hamming functions are not called by any other functions in
+source, but may be useful for some user applications.
 
