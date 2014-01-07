@@ -14,6 +14,7 @@
 % OPT1 FIELDS
 %   dvb    - deconv grid step, default 0.1
 %   bfile  - pinv temp file, default 'bconv.mat'
+%   hapod  - 0 = default, 1 = Hamming apodization
 %
 % OUTPUTS
 %   crad   - simulated CrIS radiances, n x k array
@@ -53,6 +54,7 @@ function [crad, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1)
 dvb = 0.1;            % deconv grid step size
 bfile = 'bconv.mat';  % temp file for pinv matrix
 wlaser = 773.1301;    % nominal value is OK here
+hapod = 0;            % no Hamming apodization
 
 % process input options
 if nargin == 4
@@ -73,7 +75,8 @@ crad = []; cfrq = [];
 bpts = []; bv1 = []; bv2 = [];
 
 % deconvolve the AIRS radiances
-afrq = trim_chans(afrq);
+[afrq, ifrq] = trim_chans(afrq);
+arad = arad(ifrq, :);
 [brad, bfrq] = airs_decon(arad, afrq, sfile, bfile, dvb);
 
 % loop on CrIS bands
@@ -97,10 +100,17 @@ for bi = 1 : 3
 
   % trim reconvolved data to band intersection 
   ix = find(tv1 <= ftmp & ftmp <= tv2);
+  rtmp = rtmp(ix, :);
+  ftmp = ftmp(ix);
+
+  % option for hamming apodization
+  if hapod
+    rtmp = hamm_app(rtmp);
+  end
 
   % concatenate output columns
-  crad = [crad; rtmp(ix,:)];
-  cfrq = [cfrq; ftmp(ix)];
+  crad = [crad; rtmp];
+  cfrq = [cfrq; ftmp];
 
   % save band size and info
   bpts = [bpts, length(ix)];

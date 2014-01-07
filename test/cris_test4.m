@@ -10,10 +10,11 @@
 % (“AIRS Cris”).  Then compare AIRS CrIS vs true CrIS for various
 % profiles and any of the three CrIS bands
 %
-% derived cris_test3, processes all the fitting profiles and plots
-% the means of residuals.
+% derived frim cris_test3, processes all the fitting profiles and
+% plots the means of residuals.  Calls the airs2cris wrapper instead
+% of airs_decon, and includes an option for hamming apodization of
+% all the test radiances.
 %
-
 %-----------------
 % test parameters
 %-----------------

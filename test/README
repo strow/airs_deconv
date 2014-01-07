@@ -2,6 +2,11 @@
 Test Scripts
 -------------
 
+cris_test4 -- processes all the fitting profiles and plots the means
+    of residuals.  Derived frim cris_test3, calls airs2cris instead
+    of airs_decon and adds an option for hamming apodization of the
+    test radiances.
+
 cris_test3 -- cris_test2 reworked to process all the fitting
     profiles and plot the means of residuals
 
