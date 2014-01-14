@@ -1,23 +1,29 @@
 
-airs_decon v 0.9, beta release
--------------------------------
+airs_decon v 0.95, beta release
+--------------------------------
 
-H. Motteler, 12 Sep 2013
+H. Motteler, 8 Jan 2014
 
 
 Overview
 ---------
 
-This is a "beta" release.  It works well with simulated AIRS 1c
-data but hasn't been tested with real 1c data.  The user interface
-is source/airs2cris.m, see the help there for more info.
+This is a "beta" release.  It works well with simulated AIRS 1c 
+data and in initial tests with real 1c data.  The top-level user
+interface for AIRS to CrIS translation is source/airs2cris.m; 
+see the matlab-style help there and the example calling script
+test/demo1.m for more info.
 
-There is more code in the test than the source directory--testing
-and validation are key parts of the package.
+The main processing steps are (1) build the convolution matrix for 
+a particular AIRS SRF set, (2) invert this or take a pseudo-inverse,
+(3) use the inverse to translate AIRS channel radiances to an
+intermediate form, and (4) interpolate or convolve the intermediate
+form to a final representation.  The final form for tests so far is
+either CrIS or AIRS radiances with a different SRF set.
 
-Documentation is sparse--this file, test/README, and comments in
-many of the individual procedures, but not much else.  There is the
-start of a latex write-up, just an intro for now, in airs_decon/doc.
+Documentation includes this file, test/README, the first draft of a
+writeup in the doc directory, and comments in many of the individual
+procedures, and several recent blog reports, listed in doc/notes.txt.
 
 
 Top Level Directories
