@@ -1,4 +1,12 @@
 
-This is a first draft of documentation for the AIRS deconvolution
-test and related applications, including AIRS to CrIS translation.
+doc/decon/airs_decon.pdf has the start of a writeup on fundamentals
+
+the following five blog posts include an overview and the results of
+simulation studies, done with code in the test subdirectory
+
+  http://hyperearth.wordpress.com/2013/07/24/airs-to-cris-translations/
+  http://hyperearth.wordpress.com/2013/11/04/airs-to-cris-translation-update/
+  http://hyperearth.wordpress.com/2013/11/12/airs-to-cris-updates/
+  http://hyperearth.wordpress.com/2014/07/22/first-look-at-an-iasi-to-airs-translation/
+  http://hyperearth.wordpress.com/2014/07/22/interferometric-interpolation/
 

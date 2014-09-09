@@ -1,29 +1,27 @@
 
-airs_decon v 0.95, beta release
---------------------------------
+airs_decon v 1.05
+------------------
 
-H. Motteler, 8 Jan 2014
+H. Motteler, 15 Jan 2014
 
 
 Overview
 ---------
 
-This is a "beta" release.  It works well with simulated AIRS 1c 
-data and in initial tests with real 1c data.  The top-level user
-interface for AIRS to CrIS translation is source/airs2cris.m; 
-see the matlab-style help there and the example calling script
-test/demo1.m for more info.
+airs_decon is a matlab package to deconvolve AIRS channel radiances,
+taking advantage of a detailed representation of the AIRS spectral
+response functions (SRFs).  A typical application is to reconvolve
+the result with the response functions for another instrument, for
+example to translate AIRS to CrIS radiances.  
 
-The main processing steps are (1) build the convolution matrix for 
-a particular AIRS SRF set, (2) invert this or take a pseudo-inverse,
-(3) use the inverse to translate AIRS channel radiances to an
-intermediate form, and (4) interpolate or convolve the intermediate
-form to a final representation.  The final form for tests so far is
-either CrIS or AIRS radiances with a different SRF set.
+The function for AIRS to CrIS translation is source/airs2cris.m.
+This has matlab-style help, and the script test/demo1.m gives an
+example of using it.  The translation has been tested extensively
+with both real and simulated AIRS 1c data.
 
-Documentation includes this file, test/README, the first draft of a
-writeup in the doc directory, and comments in many of the individual
-procedures, and several recent blog reports, listed in doc/notes.txt.
+Documentation includes this file, test/README, the first draft of 
+a writeup in the doc directory, comments in many of the procedures,
+and several recent blog reports, listed in doc/notes.txt.
 
 
 Top Level Directories
@@ -45,9 +43,6 @@ The ccast path provides bandpass.m, finterp.m, inst_params.m, and
 also rad2bt.m and bt2rad.m.  The functions mkhamm.m and seq_match.m
 in airs_decon/source are copied from ccast/motmsc/utils.  
 
-If things are set up right users should not need the airs_decon/test
-path.
-
 
 User Functions
 ---------------
@@ -62,6 +57,6 @@ User Functions
   hamm_app    - spectral space forward hamming 
   hamm_inv    - spectral space inverse hamming
 
-The hamming functions are not called by any other functions in
-source, but may be useful for some user applications.
+The hamming functions are called as an option in airs2cris, and may
+be useful for other applications.
 
