@@ -25,7 +25,7 @@ addpath /home/motteler/cris/airs_decon/source
 addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
-band = 'SW';            % cris band
+band = 'LW';            % cris band
 bfile = 'bconv4.mat';   % deconvolution temp file
 dvb = 0.1;              % deconvolution frequency step
 fig = 'fig';            % plot type
@@ -45,10 +45,6 @@ dvs = 0.0025;
 % get CrIS inst and user params
 opts.resmode = 'lowres';
 wlaser = 773.1301;  % nominal value
-[inst, user] = inst_params(band, wlaser, opts);
-
-% set wlaser so inst grid == user grid
-wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
 [inst, user] = inst_params(band, wlaser, opts);
 
 % intersection of AIRS and CrIS bands

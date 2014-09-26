@@ -35,12 +35,8 @@ clear d1
 wlaser = 773.1301;  % nominal value
 [inst, user] = inst_params(band, wlaser);
 
-% set wlaser so inst grid == user grid
-wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
-[inst, user] = inst_params(band, wlaser);
-
 % get CrIS channel radiances for rkc
-[rad1, frq1] = kc2cris(inst, user, rkc, vkc);
+[rad1, frq1] = kc2cris(user, rkc, vkc);
 
 % get the kcarta to AIRS convolution matrix
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';

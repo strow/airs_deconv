@@ -45,10 +45,6 @@ opts.resmode = 'lowres';
 wlaser = 773.1301;  % nominal value
 [inst, user] = inst_params(band, wlaser, opts);
 
-% set wlaser so inst grid == user grid
-wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
-[inst, user] = inst_params(band, wlaser, opts);
-
 % intersection of AIRS and CrIS bands
 switch upper(band)
   case 'LW', tv1 =  650; tv2 = 1095; dt1 = 2; dt2 = 6;
@@ -67,7 +63,7 @@ for i = 1 : length(flist)
   vkc = d1.w(:); rkc = d1.r(:);
 
   % convolve kcarta radiances to CrIS channels
-  [rtmp, ftmp] = kc2cris(inst, user, rkc, vkc);
+  [rtmp, ftmp] = kc2cris(user, rkc, vkc);
   rad1 = [rad1, rtmp];
 
   % apply the AIRS convolution

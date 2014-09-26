@@ -1,156 +1,108 @@
 %
 % NAME
-%   kc2cris - convolve kcarta to cris channel radiances
+%   kc2cris - convolve kcarta to CrIS channel radiances
 %
 % SYNOPSIS
-%   [rad3, frq3, opt2] = kc2cris(inst, user, rkc, vkc, opt1)
+%   [rad2, frq2] = kc2cris(inst, user, rad1, frq1)
 %
 % INPUTS
-%   inst    - instrument params struct
-%   user    - user grid params struct
-%   rkc     - kcarta grid radiances
-%   vkc     - frequency grid for rkc
-%   opt1    - optional input parameters
+%   inst  - sensor grid params
+%   user  - user grid params
+%   rad1  - kcarta radiances, m x n array
+%   frq1  - kcarta frequencies, m-vector
 %
 % OUTPUTS
-%   rad3    - cris radiances
-%   frq3    - radiance frequency grid
-%   opt2    - selected internal values
+%   rad2  - CrIS radiances, k x n array
+%   frq2  - CrIS frequency grid, k-vector
 %
 % DISCUSSION
-%   derived from the setup and reference path parts of cris_igm2.m,
-%   from the cris_sim package
+%   see finterp.pdf for the derivations used here.
 %
-% reference path
-%   - start with kcarta radiances
-%   - bandpass to selected CrIS band
-%   - IFFT to single-sided high-res IGM
-%   - truncate to the instrument OPD 
-%   - FFT to get CrIS reference radiance
-% 
-% key internal variables
-%   user - user grid params
-%   inst - instrument grid params 
-%   N    - kcarta to interferogram transform size
-%   N3   - undecimated half-path size, inst.df * inst.npts / 2
-%   igm1 - N2+1 pt single-sided high res igm from kcarta radiances
-%   rad3 - instrument grid radiances from igm1
-%   frq3 - instrument grid frequencies for rad3
-% 
-% HM, 4 Mar 2013
+%   note that since we start with kcarta radiances, large n 
+%   (number of observations) can quickly reach memory limits.
+%
+% HM, 20 Sep 2014
 %
 
-function [rad3, frq3, opt2] = kc2cris(inst, user, rkc, vkc, opt1)
+function [rad2, frq2] = kc2cris(inst, user, rad1, frq1)
 
-%------------------------------
-% check inputs and set defauts
-%------------------------------
-
-% devault values
-doplot = 0;        % option for lots of plots
-figtype = 'fig';
-
-% option to override defaults with opt1 fields
-if nargin == 5
-  optvar = fieldnames(opt1);
-  for i = 1 : length(optvar)
-    vname = optvar{i};
-    if exist(vname, 'var')
-      % fprintf(1, 'cris_igm: setting %s\n', vname)
-      eval(sprintf('%s = opt1.%s;', vname, vname));
-    else
-      fprintf(1, 'kc2cris: unknown option variable %s\n', vname);
-    end
-  end
+% check that array sizes match
+frq1 = frq1(:);
+[m, nobs] = size(rad1);
+if m ~= length(frq1)
+  error('rad1 and frq1 sizes do not match')
 end
 
 %-----------------------------------
 % set up interferometric parameters
 %-----------------------------------
 
-dvk  = 0.0025;            % kcarta dv
-dx = 1 / inst.vlaser;     % undecimated IGM distance step
+% kcarta param
+dv1  = 0.0025;       % kcarta dv
 
-% get dv and transform size
-for k = 20 : 24
-  N = 2^k;
-  dv = 1 / (2*N*dx);
-  if dv <= dvk, break, end
-end            
-
-% get Lmax and Vmax
-Lmax = N * dx;
-Vmax = N * dv;
-
-% single-sided undecimated interferogram size
-N3 = inst.df * inst.npts / 2;   
-
-% sanity check for dx and inst.opd
-if N3 ~= round(inst.opd / dx)
-  error('df * npts / 2 != inst.opd / dx')
+% check input frequency spacing
+if abs(dv1 - (frq1(2) - frq1(1))) > 1e-10
+  error('input frequency spacing not 0.0025 1/cm')
 end
 
-%----------------------------------------------
-% create a single-sided high res interferogram
-%----------------------------------------------
+% CrIS params
+v1 = user.v1;         % user grid start
+v2 = user.v2;         % user grid end
+vr = user.vr;         % out-of-band rolloff
+dv2 = user.dv;        % user grid dv
+vb = inst.freq(end);  % sensor grid max
 
-% embed kcarta-grid radiance in 0 to Vmax N+1 point grid
-frq2 = (0:N)' * dv;
-rad2 = zeros(N+1, 1);
+% get rational approx to dv1/dv2
+[m1, m2] = rat(dv1/dv2);
+if ~isclose(m1/m2, dv1/dv2, 4)
+  error('no rational approximation for dv1 / dv2')
+end
+
+% get the tranform sizes
+for k = 4 : 24
+  if m2 * 2^k * dv1 >= vb, break, end
+end
+N1 = m2 * 2^k;
+N2 = m1 * 2^k;
+
+% get (and check) dx
+dx1 = 1 / (2*dv1*N1);
+dx2 = 1 / (2*dv2*N2);
+if ~isclose(dx1, dx2, 4)
+  error('dx1 and dx2 are different')
+end
+dx = dx1;
+
+% fprintf(1, 'new kc2cris: N1 = %7d, N2 = %5d, dx = %6.3e\n', N1, N2, dx);
+
+%-------------------------------
+% take kcarta to CrIS radiances
+%-------------------------------
 
 % set kcarta radiance passband to the user grid
-rkc = bandpass(vkc, rkc, user.v1, user.v2, user.vr);
+rad1 = bandpass(frq1, rad1, v1, v2, vr);
 
-% interpolate rkc to the dv grid
-ix = find(user.v1 - user.vr < frq2 & frq2 < user.v2 + user.vr);
-rad2(ix) = interp1(vkc, rkc, frq2(ix), 'linear');
-% rad3(ix) = interp1(vkc, rkc, frq2(ix), 'spline');
+% embed kcarta radiance in a 0 to Vmax grid
+ftmp = (0:N1)' * dv1;
+rtmp = zeros(N1+1, nobs);
+[ix, jx] = seq_match(ftmp, frq1);
+rtmp(ix, :) = rad1(jx, :);
 
-% compare interpolated vs actual kcarta radiances
-% plot(vkc, rkc, frq2(ix), rad2(ix), frq2(ix), rad3(ix))
-% ax=axis; ax(1)=user.v1-user.vr; ax(2)=user.v2+user.vr; axis(ax);
-% legend('kcarta', 'linear', 'spline'); grid on; zoom on
+% radiance to interferogram
+igm1 = real(ifft([rtmp; flipud(rtmp(2:N1, :))]));
+igm1 = igm1(1:N1+1, :);
 
-% do the N+1 point cosine transform (as a 2*N point FFT)
-% igm1 = real(ifft([rad2; rad2(N:-1:2,1)]));
-igm1 = real(ifft([rad2; flipud(rad2(2:N,1))]));
-% igm_full = igm1;
-igm1 = igm1(1:N+1,1);
+% apply a time-domain apodization
+% dtmp = (0:N2)' * dx;
+% apod = gaussapod(dtmp, 2) * ones(1, nobs);
+% igm1(1:N2+1, :) = igm1(1:N2+1, :) .* apod;
 
-%---------------------
-% reference transform
-%---------------------
-% truncate the single-sided high res igm1 to instrument OPD and
-% transform back to radiance.  This is the usual interferometric
-% interpolation as done in finterp or fconvkc
-%
-rad3 = real(fft([igm1(1:N3+1,1); flipud(igm1(2:N3,1))]));
-frq3 = (0:N3)' * inst.dv;
-ix = interp1(frq3, (1:N3+1)', inst.freq, 'nearest');
-rad3 = rad3(ix);
-frq3 = frq3(ix);
+% interferogram to radiance
+rad2 = real(fft([igm1(1:N2+1,:); flipud(igm1(2:N2,:))]));
+frq2 = (0:N2)' * dv2;
 
-% option to return more data
-if nargout == 3
-  opt2 = struct;
-  opt2.N = N;
-  opt2.N3 = N3;
-  opt2.igm = igm1;
-end
-
-%------------------
-% option for plots
-%------------------
-if doplot == 0
-  return
-end
-
-% plot reference radiance
-figure(1); clf
-plot(frq3, rad3)
-title('CrIS reference radiance')
-xlabel('wavenumber, 1/cm')
-ylabel('radiance')
-grid on; zoom on
-saveas(gcf, 'figure_1', figtype)
+% return just the CrIS user grid
+ix = find(v1 <= frq2 & frq2 <= v2);
+rad2 = rad2(ix, :);
+frq2 = frq2(ix);
 
