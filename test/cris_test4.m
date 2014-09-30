@@ -130,8 +130,8 @@ end
 % option for apodization
 if dohamm
   rad1 = hamm_app(rad1);
-  rad2 = hamm_app(rad2);
-  rad3 = hamm_app(rad3);
+% rad2 = hamm_app(rad2);
+% rad3 = hamm_app(rad3);
   rad4 = hamm_app(rad4);
   rad5 = hamm_app(rad5);
   rad6 = hamm_app(rad6);

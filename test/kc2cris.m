@@ -16,10 +16,26 @@
 %   frq2  - CrIS frequency grid, k-vector
 %
 % DISCUSSION
-%   see finterp.pdf for the derivations used here.
+%   see ccast/doc/finterp.pdf for the derivations used here.
+%
+%   kc2cris uses inst and user structs from the ccast function
+%   inst_params.  The relevant fields are
+%
+%   user fields
+%     v1  - user grid start
+%     v2  - user grid end
+%     vr  - out-of-band rolloff
+%     dv  - user grid dv
+%
+%   inst fields
+%     freq  - freq(end) is interpolation band max
 %
 %   note that since we start with kcarta radiances, large n 
 %   (number of observations) can quickly reach memory limits.
+%
+%   kc2cris calls isclose.m from airs_decon/test and bandpass.m 
+%   from ccast/source, and uses sensor and user grid parameters 
+%   from inst_params.m, also in ccast/source
 %
 % HM, 20 Sep 2014
 %
@@ -73,7 +89,7 @@ if ~isclose(dx1, dx2, 4)
 end
 dx = dx1;
 
-% fprintf(1, 'new kc2cris: N1 = %7d, N2 = %5d, dx = %6.3e\n', N1, N2, dx);
+% fprintf(1, 'kc2cris: N1 = %7d, N2 = %5d, dx = %6.3e\n', N1, N2, dx);
 
 %-------------------------------
 % take kcarta to CrIS radiances

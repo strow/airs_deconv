@@ -83,8 +83,8 @@ if N3 ~= round(inst.opd / dx)
   error('df * npts / 2 != inst.opd / dx')
 end
 
-fprintf(1, 'old kc2cris: N  = %7d, N3 = %5d, dx = %6.3e, dv = %6.3e\n', ...
-            N, N3, dx, dv);
+% fprintf(1, 'kc2inst: N = %7d, N3 = %5d, dx = %6.3e, dv = %6.3e\n', ...
+%             N, N3, dx, dv);
 
 %----------------------------------------------
 % create a single-sided high res interferogram
