@@ -1,0 +1,149 @@
+\documentclass[11pt]{beamer}
+% \usetheme{Boadilla}
+  \usetheme{default}
+
+\input{crisdefs.tex}
+
+\title{AIRS to CrIS translation}
+\author{H.~E.~Motteler}
+\institute{
+  UMBC Atmospheric Spectroscopy Lab \\
+  Joint Center for Earth Systems Technology \\
+}
+\date{\today}
+\begin{document}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{AIRS to CrIS translation}
+
+\begin{itemize}
+  \item let $c$ be a vector of \airs\ channel radiances and $S$ a
+    matrix whose rows are {\airs} {\srf}s tabulated at a 0.1~cm$^{-1}$
+    grid
+
+  \item then $d = S^{-1}c$ is the deconvolution of $c$ on that grid
+
+  \item this can be reconvolved with a double Fourier transform
+    to the \cris\ user grid
+
+  \item the useful channels are the intersection of the AIRS and
+    \cris\ bands
+
+  \item the stability of $S^{-1}$ is significantly improved with the
+    L1c in comparison with the L1b channel set, and further improved
+    with a spacing constraint that drops a few of the closest L1c
+    channels
+
+\end{itemize}
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{AIRS to CrIS validation}
+
+\begin{itemize}
+  \item ``true CrIS'' -- start with kcarta radiances on a
+    0.0025~cm$^{-1}$ grid and convolve to the \cris\ user grid
+
+  \item ``true AIRS'' -- start with kcarta radiances as above and
+    convolve (with our tabulated {\srf}s) to \airs\ 1c channels
+
+  \item ``AIRS CrIS'' -- start with true \airs, deconvolve to an
+    intermediate 0.1~cm$^{-1}$ grid, and reconvolve to \cris
+    
+  \item compare \airs\ \cris\ with true \cris
+
+  \item compare alternate interpolations with true \cris.  These
+    include simple interpolation and interpolation rather than
+    deconvolution to the intermediate grid.  Neither worked as well
+    as deconvolution
+
+  \item the following tests were done with our 49 fitting profiles
+
+\end{itemize}
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{LW spectra}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_1_LW.pdf}
+\end{center}
+
+LW true \cris, true \airs, deconvolved \airs, and \airs\ \cris.  \\
+The deconvolved data has significant ringing or overshoot but \\
+also some detail not apparent in the original spectra.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{LW residual}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_2_LW.pdf}
+\end{center}
+
+LW \airs\ \cris\ minus true \cris, the mean of residuals over 49
+fitting profiles.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{MW spectra}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_1_MW.pdf}
+\end{center}
+
+MW true \cris, true \airs, deconvolved \airs, and \airs\ \cris.  \\
+The deconvolved data has significant ringing or overshoot but \\
+also some detail not apparent in the original spectra.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{MW residual}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_2_MW.pdf}
+\end{center}
+
+MW \airs\ \cris\ minus true \cris, the mean of residuals over 49
+fitting profiles.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{SW spectra}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_1_SW.pdf}
+\end{center}
+
+SW true \cris, true \airs, deconvolved \airs, and \airs\ \cris.  \\
+The deconvolved data has significant ringing or overshoot but \\ 
+also some detail not apparent in the original spectra.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+\frametitle{SW residual}
+
+\begin{center}
+  \includegraphics[scale=0.54]{figures/fig_2_SW.pdf}
+\end{center}
+
+SW \airs\ \cris\ minus true \cris, the mean of residuals over 49
+fitting profiles.
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+
+\end{document}
+

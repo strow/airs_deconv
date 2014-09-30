@@ -1,6 +1,6 @@
 \documentclass[11pt]{article}
 \title{AIRS Deconvolution \\ 
-  {***} DRAFT {***}}
+  {***} draft {***}}
 \author{H.~Motteler, L.~Strow, S.~Hannon}
 \date{\today}
 \input{crisdefs.tex}
@@ -9,36 +9,37 @@
 
 \section{AIRS spectral response functions}
 
-The \AIRS\ spectral response functions model instrument channel
-response as a function of frequency and associate channels with
-nominal center frequencies[1].  Each \AIRS\ channel $i$ has an
-associated spectral response function or {\SRF} $\srf_i(v)$ such
-that the channel radiance $c_i = \int \srf_i(v)r(v)\,dv$.  The
-center or peak of this function is the nominal channel frequency.
+The \AIRS\ spectral response functions model channel response as 
+a function of frequency and associate channels with nominal center
+frequencies [1].  Each \AIRS\ channel $i$ has an associated spectral
+response function or {\SRF} $\srf_i(v)$ such that the channel
+radiance $c_i = \int \srf_i(v)r(v)\,dv$.  The center or peak of this
+function is the channel frequency.
 
-Suppose we have $n$ channels and a frequency grid $v$ of $k$ points
-spanning the domains of the functions $\srf_i$.  The grid step size
-for our applications is often $0.0025\ \wnum$, the kcarta[2]
-resolution.  Let $S_k$ be an $n\times k$ array such that $s_{i,j} =
-\srf_i(v_j)/w_i$, where $w_i = \sum_j \srf_i(v_j)$, that is where
-row $i$ is $\srf_i(v)$ tabulated at the grid $v$ and normalized so
-the row sum is 1.  If the channel centers are in increasing order
-$S_k$ is banded, and if they are not too close the rows are linearly
-independent.  $S_k$ is a linear transform whose domain is radiance
-at the grid $v$, and whose range is channel radiances.  If $r$ is
-radiance at the grid $v$, then $c = S_k r$ gives a good
-approximation of the channel radiances $c_i = \int\srf_i(v)r(v)\,dv$.
+Suppose we have $n$ channels and a frequency grid $v$ of $k$ 
+points spanning the domains of the functions $\srf_i$.  The grid
+step size for our applications is often $0.0025\ \wnum$, the
+kcarta resolution [2].  Let $S_k$ be an $n\times k$ array such that
+$s_{i,j} = \srf_i(v_j)/w_i$, where $w_i = \sum_j \srf_i(v_j)$, that
+is where row $i$ is $\srf_i(v)$ tabulated at the grid $v$ and
+normalized so the row sum is 1.  If the channel centers are in
+increasing order $S_k$ is banded, and if they are not too close, 
+the rows are linearly independent.  $S_k$ is a linear transform
+whose domain is radiance at the grid $v$ and whose range is channel
+radiances.  If $r$ is radiance at the grid $v$, then $c = S_k r$
+gives a good approximation of the channel radiances $c_i =
+\int\srf_i(v)r(v)\,dv$.
 
 In practice this is how we convolve kcarta or other simulated
-radiances to get {\AIRS} channel radiances, and transmittances 
+radiances to get {\AIRS} channel radiances, or transmittances 
 for our fast transmittance models[3].  We construct $S_k$ either
 explicitly or implicitly from {\AIRS} {\SRF} tabulations.  The
-matrix $S_k$ in the former case is large but managable with a banded 
-representation or as a Matlab sparse array.
+matrix $S_k$ in the former case is large but managable with a banded
+or sparse representation.
 
 Suppose we have $S_k$ and channel radiances $c$ and want to find
 $r$, that is, to deconvolve $c$.  Consider the linear system $S_k x
-= c$.  Since $n < k$ for the kcarta grid mentioned above, it is
+= c$.  Since $n < k$ for the kcarta grid mentioned above, this is
 underdetermined, with infinitely many solutions.  We could add
 constraints, take a pseudo-inverse, consider a new matrix $S_b$ with
 columns tabulated at some coarser grid, or some combination of the
@@ -82,8 +83,10 @@ inverse.
 \begin{itemize}
   \item show figures for channel trimming
   \item compare this approach with more recent results
-  \item the main point of this section is probably the channel
-    trimming and discussion of condition number
+  \item the main point of this section is the channel trimming and
+    discussion of condition number---maybe merge with the following
+    section into a single discussion where the intermediate grid
+    size varies from $n$ to $k$.
 \end{itemize}
 
 
@@ -109,10 +112,10 @@ resolutions $m$ is approximately 40 times less than $k$, so finding
 the pseudo-inverse of $S_b$ becomes tractible.
 
 \begin{itemize}
-  \item needs figures from 
-  \item add recent blog reports and results from cris\_test4
+  \item this works well in practice
+  \item show representative results from cris\_test4
   \item there is some redundant detail in the descriptions of
-    $S_{a,b,k}$ but that can stay until the final form is clear.
+    $S_{a,b,k}$ that will go away if the sections are merged
 \end{itemize}
 
 \section{A sinc basis for the intermediate representation}
