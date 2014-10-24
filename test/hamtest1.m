@@ -48,19 +48,19 @@ wlaser = 773.1301;
 [inst, user] = inst_params(band, wlaser);
 wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
 [inst, user] = inst_params(band, wlaser);
-[rLW, vLW] = kc2cris(inst, user, rkc, vkc);
+[rLW, vLW] = kc2cris(user, rkc, vkc);
 
 band = 'MW';
 [inst, user] = inst_params(band, wlaser);
 wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
 [inst, user] = inst_params(band, wlaser);
-[rMW, vMW] = kc2cris(inst, user, rkc, vkc);
+[rMW, vMW] = kc2cris(user, rkc, vkc);
 
 band = 'SW';
 [inst, user] = inst_params(band, wlaser);
 wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
 [inst, user] = inst_params(band, wlaser);
-[rSW, vSW] = kc2cris(inst, user, rkc, vkc);
+[rSW, vSW] = kc2cris(user, rkc, vkc);
 
 % match frequency grids
 rALL = [rLW; rMW; rSW];

@@ -43,7 +43,7 @@ for i = 1 : length(flist)
 
   % 2. convolve kcarta radiances to the CrIS user grid
 % [rtmp2, ftmp2] = kc2inst(inst2, user2, rkc, vkc);
-  [rtmp2, ftmp2] = kc2cris(inst2, user2, rkc, vkc);
+  [rtmp2, ftmp2] = kc2cris(user2, rkc, vkc);
   rad2 = [rad2, rtmp2];
   frq2 = ftmp2(:);
 

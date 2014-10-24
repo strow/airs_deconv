@@ -3,11 +3,10 @@
 %   kc2cris - convolve kcarta to CrIS channel radiances
 %
 % SYNOPSIS
-%   [rad2, frq2] = kc2cris(inst, user, rad1, frq1)
+%   [rad2, frq2] = kc2cris(user, rad1, frq1)
 %
 % INPUTS
-%   inst  - sensor grid params
-%   user  - user grid params
+%   user  - CrIS user grid params
 %   rad1  - kcarta radiances, m x n array
 %   frq1  - kcarta frequencies, m-vector
 %
@@ -16,7 +15,7 @@
 %   frq2  - CrIS frequency grid, k-vector
 %
 % DISCUSSION
-%   see ccast/doc/finterp.pdf for the derivations used here.
+%   see doc/finterp.pdf for the derivations used here.
 %
 %   kc2cris uses inst and user structs from the ccast function
 %   inst_params.  The relevant fields are
@@ -27,20 +26,21 @@
 %     vr  - out-of-band rolloff
 %     dv  - user grid dv
 %
-%   inst fields
-%     freq  - freq(end) is interpolation band max
-%
 %   note that since we start with kcarta radiances, large n 
 %   (number of observations) can quickly reach memory limits.
 %
-%   kc2cris calls isclose.m from airs_decon/test and bandpass.m 
-%   from ccast/source, and uses sensor and user grid parameters 
-%   from inst_params.m, also in ccast/source
+%   kc2cris calls isclose.m from airs_decon/test, bandpass.m from
+%   ccast/source, and sets user grid parameters from inst_params.m, 
+%   also in ccast/source
 %
-% HM, 20 Sep 2014
+%   kc2cris and kc2iasi are identical except for the way the
+%   parameters v1, v2, vr, and dv2 are set, and for the IASI
+%   apodization
+%
+% HM, 22 Oct 2014
 %
 
-function [rad2, frq2] = kc2cris(inst, user, rad1, frq1)
+function [rad2, frq2] = kc2cris(user, rad1, frq1)
 
 % check that array sizes match
 frq1 = frq1(:);
@@ -65,8 +65,8 @@ end
 v1 = user.v1;         % user grid start
 v2 = user.v2;         % user grid end
 vr = user.vr;         % out-of-band rolloff
+vb = v2 + vr;         % transform max
 dv2 = user.dv;        % user grid dv
-vb = inst.freq(end);  % sensor grid max
 
 % get rational approx to dv1/dv2
 [m1, m2] = rat(dv1/dv2);

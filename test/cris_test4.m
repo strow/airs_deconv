@@ -65,7 +65,7 @@ for i = 1 : length(flist)
   vkc = d1.w(:); rkc = d1.r(:);
 
   % convolve kcarta radiances to CrIS channels
-  [rtmp, ftmp] = kc2cris(inst, user, rkc, vkc);
+  [rtmp, ftmp] = kc2cris(user, rkc, vkc);
   rad1 = [rad1, rtmp];
 
   % apply the AIRS convolution

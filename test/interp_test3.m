@@ -1,7 +1,7 @@
 %
 % interp_test3 -- compare old and new kc2cris with finterp
 %
-% rad1 - old kc2cris
+% rad1 - old kc2cris (now kc2inst)
 % rad2 - old finterp
 % rad3 - new kc2cris
 % rad4 - new finterp
@@ -38,7 +38,7 @@ for i = 1 : 4
   % save kcarta radiances in column order
   rad_kc = [rad_kc, rkc];
 
-  % convolve kcarta radiances with old kc2cris
+  % convolve kcarta radiances with kc2inst
   [rtmp1, ftmp1] = kc2inst(inst, user, rkc, vkc);
   rad1 = [rad1, rtmp1];
   frq1 = ftmp1(:);
@@ -47,8 +47,8 @@ for i = 1 : 4
 end
 % fprintf(1, '\n')
 
-% convolve kcarta radiances with new kc2cris
-[rad3, frq3] = kc2cris(inst, user, rad_kc, vkc);
+% convolve kcarta radiances with kc2cris
+[rad3, frq3] = kc2cris(user, rad_kc, vkc);
 
 % finterp setup
 opt2 = struct; opt2.info = 1; opt2.tol = 1e-6;
