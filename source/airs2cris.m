@@ -53,22 +53,20 @@ function [crad, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1)
 % defaults
 dvb = 0.1;            % deconv grid step size
 bfile = 'bconv.mat';  % temp file for pinv matrix
-wlaser = 773.1301;    % nominal value is OK here
 hapod = 0;            % no Hamming apodization
 
 % process input options
 if nargin == 4
-  optvar = fieldnames(opt1);
-  for i = 1 : length(optvar)
-    vname = optvar{i};
-    if exist(vname, 'var')
-      eval(sprintf('%s = opt1.%s;', vname, vname));
-    end
-  end
+  if isfield(opt1, 'dvb'), dvb = opt1.dvb; end
+  if isfield(opt1, 'bfile'), bfile = opt1.bfile; end
+  if isfield(opt1, 'hapod'), hapod = opt1.hapod; end
 end
 
-% band names
-bstr{1} = 'LW'; bstr{2} = 'MW'; bstr{3} = 'SW';
+% CrIS params
+wlaser = 773.1301;    % nominal value
+bstr{1} = 'LW';       % band by numbber
+bstr{2} = 'MW';
+bstr{3} = 'SW';
 
 % initialize outputs
 crad = []; cfrq = []; 

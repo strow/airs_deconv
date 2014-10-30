@@ -29,7 +29,7 @@ band = 'LW';            % cris band
 bfile = 'bconv4.mat';   % deconvolution temp file
 dvb = 0.1;              % deconvolution frequency step
 fig = 'fig';            % plot type
-dohamm = 1;
+dohamm = 0;
 
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
