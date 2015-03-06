@@ -3,13 +3,12 @@
 %   kc2cris - convolve kcarta to CrIS channel radiances
 %
 % SYNOPSIS
-%   [rad2, frq2] = kc2cris(user, rad1, frq1, ngc)
+%   [rad2, frq2] = kc2cris(user, rad1, frq1)
 %
 % INPUTS
 %   user  - CrIS user grid params
 %   rad1  - kcarta radiances, m x n array
 %   frq1  - kcarta frequencies, m-vector
-%   ngc   - number of guard channels (default 0)
 %
 % OUTPUTS
 %   rad2  - CrIS radiances, k x n array
@@ -32,7 +31,7 @@
 %
 %   kc2cris calls isclose.m from airs_decon/test, bandpass.m from
 %   ccast/source, and sets user grid parameters from inst_params.m, 
-%   also from ccast/source
+%   also in ccast/source
 %
 %   kc2cris and kc2iasi are identical except for the way the
 %   parameters v1, v2, vr, and dv2 are set, and for the IASI
@@ -41,10 +40,7 @@
 % HM, 22 Oct 2014
 %
 
-function [rad2, frq2] = kc2cris(user, rad1, frq1, ngc)
-
-% default is no guard channels
-if nargin == 3, ngc = 0; end
+function [rad2, frq2] = kc2cris(user, rad1, frq1)
 
 % check that array sizes match
 frq1 = frq1(:);
@@ -121,9 +117,8 @@ igm1 = igm1(1:N1+1, :);
 rad2 = real(fft([igm1(1:N2+1,:); flipud(igm1(2:N2,:))]));
 frq2 = (0:N2)' * dv2;
 
-% return the user grid plus any guard channels
-dg = ngc * dv2;
-ix = find(v1 - dg <= frq2 & frq2 <= v2 + dg);
+% return just the CrIS user grid
+ix = find(v1 <= frq2 & frq2 <= v2);
 rad2 = rad2(ix, :);
 frq2 = frq2(ix);
 
