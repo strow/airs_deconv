@@ -21,7 +21,7 @@ addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
 band = 'LW';            % cris band
-hapod = 0;              % flag for Hamming apodization
+hapod = 1;              % flag for Hamming apodization
 dvb = 0.1;              % deconvolution frequency step
 bfile = 'bconv4.mat';   % deconvolution temp file
 

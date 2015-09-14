@@ -3,82 +3,85 @@
 %   kc2cris - convolve kcarta to CrIS channel radiances
 %
 % SYNOPSIS
-%   [rad2, frq2] = kc2cris(user, rad1, frq1, ngc)
+%   [rad2, frq2] = kc2cris(user, rad1, frq1, opts)
 %
 % INPUTS
-%   user  - CrIS user grid params
+%   user  - CrIS user grid struct
 %   rad1  - kcarta radiances, m x n array
 %   frq1  - kcarta frequencies, m-vector
-%   ngc   - number of guard channels (default 0)
+%   opts  - optional parameters
+%
+% user fields
+%   v1  - user grid low
+%   v2  - user grid high
+%   vr  - out-of-band rolloff
+%   dv  - user grid dv
+%
+% opts fields
+%   pL  - passband low (default user.v1)
+%   pH  - passband high (default user.v2)
+%   rL  - LHS rolloff width (default user.vr)
+%   rH  - RHS rolloff width (default user.vr)
+%   ng  - number of guard channels (default 0)
 %
 % OUTPUTS
 %   rad2  - CrIS radiances, k x n array
 %   frq2  - CrIS frequency grid, k-vector
 %
 % DISCUSSION
-%   see doc/finterp.pdf for the derivations used here.
-%
-%   kc2cris uses inst and user structs from the ccast function
-%   inst_params.  The relevant fields are
-%
-%   user fields
-%     v1  - user grid start
-%     v2  - user grid end
-%     vr  - out-of-band rolloff
-%     dv  - user grid dv
-%
-%   note that since we start with kcarta radiances, large n 
-%   (number of observations) can quickly reach memory limits.
-%
-%   kc2cris calls isclose.m from airs_decon/test, bandpass.m from
-%   ccast/source, and sets user grid parameters from inst_params.m, 
-%   also from ccast/source
-%
-%   kc2cris and kc2iasi are identical except for the way the
-%   parameters v1, v2, vr, and dv2 are set, and for the IASI
-%   apodization
+%   kc2cris and kc2iasi are similar internally--see finterp.pdf 
+%   from the airs_decon or ccast documentation for the relevant
+%   derivations.  rad1 is an m x n array of kcarta radiances and
+%   can quickly reach memory limits for large n.
 %
 % HM, 22 Oct 2014
 %
 
-function [rad2, frq2] = kc2cris(user, rad1, frq1, ngc)
+function [rad2, frq2] = kc2cris(user, rad1, frq1, opts)
 
-% default is no guard channels
-if nargin == 3, ngc = 0; end
+% set defaults
+pL = user.v1;  % passband low
+pH = user.v2;  % passband high
+rL = user.vr;  % LHS rolloff width
+rH = user.vr;  % RHS rolloff width
+ng = 0;        % no guard channels
+
+% check opts fields
+if nargin == 4
+  if isfield(opts, 'pL'), pL = opts.pL; end
+  if isfield(opts, 'pH'), pH = opts.pH; end
+  if isfield(opts, 'rL'), rL = opts.rL; end
+  if isfield(opts, 'rH'), rH = opts.rH; end
+  if isfield(opts, 'ng'), ng = opts.ng; end
+end
 
 % check that array sizes match
 frq1 = frq1(:);
 [m, nobs] = size(rad1);
 if m ~= length(frq1)
-  error('rad1 and frq1 sizes do not match')
+  error('rad1 and frq1 do not conform')
 end
 
 %-----------------------------------
 % set up interferometric parameters
 %-----------------------------------
 
-% kcarta param
-dv1  = 0.0025;       % kcarta dv
+dv1 = 0.0025;   % kcarta dv
+dv2 = user.dv;  % user grid dv
 
 % check input frequency spacing
 if abs(dv1 - (frq1(2) - frq1(1))) > 1e-10
   error('input frequency spacing not 0.0025 1/cm')
 end
 
-% CrIS params
-v1 = user.v1;         % user grid start
-v2 = user.v2;         % user grid end
-vr = user.vr;         % out-of-band rolloff
-vb = v2 + vr;         % transform max
-dv2 = user.dv;        % user grid dv
-
 % get rational approx to dv1/dv2
 [m1, m2] = rat(dv1/dv2);
-if ~isclose(m1/m2, dv1/dv2, 4)
-  error('no rational approximation for dv1 / dv2')
-end
+% if ~isclose(m1/m2, dv1/dv2, 4)
+%   error('no rational approximation for dv1 / dv2')
+% end
 
 % get the tranform sizes
+vb = pH + rH;
 for k = 4 : 24
   if m2 * 2^k * dv1 >= vb, break, end
 end
@@ -88,9 +91,9 @@ N2 = m1 * 2^k;
 % get (and check) dx
 dx1 = 1 / (2*dv1*N1);
 dx2 = 1 / (2*dv2*N2);
-if ~isclose(dx1, dx2, 4)
-  error('dx1 and dx2 are different')
-end
+% if ~isclose(dx1, dx2, 4)
+%   error('dx1 and dx2 are different')
+% end
 dx = dx1;
 
 % fprintf(1, 'kc2cris: N1 = %7d, N2 = %5d, dx = %6.3e\n', N1, N2, dx);
@@ -100,7 +103,7 @@ dx = dx1;
 %-------------------------------
 
 % set kcarta radiance passband to the user grid
-rad1 = bandpass(frq1, rad1, v1, v2, vr);
+rad1 = bandpass(frq1, rad1, pL, pH, rL, rH);
 
 % embed kcarta radiance in a 0 to Vmax grid
 ftmp = (0:N1)' * dv1;
@@ -122,8 +125,8 @@ rad2 = real(fft([igm1(1:N2+1,:); flipud(igm1(2:N2,:))]));
 frq2 = (0:N2)' * dv2;
 
 % return the user grid plus any guard channels
-dg = ngc * dv2;
-ix = find(v1 - dg <= frq2 & frq2 <= v2 + dg);
+dg = ng * dv2;
+ix = find(user.v1 - dg <= frq2 & frq2 <= user.v2 + dg);
 rad2 = rad2(ix, :);
 frq2 = frq2(ix);
 
