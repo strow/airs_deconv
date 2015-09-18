@@ -1,23 +1,26 @@
 
-airs_decon v 1.05
-------------------
+airs_decon v 1.2
+-----------------
 
-H. Motteler, 15 Jan 2014
-
+H. Motteler, 15 Sep 2015
 
 Overview
 ---------
 
 airs_decon is a matlab package to deconvolve AIRS channel radiances,
-taking advantage of a detailed representation of the AIRS spectral
-response functions (SRFs).  A typical application is to reconvolve
-the result with the response functions for another instrument, for
-example to translate AIRS to CrIS radiances.  
+taking advantage of detailed knowledge of the AIRS spectral response
+functions.  Applications include reconvolving with the CrIS response
+function to translate AIRS to CrIS radiances.  This package includes
+support routines such as kc2cris and mksconv1 which take kcarta high
+resolution to CrIS and AIRS channel radiances
 
-The function for AIRS to CrIS translation is source/airs2cris.m.
-This has matlab-style help, and the script test/demo1.m gives an
-example of using it.  The translation has been tested extensively
+The function for AIRS to CrIS translation is source/airs2cris.m.  
+This includes matlab-style help.  The script test/demo1.m gives an
+example of calling it.  The translation has been tested extensively
 with both real and simulated AIRS 1c data.
+
+A function cris2airs for CrIS to AIRS translation is included, but
+works poorly in the LW because the CrIS resolution is too low
 
 Documentation includes this file, test/README, the first draft of 
 a writeup in the doc directory, comments in many of the procedures,
@@ -47,9 +50,11 @@ in airs_decon/source are copied from ccast/motmsc/utils.
 User Functions
 ---------------
 
-  airs2cris   - translate AIRS to CrIS radiances
   airs_decon  - deconvolve AIRS radiances
-  mksconv2    - build a sparse AIRS convolution matrix
+  airs2cris   - translate AIRS to CrIS radiances
+  cris2airs   - translate CrIS to AIRS radiances
+  mksconv1    - create a general-purpose sparse AIRS SRF matrix
+  mksconv2    - create a modified SRF matrix for deconvolutions
   seq_match   - find the matching subsequence of two sequences
   trim_chans  - drop close neighbors from an AIRS channel set
 
@@ -59,4 +64,12 @@ User Functions
 
 The hamming functions are called as an option in airs2cris, and may
 be useful for other applications.
+
+
+Validation
+-----------
+
+The function test/cris_test5.m has the most recent AIRS to CrIS
+validation tests.  Similar tests for the CrIS to AIRS translation
+are in test/airs_test1.m
 

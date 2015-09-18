@@ -3,16 +3,16 @@
 %   cris2airs -- translate CrIS high res to AIRS radiances
 %
 % SYNOPSIS
-%   [arad, afrq] = ...
+%   [arad, afrq, brad, bfrq] = ...
 %       cris2airs(rLW, rMW, rSW, vLW, vMW, vSW, sfile, cfrq, opt1)
 %
 % INPUTS
 %   rLW    - CrIS LW radiance, nLW x k array
 %   rMW    - CrIS MW radiance, nMW x k array
 %   rSW    - CrIS SW radiance, nSW x k array
-%   rLW    - CrIS LW frequency, nLW vector
-%   rMW    - CrIS MW frequency, nMW vector
-%   rSW    - CrIS SW frequency, nSW vector
+%   vLW    - CrIS LW frequency, nLW vector
+%   vMW    - CrIS MW frequency, nMW vector
+%   vSW    - CrIS SW frequency, nSW vector
 %   sfile  - AIRS HDF4 SRF tabulation file
 %   cfrq   - desired AIRS channel frequencies
 %   opt1   - optional input parameters
@@ -24,16 +24,14 @@
 % OUTPUTS
 %   arad   - simulated AIRS radiances, n x k array
 %   afrq   - AIRS channel frequencies, n-vector
+%   brad   - deconvolved CrIS radiances, m x k array
+%   bfrq   - deconvolved CrIS frequencies, m x k array
 %
 % DISCUSSION
-%   cris2aris translates Cris to AIRS radiances by deconvolving
-%   CrIS to an intermediate grid and then reconvolving with the 
-%   AIRS channel response functions
-%
-%   cfrq is desired channel frequencies and afrq is nominal center
-%   frequencies of the tabulated SRFs.  If these differ by more than
-%   0.02 1/cm, a warning is given.  iasi2airs does not sort afrq by
-%   frequency.
+%   cris2aris translates Cris to AIRS radiances by interpolating
+%   CrIS to an intermediate grid and then convolving with AIRS SRFs
+%   
+%   works poorly in the LW because the CrIS resolution is too low
 %
 % COPYRIGHT
 %   Copyright 2013-2015, Atmospheric Spectroscopy Laboratory.  
@@ -43,25 +41,8 @@
 %   H. Motteler, 12 Sep 2015
 %
 
-% test env
-addpath /home/motteler/cris/iasi_decon
-addpath /home/motteler/mot2008/hdf/h4tools
-addpath /home/motteler/cris/ccast/source
-
-f1 = '/asl/data/cris/ccast/sdr60_hr/2015/231/SDR_d20150819_t0821345.mat';
-d1 = load(f1);
-rLW = squeeze(d1.rLW(:, 5, 15, 21:30));
-rMW = squeeze(d1.rMW(:, 5, 15, 21:30));
-rSW = squeeze(d1.rSW(:, 5, 15, 21:30));
-vLW = d1.vLW; vMW = d1.vMW; vSW = d1.vSW;
-clear d1
-sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
-cfrq = load('freq2645.txt');
-opt1 = struct;
-opt1.resmode = 'hires2'; 
-nargin = 8;
-
-% [arad, afrq] = cris2airs(rLW, rMW, rSW, vLW, vMW, vSW, sfile, cfrq, opt1);
+function [arad, afrq, brad, bfrq] = ...
+       cris2airs(rLW, rMW, rSW, vLW, vMW, vSW, sfile, cfrq, opt1);
 
 % defaults
 dvb = 0.1;            % deconv grid step size
@@ -145,5 +126,7 @@ vSWa = tfrq(kx);
 arad = [rLWa; rMWa; rSWa];
 afrq = [vLWa; vMWa; vSWa];
 
-plot(afrq, real(rad2bt(afrq, arad)));
-
+if nargout > 2
+  brad = [rLWb; rMWb; rSWb];
+  bfrq = [vLWb; vMWb; vSWb];
+end
