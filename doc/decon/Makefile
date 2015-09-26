@@ -1,14 +1,16 @@
 # basic makefile
 
-airs_decon: airs_decon.pdf
+decon: decon.pdf
 
-airs_decon.pdf: airs_decon.tex crisdefs.tex Makefile
-	pdflatex airs_decon.tex -interaction nonstopmode || rm airs_decon.pdf
+decon.pdf: decon.tex crisdefs.tex figures/*.pdf Makefile
+	rm decon.pdf 2> /dev/null || true
+	pdflatex decon.tex -interaction nonstopmode && \
+	pdflatex decon.tex -interaction nonstopmode
 
-show: airs_decon.pdf
-	acroread airs_decon.pdf
+show: decon.pdf
+	acroread decon.pdf
 
 clean:
-	rm airs_decon.log airs_decon.aux airs_decon.toc \
-	   airs_decon.snm airs_decon.nav airs_decon.out 2> /dev/null || true
+	rm decon.log decon.aux decon.toc decon.vrb \
+	decon.snm decon.nav decon.out 2> /dev/null || true
 
