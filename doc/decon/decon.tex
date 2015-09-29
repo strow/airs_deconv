@@ -4,7 +4,7 @@
 
 \input{crisdefs.tex}
 
-\title{DRAFT VERSION \\
+\title{FIRST DRAFT \\
   \vspace{5mm}
   Deconvolution and Translation \\
   Between High Spectral Resolution  \\
@@ -28,21 +28,24 @@ Upwelling infrared radiation as measured by the {\airs}, {\iasi},
 and {\cris} sounders is a significant part of the long term climate
 record.  We would like to treat this information as a single data
 set but the instruments have different spectral resolutions, channel
-response functions, and band spans.  To address this problem we
-consider several channel radiance translations: {\iasi} to CrIS,
-{\iasi} to {\airs}, {\cris} to {\airs}, and {\airs} to {\cris}.
+response functions, and band spans.  As a first step in addressing
+this problem we consider several channel radiance translations:
+{\iasi} to high resolution {\cris}, {\iasi} to {\airs}, {\airs} to
+standard resolution {\cris}, and high resolution {\cris} to {\airs}.
 
 Translation from {\airs} to {\cris} presents a special challenge
-because while {\cris} and {\iasi} are Michaelson interferometers
-with single response functions, {\airs} is a grating spectrometer
-with a distinct response function for each channel.  We take
-advantage of detailed knowledge of the {\airs} spectral response
-functions (SRFs) to deconvolve {\airs} channel radiances to a
-resolution enhanced intermediate representation.
+because {\cris} and {\iasi} are Michaelson interferometers with
+parametrized response functions, while {\airs} is a grating
+spectrometer with channel center frequencies and spectral response
+functions determined by the focal plane geometery.  In section
+\ref{decon} we show how to take advantage of detailed knowledge of
+the {\airs} spectral response function (SRF) shapes to deconvolve
+{\airs} channel radiances to a resolution enhanced intermediate
+representation.
 
-The translations are validated by comparisons with calculated
-reference truth.  For example to test the {\iasi} to {\airs}
-translation, we start with 49 fitting profiles spanning a
+The translations presented here are validated by comparisons with
+calculated reference truth.  For example to test the {\iasi} to
+{\airs} translation, we start with 49 fitting profiles spanning a
 significant range of atmospheric conditions.  Upwelling radiance is
 calculated at a 0.0025 {\wn} grid with kcarta over a band spanning
 the {\airs} and {\iasi} response functions.  ``True {\airs}'' is
@@ -58,22 +61,20 @@ bound on how well the translations can work in practice.  But the
 better we know the response functions, the closer practical
 translations can approach these limits.
 
-The conversions here are presented in order of their accuracy, with
-{\iasi} to {\cris} most accurate and {\cris} to {\airs} the least.
-As noted above {\airs} to {\cris} is a special case because of the
-non-interferometric nature of the deconvolution, and that section
-requires a more detailed presentation than the others.
+The conversions here are presented in order of their residuals, with
+{\iasi} to high resolution {\cris} most accurate and high resolution
+{\cris} to {\airs} the least.
 
 
-\section{IASI to CrIS}
+\section{IASI to high resolution CrIS}
 
 The {\cris} user grid comprises three bands, LW 650 to 1095 {\wn},
 MW 1210 to 1750 {\wn}, and SW 2155 to 2550 {\wn}.  For the {\cris}
 high resolution mode the channel spacing is 0.625 {\wn} for all
 three bands.  The {\cris} user ILS is a sinc function.  The {\iasi}
 user grid is a single band from 645 to 2760 {\wn} with a channel
-spacing of 0.5 {\wn}.  The {\iasi} user ILS is a modified Gaussian,
-as shown in figure \ref{igauss}, convolved with a sinc function.
+spacing of 0.5 {\wn}.  The {\iasi} user ILS is a sinc function
+convolved with the modified Gaussian, shown in figure \ref{igauss}.
 
 {\iasi} to {\cris} is a relatively easy translation because {\iasi}
 spans the {\cris} bands and has a nominal (though strongly apodized)
@@ -82,10 +83,10 @@ higher resolution.  The main steps of the translation, for each
 
 \begin{itemize}
 
-  \item apply a bandpass filter to the {\iasi} data to restrict it
-    to a single {\cris} band with a roughly 20 {\wn} rolloff outside
-    the {\cris} user grid, when possible.  For the LW band we use a
-    5 {\wn} rolloff because {\iasi} starts at 645 {\wn}.
+  \item apply a bandpass filter to the {\iasi} channel radiances to
+    restrict them to a single {\cris} band with a roughly 20 {\wn}
+    rolloff outside the {\cris} user grid.  For the LW band we use
+    a 5 {\wn} rolloff because {\iasi} starts at 645 {\wn}.
 
   \item take the filtered radiances to an interferogram with an
     inverse Fourier transform
@@ -100,17 +101,17 @@ higher resolution.  The main steps of the translation, for each
 
 Figure \ref{iclw1} shows the mean and standard deviation of {\iasi}
 {\cris} minus true {\cris} over the 49 fitting profiles, for the
-{\cris} LW band.  The residual is greatest at the low end of the 
-LW band.  This may be due in part to the 5 {\wn} LW rolloff, as
+{\cris} LW band.  The residual is greatest at the low end of the LW
+band.  This may be due in part to the 5 {\wn} LW rolloff, as
 residuals near the band edges are larger with a smaller rolloff.
 The residual is reduced significantly if we apply Hamming
 apodization to the {\iasi} {\cris} and true {\cris} radiances, as
-shown in figure \ref{iclw2}.
+shown in figure \ref{iclw2}.  Figures \ref{icmw1} and \ref{icsw1}
+show similar results for the unapodized radiances for the MW and SW
+bands. The residuals are very small.  Unless otherwise noted, all
+{\cris} spectra shown here are unapodized.
 
-Figures \ref{icmw1} and \ref{icsw1} show similar results for the
-unapodized radiances for the MW and SW bands. The residuals are very
-small.  Unless otherwise noted, all {\cris} spectra shown here are
-unapodized.
+% \newpage
 
 \begin{figure}
   \centering
@@ -131,7 +132,8 @@ unapodized.
   \centering
   \includegraphics[height=8cm]{figures/iasi_cris_lw_2.pdf}
   \caption{Mean and standard deviation of Hamming apodized {\iasi}
-    {\cris} minus true {\cris}, for the {\cris} LW band. }
+    {\cris} minus true {\cris}, for the {\cris} LW band. The
+    residual is reduced by an order of magnitude.}
   \label{iclw2}
 \end{figure}
 
@@ -160,9 +162,9 @@ unapodized.
 650 to 2650 {\wn} with the individual center frequencies and
 spectral response functions (SRFs) determined by the focal plane
 geometery.  Channels are not uniformly spaced.  {\airs} L1c
-radiances are derived from the L1b, with improvements including
-filling the small gaps.  The {\iasi} to {\airs} translation will
-work for either channel set, and is done as follows
+radiances are derived from the L1b with improvements including a
+more uniform spacing.  The {\iasi} to {\airs} translation works for
+either channel set and is done as follows
 
 % The {\iasi} to {\airs} translation applies a deconvolution to the
 % full {\iasi} band, to a 0.1 {\wn} intermediate grid, and then an
@@ -177,25 +179,27 @@ work for either channel set, and is done as follows
     intermediate grid, the nominal resolution of the {\airs} SRF
     tabulation.  Aside from resolution and band spans, this exactly
     the same transform used for the {\iasi} to {\cris} translation
+    and is done with the same procedure, iasi\_decon.m
 
   \item convolve the 0.1 {\wn} intermediate representation with either
-    the {\airs} L1b or L1c SRFs
+    the {\airs} L1b or L1c SRFs.  Section \ref{decon} discusses this
+    convolution in greater detail.
     
 \end{itemize}
 
 Figure \ref{srfs1} shows the first three {\airs} SRFs and the
-bandpass filter wing.  There is a tradeoff involved in the position
-of the bandpass wing---the deconvolution is better behaved with a
-broader wing, but we don't want to step on the wings of the AIRS
-SRFs.
+bandpass filter wing.  Note the relatively gentle slope of the
+rolloff, to decrease impulse ringing.  The first two {\airs} SRFs
+are ``guard channels'' and the third the first regular channel.  
+The wings of the SRFs roll off well inside the bandpass filter.
 
-Figure \ref{iaspec} shows true {\iasi}, true {\airs}, 
-deconvolved {\iasi}, and {\iasi} {\airs}.  At this level of detail
-we mainly see the greater fine structure in the deconvolution.
-Figure \ref{iadiff} shows {\iasi} {\airs} minus true {\airs}.  The
-residual is larger than for the {\iasi} to {\cris} translation, but
-significantly better than the {\airs} to {\cris} or {\cris} to
-{\airs} translations.
+Figure \ref{iaspec} shows true {\iasi}, true {\airs}, deconvolved
+{\iasi}, and {\iasi} {\airs}.  At this level of detail we mainly see
+the greater fine structure in the deconvolution.  Figure \ref{iaszoom}
+shows details from 660 to 680 {\wn}.  Figure \ref{iadiff} shows
+{\iasi} {\airs} minus true {\airs}.  The residual is larger than for
+the {\iasi} to {\cris} translation, but significantly better than
+the {\airs} to {\cris} or {\cris} to {\airs} translations.
 
 \begin{figure}
   \centering
@@ -215,6 +219,14 @@ significantly better than the {\airs} to {\cris} or {\cris} to
 
 \begin{figure}
   \centering
+  \includegraphics[height=8cm]{figures/iasi_airs_zoom.pdf}
+  \caption{true {\iasi}, true {\airs}, deconvolved {\iasi}, and
+    {\iasi} {\airs}, detail }
+  \label{iazoom}
+\end{figure}
+
+\begin{figure}
+  \centering
   \includegraphics[height=8cm]{figures/iasi_airs_diff.pdf}
   \caption{Mean and standard deviation of {\iasi} {\airs} minus true
     {\airs} }
@@ -223,8 +235,125 @@ significantly better than the {\airs} to {\cris} or {\cris} to
 
 \FloatBarrier
 
-\section{AIRS to CrIS}
+\section{AIRS to standard resolution CrIS}
 
-\section{CrIS to AIRS}
+Foir the {\cris} standard resolution mode the channel spacing is
+0.625 {\wn} for the LW, 1.25 {\wn} for the MW, and 2.5 {\wn} for the
+SW bands.  The {\iasi} deconvolution was a key step in the {\iasi}
+to {\cris} and {\iasi} to {\airs} translations.  Similarly, {\airs}
+deconvolution is central to the {\airs} to {\cris} translation and
+is presented in detail in section \ref{decon}.  The first step in
+the {\airs} L1c to {\cris} translation is to deconvolve the {\airs}
+L1c channel radiances to a 0.1 {\wn} intermediate grid, the nominal
+{\airs} SRF resolution.  Then for each {\cris} band,
+
+\begin{itemize}
+  \item find the {\airs} and {\cris} band intersection
+
+  \item apply a bandpass filter to the deconvolved {\airs} radiances
+    to restrict them to the intersection, rolling off the wings when
+    the AIRS band and gaps allow for this
+
+  \item reconvolve the filtered spectra to the user grid channel
+    spacing for the current {\cris} band
+
+  \item trim the reconvolved spectra to the band intersection 
+\end{itemize}
+
+Figure \ref{aclws} shows true {\cris}, true {\airs}, deconvolved
+{\airs}, and {\airs} {\cris}.  At this level of detail we mainly see
+the greater fine structure in the deconvolution.  Figure \ref{aclwz}
+shows details from 660 to 680 {\wn}.  In comparison with the {\iasi}
+deconvolution in figure \ref{iazoom} the {\airs} deconvolution is
+not as smooth.  The remaining figures show true {\cris} minus
+{\airs} {\cris} for the 49 fitting profiles, with and without
+Hamming apodization for each of the {\cris} bands.  The residuals
+are significantly reduced with apodization but are larger than for
+the {\iasi} to {\cris} translation.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_spec_LW_noap.pdf}
+  \caption{true {\cris}, true {\airs}, deconvolved {\airs}, and
+    {\airs} {\cris} }
+  \label{aclws}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_zoom_LW_noap.pdf}
+  \caption{true {\cris}, true {\airs}, deconvolved {\airs}, and
+    {\airs} {\cris}, detail }
+  \label{aclwz}
+\end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[height=8cm]{figures/airs_cris_spec_MW_noap.pdf}
+%   \caption{ }
+%   \label{acmws}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[height=8cm]{figures/airs_cris_spec_SW_noap.pdf}
+%   \caption{ }
+%   \label{acsws}
+% \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_LW_noap.pdf}
+  \caption{Mean and standard deviation of unapodized {\airs} {\cris}
+    minus true {\cris}, for the {\cris} LW band }
+  \label{aclwd}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_LW_hamm.pdf}
+  \caption{Mean and standard deviation of Hamming apodized {\airs}
+      {\cris} minus true {\cris}, for the {\cris} LW band }
+  \label{aclwdh}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_MW_noap.pdf}
+  \caption{Mean and standard deviation of unapodized {\airs} {\cris}
+    minus true {\cris}, for the {\cris} MW band }
+  \label{acmwd}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_MW_hamm.pdf}
+  \caption{Mean and standard deviation of Hamming apodized {\airs}
+      {\cris} minus true {\cris}, for the {\cris} MW band }
+  \label{acmwdh}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_SW_noap.pdf}
+  \caption{Mean and standard deviation of unapodized {\airs} {\cris}
+    minus true {\cris}, for the {\cris} SW band }
+  \label{acswd}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_diff_SW_hamm.pdf}
+  \caption{Mean and standard deviation of Hamming apodized {\airs}
+      {\cris} minus true {\cris}, for the {\cris} SW band }
+  \label{acswdh}
+\end{figure}
+
+\FloatBarrier
+
+\section{High resolution CrIS to AIRS}
+
+\section{AIRS Deconvolution}
+\label{decon}
 
 \end{document}
