@@ -132,8 +132,8 @@ bands. The residuals are very small.  Unless otherwise noted, all
   \centering
   \includegraphics[height=8cm]{figures/iasi_cris_lw_2.pdf}
   \caption{Mean and standard deviation of Hamming apodized {\iasi}
-    {\cris} minus true {\cris}, for the {\cris} LW band. The
-    residual is reduced by an order of magnitude.}
+    {\cris} minus true {\cris}, for the {\cris} LW band.}
+% The residual is reduced by an order of magnitude
   \label{iclw2}
 \end{figure}
 
@@ -237,7 +237,7 @@ the {\airs} to {\cris} or {\cris} to {\airs} translations.
 
 \section{AIRS to standard resolution CrIS}
 
-Foir the {\cris} standard resolution mode the channel spacing is
+For the {\cris} standard resolution mode the channel spacing is
 0.625 {\wn} for the LW, 1.25 {\wn} for the MW, and 2.5 {\wn} for the
 SW bands.  The {\iasi} deconvolution was a key step in the {\iasi}
 to {\cris} and {\iasi} to {\airs} translations.  Similarly, {\airs}
@@ -352,6 +352,63 @@ the {\iasi} to {\cris} translation.
 \FloatBarrier
 
 \section{High resolution CrIS to AIRS}
+
+The {\cris} to {\airs} translation differs in that we construct the
+intermediate representation at the 0.1 {\wn} {\airs} SRF resolution
+by double Fourier interpolation without deconvolution.  For each
+{\cris} band, the steps in the translation are as follows
+
+\begin{itemize}
+  \item find the {\airs} and {\cris} band intersection
+
+  \item interpolate the {\cris} channel radiances to the intermediate
+    grid 
+
+   \item convolve the 0.1 {\wn} intermediate representation with either
+    the {\airs} L1b or L1c SRFs
+ 
+\end{itemize}
+
+Note that there is no bandpass filtering used in this translation.
+For example in the LW we simply interpolate the full span of the
+{\cris} user grid (plus any guard channels) to the intermediate
+representation.  Adding a rolloff inside the user grid would improve
+residuals near the band edges but would mean dropping channels from
+the translation.
+
+Figure \ref{caspec} shows true {\cris}, true {\airs}, interpolated
+{\cris}, and {\cris} {\airs}.  Figure \ref{cazoom} shows details
+from 660 to 680 {\wn}.  We do not see the resolution enhancement in
+the intermediate representation that we got with the {\iasi} and
+{\airs} deconvolutions.  Figure \ref{cadiff} shows {\cris} {\airs}
+minus true {\airs}.  The residual is quite large in comparison with
+the other translations.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/cris_airs_spec.pdf}
+  \caption{true {\cris}, true {\airs}, interpolated {\cris}, and
+    {\cris} {\airs} }
+  \label{caspec}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/cris_airs_zoom.pdf}
+  \caption{true {\cris}, true {\airs}, interpolated {\cris}, and
+    {\cris} {\airs}, detail}
+  \label{cazoom}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/cris_airs_diff.pdf}
+  \caption{Mean and standard deviation of {\cris} {\airs} minus true
+    {\airs}}
+  \label{cadiff}
+\end{figure}
+
+\FloatBarrier
 
 \section{AIRS Deconvolution}
 \label{decon}
