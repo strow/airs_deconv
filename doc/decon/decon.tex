@@ -100,7 +100,7 @@ higher resolution.  The main steps of the translation, for each
 \end{itemize}
 
 Figure \ref{iclw1} shows the mean and standard deviation of {\iasi}
-{\cris} minus true {\cris} over the 49 fitting profiles, for the
+{\cris} minus true {\cris} for the 49 fitting profiles, for the
 {\cris} LW band.  The residual is greatest at the low end of the LW
 band.  This may be due in part to the 5 {\wn} LW rolloff, as
 residuals near the band edges are larger with a smaller rolloff.
@@ -195,7 +195,7 @@ The wings of the SRFs roll off well inside the bandpass filter.
 
 Figure \ref{iaspec} shows true {\iasi}, true {\airs}, deconvolved
 {\iasi}, and {\iasi} {\airs}.  At this level of detail we mainly see
-the greater fine structure in the deconvolution.  Figure \ref{iaszoom}
+the greater fine structure in the deconvolution.  Figure \ref{iazoom}
 shows details from 660 to 680 {\wn}.  Figure \ref{iadiff} shows
 {\iasi} {\airs} minus true {\airs}.  The residual is larger than for
 the {\iasi} to {\cris} translation, but significantly better than
@@ -236,6 +236,7 @@ the {\airs} to {\cris} or {\cris} to {\airs} translations.
 \FloatBarrier
 
 \section{AIRS to standard resolution CrIS}
+\label{airs2cris}
 
 For the {\cris} standard resolution mode the channel spacing is
 0.625 {\wn} for the LW, 1.25 {\wn} for the MW, and 2.5 {\wn} for the
@@ -355,8 +356,9 @@ the {\iasi} to {\cris} translation.
 
 The {\cris} to {\airs} translation differs in that we construct the
 intermediate representation at the 0.1 {\wn} {\airs} SRF resolution
-by double Fourier interpolation without deconvolution.  For each
-{\cris} band, the steps in the translation are as follows
+by double Fourier interpolation, as the {\cris} user grid sinc ILS
+does not allow for deconvolution.  For each {\cris} band, the steps
+in the translation are as follows,
 
 \begin{itemize}
   \item find the {\airs} and {\cris} band intersection
@@ -413,4 +415,123 @@ the other translations.
 \section{AIRS Deconvolution}
 \label{decon}
 
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+% \section{AIRS spectral response functions}
+
+The {\airs} spectral response functions model channel response as 
+a function of frequency and associate channels with nominal center
+frequencies.  Each {\airs} channel $i$ has an associated spectral
+response function or {\srf} $\sigma_i(v)$ such that the channel
+radiance $c_i = \int \sigma_i(v)r(v)\,dv$, where $r$ is radiance at
+frequency $v$.  The center or peak of $\sigma_i$ is the channel
+frequency.
+
+Suppose we have $n$ channels and a frequency grid $\vec v$ of $k$
+points spanning the domains of the functions $\sigma_i$.  The grid
+step size for our applications is often 0.0025 {\wn}, the kcarta
+resolution.  Let $S_k$ be an $n\times k$ array such that $s_{i,j} =
+\sigma_i(v_j)/w_i$, where $w_i = \sum_j \sigma_i(v_j)$, that is
+where row $i$ is $\sigma_i(v)$ tabulated at the grid $\vec v$ and
+normalized so the row sum is 1.  If the channel centers are in
+increasing order $S_k$ is banded, and if they are not too close, the
+rows are linearly independent.  $S_k$ is a linear transform whose
+domain is radiance at the grid $\vec v$ and whose range is channel
+radiances.  If $r$ is radiance at the grid $\vec v$, then $c = S_k r$
+gives a good approximation of the channel radiances $c_i = 
+\int\sigma_i(v)r(v)\,dv$.
+
+In practice this is how we convolve kcarta or other simulated
+radiances to get {\airs} channel radiances.  We construct $S_k$
+either explicitly or implicitly from {\airs} {\srf} tabulations.
+The matrix $S_k$ in the former case is large but managable with a
+banded or sparse representation.
+
+Suppose we have $S_k$ and channel radiances $c$ and want to find
+$r$, that is, to deconvolve $c$.  Consider the linear system $S_k x
+= c$.  Since $n < k$ for the kcarta grid mentioned above this is
+underdetermined, with infinitely many solutions.  We could add
+constraints, take a pseudo-inverse, consider a new matrix $S_b$ with
+columns tabulated at some coarser grid, or some combination of the
+above.  We consider two cases, $S_a$ with SRFs tabulated at the
+{\airs} channel grid, and $S_b$ with {\srf}s at an intermediate
+grid, typically 0.1 {\wn}, the approximate resolution of the {\srf}
+measurements.
+
+\subsection{Deconvolution to the AIRS channel grid}
+
+Let $\vec v_a = v_1,v_2,\ldots,v_n$ be channel center frequencies
+associated with a set of {\srf}s.  Similar to $S_k$, let $S_a$ be an
+$n\times n$ array where row $i$ is $\sigma_i(v)$ tabulated at the
+$v_a$ grid, with rows normalized to 1.  If $r$ is radiance at the
+grid $\vec v_a$, then $c = S_a r$ is a rough approximation of
+$\int\sigma_i(v)r(v)\,dv$.
+
+Consider the linear system $S_a x = c$, similar to the case 
+$S_k x = c$ above, where we are given $S_a$ and channel signals $c$
+and want to find radiances $x$.  Since $S_a$ is an $n \times n$
+matrix we might hope to solve for $r$.  However in practice there
+are problems.  If we take $\vec v_a$ as the standard AIRS L1b
+channel set, we find $S_a$ is poorly conditioned, without a usable
+inverse.  This is due to the L1b channel spacing, which because of
+module overlaps is quite variable, with the closest channels only
+0.0036 {\wn} apart.
+
+If we use the the linear function $g(v) = 4\cdot 10^{-4} \cdot v -
+0.04$, where $v$ is frequency, as a lower bound on the acceptable
+channel spacing, we drop about 64 out of the 2378 L1b channels and
+the condition number of $S_a$ is much improved, to around 30.  With
+the partly synthetic L1c channel set, $g(v)$ drops only 4 channels
+and $\hbox{cond}(S_a)$ is about 250, still low enough to get a
+usable inverse.  The higher condition number for the L1c channel set
+is not surprising since the extra channels are synthesized from the
+L1b set.  
+
+\subsection{Deconvolution to the SRF tabulation grid}
+
+We now consider deconvolution to an intermediate grid, 0.1 {\wn},
+the resolution of the tabulated {\airs} {\srf}s.  Let $\vec v_b =
+v_1,v_2,\ldots,v_m$ be a 0.1 {\wn} grid spanning the domains of the
+functions $\sigma_i$.  Similar to $S_k$, let $S_b$ be an $n\times m$
+array where row $i$ is $\sigma_i(v)$ tabulated at the $\vec v_m$
+grid, with rows normalized to~1.  If $r$ is radiance at the $\vec
+v_b$ grid, then $c = S_b r$ is still a reasonable approximation of
+$\int\sigma_i(v)r(v)\,dv$.
+
+Consider the linear system $S_b x = c$, similar to the case 
+$S_k x = c$ above, where we are given $S_b$ and channel signals $c$
+and want to find radiances $x$.  Since $n < m < k$, as with $S_k$
+the system will be underdetermined but more manageable because $m$
+is approximately 40 times less than $k$.  After trying several
+approaches we settled on a Moore-Penrose pseudoinverse $S_b^{-1}$ of
+$S_b$.  Given that, $x = S_b^{-1} c$ gives us deconvolved radiances
+at the {\srf} tabulation grid.  This is what we use for the {\airs}
+to {\cris} translation in section \ref{airs2cris}.
+
+\subsection{Notes}
+
+\begin{itemize}
+  
+  \item The work evolved as described above, with deconvolution to
+    the AIRS channel grid a key step in getting deconvolution to the
+    SRF tabulation grid to work.  But rather than the AIRS channel
+    grid it might be simpler to deconvolve to $n$ regularly spaced
+    points spanning the SRF domains, and check the condition number
+    and get the channel spacing from that.
+
+  \item Some of the earlier blog posts include comparisons of
+    deconvolution based translation with both regular interpolation
+    and translation to an intermediate grid with interpolaton rather
+    than deconvolution.  This is an important motivation for the
+    deconvolution based translations.
+
+  \item It may be possible to use a sinc basis for the intermediate
+    representation and turn the deconvolution from an under- to an
+    over-determined system that can be solved by regression.  I have
+    notes on this but didn't pursue it because the pseudo-inverse
+    based deconvolution was working fairly well.
+
+\end{itemize}
+
 \end{document}
+
