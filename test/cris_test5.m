@@ -21,7 +21,7 @@ addpath /home/motteler/mot2008/hdf/h4tools
 
 % test params
 band = 'LW';            % cris band
-hapod = 1;              % flag for Hamming apodization
+hapod = 0;              % flag for Hamming apodization
 dvb = 0.1;              % deconvolution frequency step
 bfile = 'bconv4.mat';   % deconvolution temp file
 
@@ -96,6 +96,7 @@ bt4 = real(rad2bt(frq4, rad4));   % AIRS CrIS
 
 % plot parameters
 [i1, i4] = seq_match(frq1, frq4); 
+
 pv1 = min(frq1(i1)) - 10; 
 pv2 = max(frq1(i1)) + 10;
 if hapod,  psf = 0.2; app = 'hamm';
@@ -103,6 +104,7 @@ else psf = 2.0; app = 'noap'; end
 
 % AIRS and CrIS spectra
 figure(1); clf; j = 1; 
+set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 plot(frq1, bt1(:,j), frq2, bt2(:,j), bfrq, bt3(:,j), frq4, bt4(:,j))
 ax(1)=pv1; ax(2)=pv2; ax(3)=180; ax(4)=320; axis(ax)
 legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
@@ -110,10 +112,13 @@ legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
 xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('AIRS 1C and CrIS %s profile %d', band, j));
 grid on; zoom on
-% saveas(gcf, sprintf('airs_cris_spec_%s_%s', band, app), 'png')
+pname = sprintf('airs_cris_spec_%s_%s', band, app);
+% saveas(gcf, pname, 'png')
+% export_fig([pname, '.pdf'], '-m2', '-transparent')
 
 % AIRS CrIS minus true CrIS mean
 figure(2); clf
+set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 [i1, i4] = seq_match(frq1, frq4);
 plot(frq1(i1), mean(bt4(i4,:) - bt1(i1,:), 2))
@@ -129,5 +134,7 @@ ax(1)=pv1; ax(2)=pv2; ax(3)=0; ax(4)=psf/2; axis(ax);
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('AIRS CrIS minus true CrIS %s std', band));
 grid on; zoom on
-% saveas(gcf, sprintf('airs_cris_diff_%s_%s', band, app), 'png')
+pname = sprintf('airs_cris_diff_%s_%s', band, app);
+% saveas(gcf, pname, 'png')
+% export_fig([pname, '.pdf'], '-m2', '-transparent')
 

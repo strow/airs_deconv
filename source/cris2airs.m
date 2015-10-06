@@ -53,7 +53,9 @@ resmode = 'hires2';   % ccast resolution mode
 if nargin == 9
   if isfield(opt1, 'dvb'), dvb = opt1.dvb; end
   if isfield(opt1, 'wlaser'), wlaser = opt1.wlaser; end
-  if isfield(opt1, 'resmode'), resmode = opt1.resmode; end
+else
+  opt1 = struct;
+  opt1.resmode = resmode;
 end
 
 % check that array sizes match

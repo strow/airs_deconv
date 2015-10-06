@@ -153,7 +153,7 @@ legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
 xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('AIRS 1C and CrIS %s profile %d', band, j));
 grid on; zoom on
-saveas(gcf, sprintf('test4_fig_1_%s', band), fig)
+% saveas(gcf, sprintf('test4_fig_1_%s', band), fig)
 
 % residuals for real CrIS and AIRS CrIS
 figure(2); clf
@@ -163,25 +163,27 @@ ax(1)=tv1; ax(2)=tv2; ax(3)=-dt1; ax(4)=dt1; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('AIRS CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test4_fig_2_%s', band), fig)
+% saveas(gcf, sprintf('test4_fig_2_%s', band), fig)
 
 % residuals for real CrIS and interpolated AIRS
 figure(3); clf
+set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(2,1,1)
 plot(frq1, mean(bt5 - bt1, 2))
 ax(1)=tv1; ax(2)=tv2; ax(3)=-dt2; ax(4)=dt2; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interpolated CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test4_fig_3_%s', band), fig)
 
 % residuals for real CrIS and interpolated convolved AIRS
 [j1, j6] = seq_match(frq1, frq6);
-figure(4); clf
+subplot(2,1,2)
 plot(frq1(j1), mean(bt6(j6,:) - bt1(j1,:), 2))
 % plot(frq1(j1), mean(bt6(j6,:) - bt1(j1,:), 2), frq1, 0, '+')
 ax(1)=tv1; ax(2)=tv2; ax(3)=-dt2; ax(4)=dt2; axis(ax)
 xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('interpolated convolved CrIS minus true CrIS %s mean', band));
 grid on; zoom on
-saveas(gcf, sprintf('test4_fig_4_%s', band), fig)
+% saveas(gcf, sprintf('test4_fig_4_%s', band), fig)
+% export_fig(sprintf('airs_cris_intp_%s.pdf', band), '-m2', '-transparent')
 

@@ -28,6 +28,10 @@ flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 % AIRS 1C channel frequencies
 cfrq = load('freq2645.txt');  
 
+% AIRS 1b channel frequencies
+% d2 = load('freqL1b');
+% cfrq = sort(d2.freqL1b);
+
 % specify an AIRS SRF tabulation
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 
@@ -40,7 +44,8 @@ opt1.ng = 2;
 
 % opts for inst_params
 opt2 = struct;
-opt2.resmode = 'hires2';
+  opt2.resmode = 'hires2';
+% opt2.resmode = 'lowres';
 wlaser = 773.1301;
 
 % cris user grid structs
@@ -110,7 +115,8 @@ legend('true CrIS', 'true AIRS', 'CrIS decon', 'CrIS AIRS', ...
 xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('CrIS and AIRS profile %d', j));
 grid on; zoom on
-saveas(gcf, 'cris2airs_1', 'png')
+% saveas(gcf, 'cris_airs_spec', 'png')
+% export_fig('cris_airs_spec.pdf', '-m2', '-transparent')
 
 % match true AIRS and CrIS AIRS channels
 [ix, jx] = seq_match(frq2, frq4);
@@ -136,5 +142,6 @@ axis([600, 2800, 0, 2])
 xlabel('wavenumber'); ylabel('dBT')
 title('CrIS AIRS minus true AIRS std');
 grid on; zoom on
-saveas(gcf, 'cris2airs_2', 'png')
+% saveas(gcf, 'cris_airs_diff', 'png')
+% export_fig('cris_airs_diff.pdf', '-m2', '-transparent')
 
