@@ -434,7 +434,7 @@ resolution.  Let $S_k$ be an $n\times k$ array such that $s_{i,j} =
 \sigma_i(v_j)/w_i$, where $w_i = \sum_j \sigma_i(v_j)$, that is
 where row $i$ is $\sigma_i(v)$ tabulated at the grid $\vec v$ and
 normalized so the row sum is 1.  If the channel centers are in
-increasing order $S_k$ is banded, and if they are not too close, the
+increasing order $S_k$ is banded, and if they are not too close the
 rows are linearly independent.  $S_k$ is a linear transform whose
 domain is radiance at the grid $\vec v$ and whose range is channel
 radiances.  If $r$ is radiance at the grid $\vec v$, then $c = S_k r$
@@ -507,6 +507,54 @@ approaches we settled on a Moore-Penrose pseudoinverse $S_b^{-1}$ of
 $S_b$.  Given that, $x = S_b^{-1} c$ gives us deconvolved radiances
 at the {\srf} tabulation grid.  This is what we use for the {\airs}
 to {\cris} translation in section \ref{airs2cris}.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_intp_LW.pdf}
+  \caption{simple interpolation and interpolation with convolution, 
+    for the {\cris} LW band}
+  \label{intpLW}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_intp_MW.pdf}
+  \caption{simple interpolation and interpolation with convolution, 
+    for the {\cris} MW band}
+  \label{intpMW}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_cris_intp_SW.pdf}
+  \caption{simple interpolation and interpolation with convolution, 
+    for the {\cris} SW band}
+  \label{intpSW}
+\end{figure}
+
+The {\airs} deconvolution gives a significant resolution
+enhancement.  For the {\airs} to {\cris} translation deconvolution
+works better than both simple interpolation and interpolation
+(rather than deconvolution) to an intermediate grid followed by
+convolution to {\cris} radiances.  For the first case we start with
+true {\airs} and interpolate radiances directly to the {\cris} user
+grid with a cubic spline.  For the second we interpolate true
+{\airs} to the 0.1 {\wn} intermediate grid with a cubic spline and
+then convolve this to the use {\cris} user grid.
+
+Figure \ref{intpLW} shows interpolated {\cris} minus true {\cris}
+for both interpolation tests for the LW band, without any
+apodization.  While the two-step interpolation works a little better
+than the simple spline, both residuals are significantly larger than
+for the translation with deconvolution shown in figure \ref{aclwd}.
+Figures \ref{intpMW} and \ref{intpSW} show similar results for the
+MW and SW bands.  Deconvolution is significantly better for the MW,
+(figure \ref{acmwd}) while the comparison is less clear for the SW
+(figure\ref{acswd}).  Comparisons with Hamming apodization show the
+residuals with deconvolution are significantly less for all three
+bands.
+
+\FloatBarrier
 
 \subsection{Notes}
 
