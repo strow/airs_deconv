@@ -2,6 +2,8 @@
 Test Scripts
 -------------
 
+cris_test7 -- compare deconvolved AIRS with 0.2 cm-1 sinc ILS
+
 cris_test5 -- processes all the fitting profiles and plots the means
     of residuals.  Derived frim cris_test4, drops the interpolation
     tests and adds some stats
@@ -42,14 +44,6 @@ interp_test2 -- demo using finterp to take AIRS 1b or 1c to CrIS
 
 Functions and Support
 ----------------------
-
-airs_decon -- deconvolve AIRS radiances
-
-mksconv2   -- build a sparse AIRS convolution matrix
-
-kc2cris    -- convolve kcarta to cris channel radiances
-
-trim_chans -- drop close neighbors from an AIRS channel set
 
 fake_srf   -- make a fake AIRS SRF file from a real one
 
@@ -98,7 +92,7 @@ sconv_test1 -- initial tests of inverting the full-sized convolution
     matrix from mksconv, from /home/motteler/sconv
 
 
-older function (mostly in zold)
+Older function (mostly in zold)
 --------------------------------
 
 chanstep -- set a lower bound on AIRS channel step size

@@ -13,9 +13,8 @@
 % test parameters
 %-----------------
 
-addpath /asl/matlib/h4tools
-addpath /asl/packages/iasi_decon
-addpath /asl/packages/airs_decon/source
+addpath ../source
+addpath ../h4tools
 addpath /asl/packages/ccast/source
 
 dvb = 0.1;       % deconvolution frequency step
@@ -26,11 +25,11 @@ kcdir = '/home/motteler/cris/sergio/JUNK2012/';
 flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 
 % AIRS 1C channel frequencies
-cfrq = load('freq2645.txt');  
+% cfrq = load('freq2645.txt');  
 
 % AIRS 1b channel frequencies
-% d2 = load('freqL1b');
-% cfrq = sort(d2.freqL1b);
+d2 = load('freqL1b');
+cfrq = sort(d2.freqL1b);
 
 % specify an AIRS SRF tabulation
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';

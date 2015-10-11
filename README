@@ -1,8 +1,8 @@
 
-airs_decon v 1.2
+airs_decon v 1.3
 -----------------
 
-H. Motteler, 15 Sep 2015
+H. Motteler, 10 Oct 2015
 
 Overview
 ---------
@@ -14,18 +14,16 @@ function to translate AIRS to CrIS radiances.  This package includes
 support routines such as kc2cris and mksconv1 which take kcarta high
 resolution to CrIS and AIRS channel radiances
 
-The function for AIRS to CrIS translation is source/airs2cris.m.  
-This includes matlab-style help.  The script test/demo1.m gives an
-example of calling it.  The translation has been tested extensively
-with both real and simulated AIRS 1c data.
+airs2cris.m is the main function for AIRS to CrIS translations.
+test/demo1.m gives an example of calling it.  The translation has
+been tested extensively with both real and simulated AIRS 1c data.
 
-A function cris2airs for CrIS to AIRS translation is included, but
-works poorly in the LW because the CrIS resolution is too low
+A function cris2airs.m for CrIS to AIRS translation is included, 
+but does not work as well as the AIRS to CrIS translation in the 
+LW because the CrIS resolution is too low
 
-Documentation includes this file, test/README, the first draft of 
-a writeup in the doc directory, comments in many of the procedures,
-and several recent blog reports, listed in doc/notes.txt.
-
+Documentation includes man-page style comments for most procedures,
+with fundamentals and validation in doc/decon/decon.pdf.
 
 Top Level Directories
 ----------------------
@@ -33,19 +31,21 @@ Top Level Directories
   doc      - documentation
   source   - user source directory
   test     - test source directory
-
+  h4tools  - basic HDF SD tools
 
 User Paths
 -----------
   
-  /asl/matlib/h4tools
+Application running in the test directory set the following paths
+
+  ../source
+  ../h4tools
   /asl/packages/ccast/source
-  /asl/packages/airs_decon/source
 
-The ccast path provides bandpass.m, finterp.m, inst_params.m, and
-also rad2bt.m and bt2rad.m.  The functions mkhamm.m and seq_match.m
-in airs_decon/source are copied from ccast/motmsc/utils.  
-
+Paths are set in the calling routines, the demo and test routines
+here.  ccast provides bandpass, finterp, inst_params, rad2bt and
+bt2rad.  h4tools provides h4sdread which is used by mksconv1 and
+mksconv2.  ccast is available at https://github.com/strow/ccast.git
 
 User Functions
 ---------------
@@ -57,6 +57,7 @@ User Functions
   mksconv2    - create a modified SRF matrix for deconvolutions
   seq_match   - find the matching subsequence of two sequences
   trim_chans  - drop close neighbors from an AIRS channel set
+  kc2cris     - convolve kcarta to CrIS channel radiances
 
   mkhamm      - sparse hamming convolution matrix 
   hamm_app    - spectral space forward hamming 
@@ -64,7 +65,6 @@ User Functions
 
 The hamming functions are called as an option in airs2cris, and may
 be useful for other applications.
-
 
 Validation
 -----------

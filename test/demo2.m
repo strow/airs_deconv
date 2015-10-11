@@ -1,11 +1,11 @@
 % 
-% demo2 --  CrIS to AIRS translation demo
+% demo2 -- CrIS to AIRS translation demo
 % 
 
 % set paths to asl libs
-addpath /asl/matlib/h4tools
-addpath /asl/packages/ccast/source
 addpath ../source
+addpath ../h4tools
+addpath /asl/packages/ccast/source
 
 % get sample CrIS radiances
 f1 = '/asl/data/cris/ccast/sdr60_hr/2015/231/SDR_d20150819_t0821345.mat';

@@ -1,11 +1,11 @@
 %
-% demo1 - AIRS to CrIS translation test
+% cris_test6 - AIRS to CrIS translation test
 % 
 
-% set paths to standard libs
-addpath /asl/matlib/h4tools
+% set paths to asl libs
+addpath ../source
+addpath ../h4tools
 addpath /asl/packages/ccast/source
-addpath /asl/packages/airs_decon/source
 
 % specify an SRF tabulation file
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';

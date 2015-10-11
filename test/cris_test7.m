@@ -1,15 +1,15 @@
 % 
-% cris_test5 -- compare AIRS CrIS with true CrIS
+% cris_test7 -- compare deconvolved AIRS with 0.2 cm-1 sinc 
 % 
-% reference truth: start with kcarta radiances, convolve to the 
-% CrIS user grid, and call the result "true CrIS".
-% 
-% deconvolution: start with kcarta radiances, convolve to AIRS
-% channel radiances (“true AIRS”), deconvolve to an intermediate
-% grid, e.g. 0.05 1/cm spacing, and reconvolve to the CrIS user 
-% grid (“AIRS Cris”).  Compare AIRS CrIS to true CrIS profiles 
-% and any of the three CrIS bands
+% includes the overview plot from cris_test5 but no stats, 
+% uses radiances from one (typically the first) fitting profile
 %
+%   bkc = real(rad2bt(vkc, rkc));     % kcarta
+%   bt1 = real(rad2bt(frq1, rad1));   % true CrIS
+%   bt2 = real(rad2bt(frq2, rad2));   % true AIRS
+%   bt3 = real(rad2bt(frq3, rad3));   % deconvolved AIRS
+%   bt4 = real(rad2bt(frq4, rad4));   % AIRS CrIS
+%   bt5 = real(rad2bt(frq5, rad5));   % decon grid sinc
 
 %-----------------
 % test parameters
@@ -24,6 +24,7 @@ addpath /asl/packages/ccast/source
 band = 'LW';            % cris band
 hapod = 0;              % flag for Hamming apodization
 dvb = 0.1;              % deconvolution frequency step
+dvs = 0.2;              % karta to sinc ILS resolution
 bfile = 'bconv4.mat';   % deconvolution temp file
 
 % kcarta test data
@@ -46,27 +47,27 @@ wlaser = 773.1301;  % nominal value
 % get true CrIS and true AIRS
 %-----------------------------
 
-% loop on kcarta files
-rad1 = []; rad2 = [];
-for i = 1 : length(flist)
-  d1 = load(fullfile(kcdir, flist(i).name));
-  vkc = d1.w(:); rkc = d1.r(:);
+% kcarta
+i = 1;
+d1 = load(fullfile(kcdir, flist(i).name));
+vkc = d1.w(:); rkc = d1.r(:);
+clear d1
 
-  % convolve kcarta radiances to CrIS channels
-  [rtmp, ftmp] = kc2cris(user, rkc, vkc);
-  rad1 = [rad1, rtmp];
+% true CrIS
+[rad1, ftmp] = kc2cris(user, rkc, vkc);
+frq1 = ftmp(:);
 
-  % apply the AIRS convolution
-  ix = interp1(vkc, 1:length(rkc), sfreq, 'nearest');
-  rtmp = sconv * rkc(ix);
-  rad2 = [rad2, rtmp];
+% true AIRS
+ix = interp1(vkc, 1:length(rkc), sfreq, 'nearest');
+rad2 = sconv * rkc(ix);
+frq2 = ofreq(:);
 
-  fprintf(1, '.');
-end
-fprintf(1, '\n')
-frq1 = ftmp(:);     % from kc2cris
-frq2 = ofreq(:);    % from mksconv
-clear d1 vkc rkc
+% decon grid sinc 
+ix = find(min(cfreq) - 10 <= vkc & vkc <= max(cfreq) + 10);
+vtmp = vkc(ix); rtmp = rkc(ix); 
+rtmp = bandpass(vtmp, rtmp, min(cfreq), max(cfreq), 10);
+% [rad5, frq5] = finterp(rtmp, vtmp, dvb);
+[rad5, frq5] = finterp(rtmp, vtmp, dvs);
 
 %------------------------
 % transform AIRS to CrIS
@@ -78,7 +79,7 @@ opt1.hapod = hapod;
 
 [rad4, frq4, opt2] = airs2cris(rad2, frq2, sfile, opt1);
 rad3 = opt2.brad;
-bfrq = opt2.bfrq;
+frq3 = opt2.bfrq;
 
 % option to apodize true CrIS
 if hapod
@@ -90,10 +91,12 @@ end
 %-----------------
 
 % take radiances to brightness temps
+bkc = real(rad2bt(vkc, rkc));     % kcarta
 bt1 = real(rad2bt(frq1, rad1));   % true CrIS
 bt2 = real(rad2bt(frq2, rad2));   % true AIRS
-bt3 = real(rad2bt(bfrq, rad3));   % deconvolved AIRS
+bt3 = real(rad2bt(frq3, rad3));   % deconvolved AIRS
 bt4 = real(rad2bt(frq4, rad4));   % AIRS CrIS
+bt5 = real(rad2bt(frq5, rad5));   % decon grid sinc
 
 % plot parameters
 [i1, i4] = seq_match(frq1, frq4); 
@@ -104,9 +107,9 @@ if hapod,  psf = 0.2; app = 'hamm';
 else psf = 2.0; app = 'noap'; end
 
 % AIRS and CrIS spectra
-figure(1); clf; j = 1; 
+figure(1); clf;
 set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-plot(frq1, bt1(:,j), frq2, bt2(:,j), bfrq, bt3(:,j), frq4, bt4(:,j))
+plot(frq1, bt1, frq2, bt2, frq3, bt3, frq4, bt4)
 ax(1)=pv1; ax(2)=pv2; ax(3)=180; ax(4)=320; axis(ax)
 legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
        'location', 'southeast')
@@ -117,25 +120,14 @@ pname = sprintf('airs_cris_spec_%s_%s', band, app);
 % saveas(gcf, pname, 'png')
 % export_fig([pname, '.pdf'], '-m2', '-transparent')
 
-% AIRS CrIS minus true CrIS mean
+% deconvolved AIRS and sinc ILS 
 figure(2); clf
 set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(2,1,1)
-[i1, i4] = seq_match(frq1, frq4);
-plot(frq1(i1), mean(bt4(i4,:) - bt1(i1,:), 2))
-ax(1)=pv1; ax(2)=pv2; ax(3)=-psf; ax(4)=psf; axis(ax);
-xlabel('wavenumber'); ylabel('dBT')
-title(sprintf('AIRS CrIS minus true CrIS %s mean', band));
+% plot(frq3, bt3, vkc, bkc)
+plot(frq3, bt3, frq5, bt5)
+axis([660, 680, 200, 260])
+legend('deconvolved AIRS', sprintf('%.2f cm-1 sinc ILS', dvs))
+title(sprintf('deconvolved AIRS and sinc ILS at %.2f cm-1', dvs))
+xlabel('wavenumber'); ylabel('brighness temp')
 grid on; zoom on
-
-% AIRS CrIS minus true CrIS std
-subplot(2,1,2)
-plot(frq1(i1), std(bt4(i4,:) - bt1(i1,:), 0, 2))
-ax(1)=pv1; ax(2)=pv2; ax(3)=0; ax(4)=psf/2; axis(ax);
-xlabel('wavenumber'); ylabel('dBT')
-title(sprintf('AIRS CrIS minus true CrIS %s std', band));
-grid on; zoom on
-pname = sprintf('airs_cris_diff_%s_%s', band, app);
-% saveas(gcf, pname, 'png')
-% export_fig([pname, '.pdf'], '-m2', '-transparent')
-
+% export_fig('airs_decon_res.pdf', '-m2', '-transparent')

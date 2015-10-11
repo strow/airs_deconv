@@ -19,10 +19,10 @@
 % test parameters
 %-----------------
 
-% use my bcast utils and HDF libs
-addpath /home/motteler/cris/ccast/source
-addpath /home/motteler/cris/airs_decon/source
-addpath /home/motteler/mot2008/hdf/h4tools
+% set paths to asl libs
+addpath ../source
+addpath ../h4tools
+addpath /asl/packages/ccast/source
 
 % test params
 band = 'LW';            % cris band
