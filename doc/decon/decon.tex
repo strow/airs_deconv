@@ -4,7 +4,7 @@
 
 \input{crisdefs.tex}
 
-\title{FIRST DRAFT \\
+\title{SECOND DRAFT \\
   \vspace{5mm}
   Deconvolution and Translation \\
   Between High Spectral Resolution  \\
@@ -39,8 +39,8 @@ parametrized response functions, while {\airs} is a grating
 spectrometer with channel center frequencies and spectral response
 functions determined by the focal plane geometery.  In section
 \ref{decon} we show how to take advantage of detailed knowledge of
-the {\airs} spectral response function (SRF) shapes to deconvolve
-{\airs} channel radiances to a resolution enhanced intermediate
+the {\airs} spectral response functions (SRFs) to deconvolve {\airs}
+channel radiances to a resolution enhanced intermediate
 representation.
 
 The translations presented here are validated by comparisons with
@@ -49,21 +49,33 @@ calculated reference truth.  For example to test the {\iasi} to
 significant range of atmospheric conditions.  Upwelling radiance is
 calculated at a 0.0025 {\wn} grid with kcarta over a band spanning
 the {\airs} and {\iasi} response functions.  ``True {\airs}'' is
-calculated from this by convolving the kcarta radiances with
-tabulated {\airs} SRFs, and ``true {\iasi}'' by convolving kcarta
-radiances to the {\iasi} instrument specs.  {\iasi} is translated to
-{\airs} (we call this ``{\iasi} {\airs}'') and this is compared with
-true {\airs}.
+calculated from this by convolving the kcarta radiances with {\airs}
+SRFs, and ``true {\iasi}'' by convolving kcarta radiances to the
+{\iasi} instrument specifications.  {\iasi} is translated to {\airs}
+(we call this ``{\iasi} {\airs}'') and this is compared with true
+{\airs}.
 
-This sort of validation assumes perfect knowledge of the {\airs} 
-and {\iasi} instrument response functions and so gives only a lower
-bound on how well the translations can work in practice.  But the
-better we know the response functions, the closer practical
-translations can approach these limits.
+This sort of validation assumes perfect knowledge of the {\airs} and
+{\iasi} instrument response functions and so gives only a lower bound
+on residuals, and so on how well the translations can work in practice.
+But the better we know the response functions, the closer practical
+translations can approach these limits.  The conversions here are
+presented in order of the residuals, with {\iasi} to high resolution
+{\cris} most accurate and high resolution {\cris} to {\airs} the
+least.  After the translation sections, the {\airs} deconvolution is
+examined in greater detail.
 
-The conversions here are presented in order of their residuals, with
-{\iasi} to high resolution {\cris} most accurate and high resolution
-{\cris} to {\airs} the least.
+This report is the theoretical basis document for the sounder
+radiance translations implemented in the airs\_decon and iasi\_deon
+git repositories, and is included in the airs\_decon repo.  It is
+under development in parallel with the work there.  In addition to
+the translations, the repositories include the test and validation
+code used to produce the results shown here.  The repositories are
+available at github,
+\begin{verbatim}
+  https://github.com/strow/airs_deconv.git
+  https://github.com/strow/iasi_decon.git
+\end{verbatim}
 
 
 \section{IASI to high resolution CrIS}
@@ -76,17 +88,15 @@ user grid is a single band from 645 to 2760 {\wn} with a channel
 spacing of 0.5 {\wn}.  The {\iasi} user ILS is a sinc function
 convolved with the modified Gaussian, shown in figure \ref{igauss}.
 
-{\iasi} to {\cris} is a relatively easy translation because {\iasi}
-spans the {\cris} bands and has a nominal (though strongly apodized)
-higher resolution.  The main steps of the translation, for each
-{\cris} band, are
+{\iasi} to {\cris} is an easy translation because {\iasi} spans the
+{\cris} bands and has a nominal (though strongly apodized) higher
+resolution.  The main steps, for each {\cris} band, are
 
 \begin{itemize}
 
   \item apply a bandpass filter to the {\iasi} channel radiances to
-    restrict them to a single {\cris} band with a roughly 20 {\wn}
-    rolloff outside the {\cris} user grid.  For the LW band we use
-    a 5 {\wn} rolloff because {\iasi} starts at 645 {\wn}.
+    restrict them to a single {\cris} band with a rolloff outside the
+    {\cris} user grid
 
   \item take the filtered radiances to an interferogram with an
     inverse Fourier transform
@@ -99,12 +109,16 @@ higher resolution.  The main steps of the translation, for each
 
 \end{itemize}
 
+For the first step the passband is the {\cris} user grid and the
+rolloff the minimum of data available and 15 {\wn} for the LW, 20
+{\wn} for the MW, and 22 {\wn} for the SW.  So for example for the 
+LW band we use a 5 {\wn} rolloff because {\iasi} starts at 645 {\wn}.
+The rolloff reduces ringing at the band edges.
+
 Figure \ref{iclw1} shows the mean and standard deviation of {\iasi}
 {\cris} minus true {\cris} for the 49 fitting profiles, for the
 {\cris} LW band.  The residual is greatest at the low end of the LW
-band.  This may be due in part to the 5 {\wn} LW rolloff, as
-residuals near the band edges are larger with a smaller rolloff.
-The residual is reduced significantly if we apply Hamming
+band.  The residual is reduced significantly if we apply Hamming
 apodization to the {\iasi} {\cris} and true {\cris} radiances, as
 shown in figure \ref{iclw2}.  Figures \ref{icmw1} and \ref{icsw1}
 show similar results for the unapodized radiances for the MW and SW
@@ -198,8 +212,8 @@ Figure \ref{iaspec} shows true {\iasi}, true {\airs}, deconvolved
 the greater fine structure in the deconvolution.  Figure \ref{iazoom}
 shows details from 660 to 680 {\wn}.  Figure \ref{iadiff} shows
 {\iasi} {\airs} minus true {\airs}.  The residual is larger than for
-the {\iasi} to {\cris} translation, but significantly better than
-the {\airs} to {\cris} or {\cris} to {\airs} translations.
+the {\iasi} to {\cris} translation, but significantly smaller than
+for the {\airs} to {\cris} or {\cris} to {\airs} translations.
 
 \begin{figure}
   \centering
@@ -240,25 +254,23 @@ the {\airs} to {\cris} or {\cris} to {\airs} translations.
 
 For the {\cris} standard resolution mode the channel spacing is
 0.625 {\wn} for the LW, 1.25 {\wn} for the MW, and 2.5 {\wn} for the
-SW bands.  The {\iasi} deconvolution was a key step in the {\iasi}
+SW bands.  The {\iasi} deconvolution was the key step in the {\iasi}
 to {\cris} and {\iasi} to {\airs} translations.  Similarly, {\airs}
 deconvolution is central to the {\airs} to {\cris} translation and
 is presented in detail in section \ref{decon}.  The first step in
 the {\airs} L1c to {\cris} translation is to deconvolve the {\airs}
-L1c channel radiances to a 0.1 {\wn} intermediate grid, the nominal
+channel radiances to a 0.1 {\wn} intermediate grid, the nominal
 {\airs} SRF resolution.  Then for each {\cris} band,
 
 \begin{itemize}
   \item find the {\airs} and {\cris} band intersection
 
   \item apply a bandpass filter to the deconvolved {\airs} radiances
-    to restrict them to the intersection, rolling off the wings when
-    the AIRS band and gaps allow for this
+    to restrict them to the intersection, with a rolloff outside the
+    intersection
 
-  \item reconvolve the filtered spectra to the user grid channel
-    spacing for the current {\cris} band
+  \item reconvolve the filtered spectra to the {\cris} user grid
 
-  \item trim the reconvolved spectra to the band intersection 
 \end{itemize}
 
 Figure \ref{aclws} shows true {\cris}, true {\airs}, deconvolved
@@ -508,6 +520,28 @@ $S_b$.  Given that, $x = S_b^{-1} c$ gives us deconvolved radiances
 at the {\srf} tabulation grid.  This is what we use for the {\airs}
 to {\cris} translation in section \ref{airs2cris}.
 
+The {\airs} deconvolution gives a significant resolution enhancement.
+Figure \ref{dsinc} shows LW detail of deconvolved {\airs} together
+with kcarta radiances convolved directly to a 0.2 {\wn} sinc ILS.
+Figure \ref{dbasis} shows a typical basis function for the {\airs}
+deconvolution.  This is simply a column of the pseudo-inverse
+$S_b^{-1}$.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_decon_res.pdf}
+  \caption{deconvolved {\airs} and kcarta radiances convolved to a
+    sinc ILS at 0.2 {\wn}}
+  \label{dsinc}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=8cm]{figures/airs_decon_basis.pdf}
+  \caption{typical basis function for deconvolved {\airs} radiances}
+  \label{dbasis}
+\end{figure}
+
 \begin{figure}
   \centering
   \includegraphics[height=8cm]{figures/airs_cris_intp_LW.pdf}
@@ -532,15 +566,14 @@ to {\cris} translation in section \ref{airs2cris}.
   \label{intpSW}
 \end{figure}
 
-The {\airs} deconvolution gives a significant resolution
-enhancement.  For the {\airs} to {\cris} translation deconvolution
-works better than both simple interpolation and interpolation
-(rather than deconvolution) to an intermediate grid followed by
-convolution to {\cris} radiances.  For the first case we start with
-true {\airs} and interpolate radiances directly to the {\cris} user
-grid with a cubic spline.  For the second we interpolate true
-{\airs} to the 0.1 {\wn} intermediate grid with a cubic spline and
-then convolve this to the use {\cris} user grid.
+For the {\airs} to {\cris} translation deconvolution works better
+than both simple interpolation and interpolation (rather than
+deconvolution) to an intermediate grid followed by convolution to
+{\cris} radiances.  For the first case we start with true {\airs} and
+interpolate radiances directly to the {\cris} user grid with a cubic
+spline.  For the second we interpolate true {\airs} to the 0.1 {\wn}
+intermediate grid with a cubic spline and then convolve this to the
+use {\cris} user grid.
 
 Figure \ref{intpLW} shows interpolated {\cris} minus true {\cris}
 for both interpolation tests for the LW band, without any
@@ -554,32 +587,30 @@ MW and SW bands.  Deconvolution is significantly better for the MW,
 residuals with deconvolution are significantly less for all three
 bands.
 
-\FloatBarrier
-
-\subsection{Notes}
-
-\begin{itemize}
-  
-  \item The work evolved as described above, with deconvolution to
-    the AIRS channel grid a key step in getting deconvolution to the
-    SRF tabulation grid to work.  But rather than the AIRS channel
-    grid it might be simpler to deconvolve to $n$ regularly spaced
-    points spanning the SRF domains, and check the condition number
-    and get the channel spacing from that.
-
-  \item Some of the earlier blog posts include comparisons of
-    deconvolution based translation with both regular interpolation
-    and translation to an intermediate grid with interpolaton rather
-    than deconvolution.  This is an important motivation for the
-    deconvolution based translations.
-
-  \item It may be possible to use a sinc basis for the intermediate
-    representation and turn the deconvolution from an under- to an
-    over-determined system that can be solved by regression.  I have
-    notes on this but didn't pursue it because the pseudo-inverse
-    based deconvolution was working fairly well.
-
-\end{itemize}
+% \FloatBarrier
+% 
+% \subsection{Notes}
+% 
+% \begin{itemize}
+%   
+%   \item Another potential application of the {\airs} deconvolution 
+%     is to shift {\airs} SRFs to a more regular reference set, by
+%     applying the reference set to the intermediate representation.
+% 
+%   \item The work evolved as described above, with deconvolution to
+%     the AIRS channel grid a key step in getting deconvolution to the
+%     SRF tabulation grid to work.  But rather than the AIRS channel
+%     grid it might be simpler to deconvolve to $n$ regularly spaced
+%     points spanning the SRF domains, and check the condition number
+%     and get the channel spacing from that.
+% 
+%   \item It may be possible to use a sinc basis for the intermediate
+%     representation and turn the deconvolution from an under- to an
+%     over-determined system that can be solved by regression.  I have
+%     notes on this but didn't pursue it because the pseudo-inverse
+%     based deconvolution was working fairly well.
+% 
+% \end{itemize}
 
 \end{document}
 
