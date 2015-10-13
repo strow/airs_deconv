@@ -4,9 +4,7 @@
 
 \input{crisdefs.tex}
 
-\title{SECOND DRAFT \\
-  \vspace{5mm}
-  Deconvolution and Translation \\
+\title{Deconvolution and Translation \\
   Between High Spectral Resolution  \\
   IR Sounders \\
 }
@@ -45,25 +43,25 @@ representation.
 
 The translations presented here are validated by comparisons with
 calculated reference truth.  For example to test the {\iasi} to
-{\airs} translation, we start with 49 fitting profiles spanning a
+{\airs} translation we start with 49 fitting profiles spanning a
 significant range of atmospheric conditions.  Upwelling radiance is
 calculated at a 0.0025 {\wn} grid with kcarta over a band spanning
 the {\airs} and {\iasi} response functions.  ``True {\airs}'' is
 calculated from this by convolving the kcarta radiances with {\airs}
 SRFs, and ``true {\iasi}'' by convolving kcarta radiances to the
-{\iasi} instrument specifications.  {\iasi} is translated to {\airs}
-(we call this ``{\iasi} {\airs}'') and this is compared with true
+{\iasi} instrument specifications.  {\iasi} is then translated to
+{\airs} (we call this ``{\iasi} {\airs}'') and compared with true
 {\airs}.
 
-This sort of validation assumes perfect knowledge of the {\airs} and
-{\iasi} instrument response functions and so gives only a lower bound
-on residuals, and so on how well the translations can work in practice.
-But the better we know the response functions, the closer practical
-translations can approach these limits.  The conversions here are
-presented in order of the residuals, with {\iasi} to high resolution
-{\cris} most accurate and high resolution {\cris} to {\airs} the
-least.  After the translation sections, the {\airs} deconvolution is
-examined in greater detail.
+This sort of validation assumes perfect knowledge of the {\airs} 
+and {\iasi} instrument response functions and so gives only a lower
+bound on residuals, and on how well the translations can work in
+practice.  The better we know the response functions, the closer
+practical translations can approach these limits.  The conversions
+here are presented in order of the residuals, with {\iasi} to high
+resolution {\cris} most accurate and high resolution {\cris} to
+{\airs} the least.  After the sections on translation, the {\airs}
+deconvolution is examined in greater detail.
 
 This report is the theoretical basis document for the sounder
 radiance translations implemented in the airs\_decon and iasi\_deon
@@ -276,13 +274,12 @@ channel radiances to a 0.1 {\wn} intermediate grid, the nominal
 Figure \ref{aclws} shows true {\cris}, true {\airs}, deconvolved
 {\airs}, and {\airs} {\cris}.  At this level of detail we mainly see
 the greater fine structure in the deconvolution.  Figure \ref{aclwz}
-shows details from 660 to 680 {\wn}.  In comparison with the {\iasi}
-deconvolution in figure \ref{iazoom} the {\airs} deconvolution is
-not as smooth.  The remaining figures show true {\cris} minus
-{\airs} {\cris} for the 49 fitting profiles, with and without
-Hamming apodization for each of the {\cris} bands.  The residuals
-are significantly reduced with apodization but are larger than for
-the {\iasi} to {\cris} translation.
+shows details from 660 to 680 {\wn}.  Note the similarity to the
+{\iasi} deconvolution in figure \ref{iazoom}.  The remaining figures
+show true {\cris} minus {\airs} {\cris} for the 49 fitting profiles,
+with and without Hamming apodization for each of the {\cris} bands.
+The residuals are significantly reduced with apodization but are
+larger than for the {\iasi} to {\cris} translation.
 
 \begin{figure}
   \centering
@@ -368,9 +365,9 @@ the {\iasi} to {\cris} translation.
 
 The {\cris} to {\airs} translation differs in that we construct the
 intermediate representation at the 0.1 {\wn} {\airs} SRF resolution
-by double Fourier interpolation, as the {\cris} user grid sinc ILS
-does not allow for deconvolution.  For each {\cris} band, the steps
-in the translation are as follows,
+directly by double Fourier interpolation, as the {\cris} user grid
+sinc ILS does not allow for deconvolution.  For each {\cris} band,
+the steps in the translation are as follows,
 
 \begin{itemize}
   \item find the {\airs} and {\cris} band intersection
@@ -489,23 +486,23 @@ inverse.  This is due to the L1b channel spacing, which because of
 module overlaps is quite variable, with the closest channels only
 0.0036 {\wn} apart.
 
-If we use the the linear function $g(v) = 4\cdot 10^{-4} \cdot v -
+If we use the linear function $g(v) = 4\cdot 10^{-4} \cdot v -
 0.04$, where $v$ is frequency, as a lower bound on the acceptable
-channel spacing, we drop about 64 out of the 2378 L1b channels and
+channel spacing we drop about 64 out of the 2378 L1b channels and
 the condition number of $S_a$ is much improved, to around 30.  With
 the partly synthetic L1c channel set, $g(v)$ drops only 4 channels
-and $\hbox{cond}(S_a)$ is about 250, still low enough to get a
-usable inverse.  The higher condition number for the L1c channel set
-is not surprising since the extra channels are synthesized from the
-L1b set.  
+and $\hbox{cond}(S_a)$ is about 250, still low enough for a usable
+inverse.  The higher condition number for the L1c channel set is not
+surprising since the extra channels are synthesized from the L1b
+set.
 
 \subsection{Deconvolution to the SRF tabulation grid}
 
-We now consider deconvolution to an intermediate grid, 0.1 {\wn},
-the resolution of the tabulated {\airs} {\srf}s.  Let $\vec v_b =
+We now consider deconvolution to an intermediate grid, the
+resolution of the tabulated {\airs} {\srf}s.  Let $\vec v_b =
 v_1,v_2,\ldots,v_m$ be a 0.1 {\wn} grid spanning the domains of the
 functions $\sigma_i$.  Similar to $S_k$, let $S_b$ be an $n\times m$
-array where row $i$ is $\sigma_i(v)$ tabulated at the $\vec v_m$
+array where row $i$ is $\sigma_i(v)$ tabulated at the $\vec v_b$
 grid, with rows normalized to~1.  If $r$ is radiance at the $\vec
 v_b$ grid, then $c = S_b r$ is still a reasonable approximation of
 $\int\sigma_i(v)r(v)\,dv$.
@@ -514,18 +511,18 @@ Consider the linear system $S_b x = c$, similar to the case
 $S_k x = c$ above, where we are given $S_b$ and channel signals $c$
 and want to find radiances $x$.  Since $n < m < k$, as with $S_k$
 the system will be underdetermined but more manageable because $m$
-is approximately 40 times less than $k$.  After trying several
-approaches we settled on a Moore-Penrose pseudoinverse $S_b^{-1}$ of
-$S_b$.  Given that, $x = S_b^{-1} c$ gives us deconvolved radiances
-at the {\srf} tabulation grid.  This is what we use for the {\airs}
-to {\cris} translation in section \ref{airs2cris}.
+is approximately 40 times less than $k$.  We use a Moore-Penrose
+pseudoinverse as $S_b^{-1}$.  Then $x = S_b^{-1} c$ gives us
+deconvolved radiances at the {\srf} tabulation grid.  This is what
+we use for the {\airs} to {\cris} translation in section
+\ref{airs2cris}.
 
-The {\airs} deconvolution gives a significant resolution enhancement.
-Figure \ref{dsinc} shows LW detail of deconvolved {\airs} together
-with kcarta radiances convolved directly to a 0.2 {\wn} sinc ILS.
-Figure \ref{dbasis} shows a typical basis function for the {\airs}
-deconvolution.  This is simply a column of the pseudo-inverse
-$S_b^{-1}$.
+The {\airs} deconvolution gives a significant resolution
+enhancement.  Figure \ref{dsinc} shows LW detail of deconvolved
+{\airs} together with kcarta radiances convolved directly to a 0.2
+{\wn} sinc ILS.  Figure \ref{dbasis} shows a typical basis function
+for the {\airs} deconvolution.  This is simply a column of the
+pseudo-inverse $S_b^{-1}$.
 
 \begin{figure}
   \centering
@@ -583,7 +580,7 @@ for the translation with deconvolution shown in figure \ref{aclwd}.
 Figures \ref{intpMW} and \ref{intpSW} show similar results for the
 MW and SW bands.  Deconvolution is significantly better for the MW,
 (figure \ref{acmwd}) while the comparison is less clear for the SW
-(figure\ref{acswd}).  Comparisons with Hamming apodization show the
+(figure \ref{acswd}).  Comparisons with Hamming apodization show the
 residuals with deconvolution are significantly less for all three
 bands.
 

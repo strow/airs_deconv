@@ -1,22 +1,16 @@
 
-airs2cris -- an overview of the AIRS to CrIS translation
+airs2cris -- an quick overview of the AIRS to CrIS translation
 
-decon -- a more detailed writeup of the IASI to CrIS, IASI to AIRS,
-AIRS to CrIS, and CrIS to AIRS translations.  DRAFT VERSION.
+decon -- a more detailed writeup of the AIRS deconvolution and IASI
+to CrIS, IASI to AIRS, AIRS to CrIS, and CrIS to AIRS translations,
 
-finterp.pdf -- some useful notes on interferometric interpolation.
-The latex source is from ccast/doc
-
-decon_old -- early version of a more detailed AIRS deconvolution
-writup, the useful parts should subsumed by decon as it develops.
-
-notes_old -- assorted old notes, the useful parts should subsumed 
-by decon as it develops
+finterp.pdf -- the basics of interferometric interpolation.
 
 
-The asl blog posts give a good overview of how these ideas were
-developed.  These are listed in chronological order, with the second
-group probably the most useful.
+Although most relevant material should now be in the decon writeup,
+and they are not generally available, the asl blog posts give a good
+overview of how these ideas were developed.  These are listed in
+chronological order, with the second group probably the most useful.
 
   http://hyperearth.wordpress.com/2013/07/24/airs-to-cris-translations/
   http://hyperearth.wordpress.com/2013/11/04/airs-to-cris-translation-update/
@@ -24,7 +18,7 @@ group probably the most useful.
   http://hyperearth.wordpress.com/2014/07/22/first-look-at-an-iasi-to-airs-translation/
   http://hyperearth.wordpress.com/2014/07/22/interferometric-interpolation/
 
-  https://hyperearth.wordpress.com/2014/10/31/airs-to-cris-validation-summary/
-  https://hyperearth.wordpress.com/2014/10/31/iasi-to-cris-translations/
-  https://hyperearth.wordpress.com/2014/10/27/iasi-to-airs-refinements/
+  http://hyperearth.wordpress.com/2014/10/31/airs-to-cris-validation-summary/
+  http://hyperearth.wordpress.com/2014/10/31/iasi-to-cris-translations/
+  http://hyperearth.wordpress.com/2014/10/27/iasi-to-airs-refinements/
 
