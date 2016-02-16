@@ -17,6 +17,8 @@
 *.nav
 *.out
 *.vrb
+*.bbl
+*.blg
 *.pdf
 *.png
 *.fig
@@ -38,4 +40,7 @@
 *.svn
 *.bak
 *~
+
+# allow pdf overview
+!decon.pdf
 

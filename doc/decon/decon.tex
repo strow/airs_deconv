@@ -22,54 +22,52 @@
 
 \section{Introduction}
 
-Upwelling infrared radiation as measured by the {\airs}, {\iasi},
-and {\cris} sounders is a significant part of the long term climate
-record.  We would like to treat this information as a single data
-set but the instruments have different spectral resolutions, channel
-response functions, and band spans.  As a first step in addressing
-this problem we consider several channel radiance translations:
-{\iasi} to high resolution {\cris}, {\iasi} to {\airs}, {\airs} to
-standard resolution {\cris}, and high resolution {\cris} to {\airs}.
+Upwelling infrared radiation as measured by the {\airs}
+\cite{airs1}, {\iasi} \cite{iasi1}, and {\cris} \cite{cris1,cris2}
+sounders is a significant part of the long term climate record.  We
+would like to treat this information as a single data set but the
+instruments have different spectral resolutions, channel response
+functions, and band spans.  As a significant step in addressing this
+problem we consider several channel radiance translations---{\iasi}
+to high resolution {\cris}, {\iasi} to {\airs}, {\airs} to standard
+resolution {\cris}, and high resolution {\cris} to {\airs}.
 
 Translation from {\airs} to {\cris} presents a special challenge
 because {\cris} and {\iasi} are Michaelson interferometers with
 parametrized response functions, while {\airs} is a grating
-spectrometer with channel center frequencies and spectral response
-functions determined by the focal plane geometery.  In section
-\ref{decon} we show how to take advantage of detailed knowledge of
-the {\airs} spectral response functions (SRFs) to deconvolve {\airs}
-channel radiances to a resolution enhanced intermediate
-representation.
+spectrometer with channel center frequencies and individually
+tabulated spectral response functions determined by the focal plane
+geometery.  In section \ref{decon} we show how to take advantage of
+detailed knowledge of the {\airs} spectral response functions (SRFs)
+to deconvolve {\airs} channel radiances to a resolution-enhanced
+intermediate representation.
 
-The translations presented here are validated by comparisons with
+The translations presented here are validated by comparison with
 calculated reference truth.  For example to test the {\iasi} to
 {\airs} translation we start with 49 fitting profiles spanning a
-significant range of atmospheric conditions.  Upwelling radiance is
-calculated at a 0.0025 {\wn} grid with kcarta over a band spanning
-the {\airs} and {\iasi} response functions.  ``True {\airs}'' is
-calculated from this by convolving the kcarta radiances with {\airs}
-SRFs, and ``true {\iasi}'' by convolving kcarta radiances to the
-{\iasi} instrument specifications.  {\iasi} is then translated to
-{\airs} (we call this ``{\iasi} {\airs}'') and compared with true
-{\airs}.
+significant range of atmospheric conditions \cite{sarta1,sarta2}.
+Upwelling radiance is calculated at a 0.0025 {\wn} grid with kcarta
+\cite{kcarta1} over a band spanning the {\airs} and {\iasi} response
+functions.  ``True {\airs}'' is calculated from this by convolving
+the kcarta radiances with {\airs} SRFs, and ``true {\iasi}'' by
+convolving kcarta radiances to the {\iasi} instrument
+specifications.  {\iasi} is then translated to {\airs} (we call this
+``{\iasi} {\airs}'') and compared with true {\airs}.  This sort of
+validation assumes perfect knowledge of the {\airs} and {\iasi}
+instrument response functions and so gives only a lower bound on
+residuals, and on how well the translations can work in practice.
+The better we know the response functions, the closer practical
+translations can approach these limits.
 
-This sort of validation assumes perfect knowledge of the {\airs} 
-and {\iasi} instrument response functions and so gives only a lower
-bound on residuals, and on how well the translations can work in
-practice.  The better we know the response functions, the closer
-practical translations can approach these limits.  The conversions
-here are presented in order of the residuals, with {\iasi} to high
-resolution {\cris} most accurate and high resolution {\cris} to
-{\airs} the least.  After the sections on translation, the {\airs}
-deconvolution is examined in greater detail.
-
-This report is the theoretical basis document for the sounder
-radiance translations implemented in the airs\_decon and iasi\_deon
-git repositories, and is included in the airs\_decon repo.  It is
-under development in parallel with the work there.  In addition to
-the translations, the repositories include the test and validation
-code used to produce the results shown here.  The repositories are
-available at github,
+The conversions here are presented in order of the size of the
+residuals, with {\iasi} to high resolution {\cris} most accurate and
+high resolution {\cris} to {\airs} the least.  After the sections on
+translation, the {\airs} deconvolution is examined in greater
+detail.  This report is the theoretical basis document for the
+sounder radiance translations implemented in the airs\_decon and
+iasi\_deon git repositories.  In addition to the translations, the
+repositories include the test and validation code used to produce
+the results shown here.  They are available at github,
 \begin{verbatim}
   https://github.com/strow/airs_deconv.git
   https://github.com/strow/iasi_decon.git
@@ -84,7 +82,7 @@ high resolution mode the channel spacing is 0.625 {\wn} for all
 three bands.  The {\cris} user ILS is a sinc function.  The {\iasi}
 user grid is a single band from 645 to 2760 {\wn} with a channel
 spacing of 0.5 {\wn}.  The {\iasi} user ILS is a sinc function
-convolved with the modified Gaussian, shown in figure \ref{igauss}.
+convolved with the truncated Gaussian shown in figure \ref{igauss}.
 
 {\iasi} to {\cris} is an easy translation because {\iasi} spans the
 {\cris} bands and has a nominal (though strongly apodized) higher
@@ -99,8 +97,9 @@ resolution.  The main steps, for each {\cris} band, are
   \item take the filtered radiances to an interferogram with an
     inverse Fourier transform
 
-  \item apply the pointwise inverse of the {\iasi} Gaussian over the 
-    {\iasi} 1~cm {\opd} and truncate this to the 0.8~cm {\cris} {\opd}.
+  \item apply the pointwise inverse of the {\iasi} Gaussian
+    apodization over the {\iasi} 1~cm {\opd} and truncate this to
+    the 0.8~cm {\cris} {\opd}.
 
   \item take the interferogram back to radiance at the {\cris}
     0.625 {\wn} channel spacing with a forward Fourier transform
@@ -175,8 +174,8 @@ bands. The residuals are very small.  Unless otherwise noted, all
 spectral response functions (SRFs) determined by the focal plane
 geometery.  Channels are not uniformly spaced.  {\airs} L1c
 radiances are derived from the L1b with improvements including a
-more uniform spacing.  The {\iasi} to {\airs} translation works for
-either channel set and is done as follows
+more uniform spacing \cite{airs2}.  The {\iasi} to {\airs}
+translation works for either channel set and is done as follows
 
 % The {\iasi} to {\airs} translation applies a deconvolution to the
 % full {\iasi} band, to a 0.1 {\wn} intermediate grid, and then an
@@ -185,7 +184,7 @@ either channel set and is done as follows
 \begin{itemize}
 
   \item apply a bandpass filter to the {\iasi} radiances to restrict
-    them to the {\airs} band span, with a 5 {\wn} rolloff
+    them to the {\airs} band span, extended with a 5 {\wn} rolloff
 
   \item deconvolve the filtered {\iasi} radiances to a 0.1 {\wn}
     intermediate grid, the nominal resolution of the {\airs} SRF
@@ -453,7 +452,7 @@ gives a good approximation of the channel radiances $c_i =
 In practice this is how we convolve kcarta or other simulated
 radiances to get {\airs} channel radiances.  We construct $S_k$
 either explicitly or implicitly from {\airs} {\srf} tabulations.
-The matrix $S_k$ in the former case is large but managable with a
+The matrix $S_k$ in the former case is large but manageable with a
 banded or sparse representation.
 
 Suppose we have $S_k$ and channel radiances $c$ and want to find
@@ -608,6 +607,9 @@ bands.
 %     based deconvolution was working fairly well.
 % 
 % \end{itemize}
+
+\bibliographystyle{abbrv}
+\bibliography{decon}
 
 \end{document}
 
