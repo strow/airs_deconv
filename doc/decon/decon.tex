@@ -81,8 +81,8 @@ MW 1210 to 1750 {\wn}, and SW 2155 to 2550 {\wn}.  For the {\cris}
 high resolution mode the channel spacing is 0.625 {\wn} for all
 three bands.  The {\cris} user ILS is a sinc function.  The {\iasi}
 user grid is a single band from 645 to 2760 {\wn} with a channel
-spacing of 0.5 {\wn}.  The {\iasi} user ILS is a sinc function
-convolved with the truncated Gaussian shown in figure \ref{igauss}.
+spacing of 0.25 {\wn}.  The {\iasi} user ILS is a sinc function
+convolved with a truncated Gaussian, as shown in figure \ref{igauss}.
 
 {\iasi} to {\cris} is an easy translation because {\iasi} spans the
 {\cris} bands and has a nominal (though strongly apodized) higher
@@ -98,7 +98,7 @@ resolution.  The main steps, for each {\cris} band, are
     inverse Fourier transform
 
   \item apply the pointwise inverse of the {\iasi} Gaussian
-    apodization over the {\iasi} 1~cm {\opd} and truncate this to
+    apodization over the {\iasi} 2~cm {\opd} and truncate this to
     the 0.8~cm {\cris} {\opd}.
 
   \item take the interferogram back to radiance at the {\cris}
@@ -126,8 +126,9 @@ bands. The residuals are very small.  Unless otherwise noted, all
 
 \begin{figure}
   \centering
-  \includegraphics[height=8cm]{figures/iasi_gauss_app.pdf}
-  \caption{{\iasi} truncated Gaussian apodization}
+  \includegraphics[height=8cm]{figures/iasi_apod_resp.pdf}
+  \caption{{\iasi} truncated Gaussian apodization and response
+    functions}
   \label{igauss}
 \end{figure}
 
