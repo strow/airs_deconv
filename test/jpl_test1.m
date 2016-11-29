@@ -3,6 +3,7 @@
 %
 
 % set paths to libs
+addpath ./data
 addpath ../source
 addpath ../h4tools
 addpath /asl/packages/ccast/source
@@ -25,9 +26,8 @@ tf1 = srf_read(srf1);
 tf2 = srf_read(srf2);
 
 % use the 1b channel set
-% i1b = 1:2378;
-% [xx, i1b] = trim_chans(tf1(1:2378));
-[xx, i1b] = sort(tf1(1:2378));
+% [xx, i1b] = sort(tf1(1:2378));
+[xx, i1b] = trim_chans(tf1(1:2378));
 tf1 = tf1(i1b);
 tf2 = tf2(i1b);
 
@@ -77,16 +77,36 @@ figure(1); clf;
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(frq2, mean(bt3 - bt2, 2))
-axis([600, 2700, -0.12, 0.12])
+axis([600, 2700, -0.1, 0.1])
 ylabel('dTb')
 title('JPL shift minus ref, 49 profile mean');
 grid on; zoom on
 
 subplot(2,1,2)
 plot(frq2, mean(bt4 - bt2, 2))
-axis([600, 2700, -0.12, 0.12])
+axis([600, 2700, -0.1, 0.1])
 xlabel('wavenumber'); 
 ylabel('dTb')
 title('spline minus ref, 49 profile mean');
+grid on; zoom on
+
+return
+
+% 49 profile mean std
+figure(2); clf; 
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(2,1,1)
+plot(frq2, std(bt3 - bt2, 0, 2))
+axis([600, 2700, -0.12, 0.12])
+ylabel('dTb')
+title('JPL shift minus ref, 49 profile std');
+grid on; zoom on
+
+subplot(2,1,2)
+plot(frq2, std(bt4 - bt2, 0, 2))
+axis([600, 2700, -0.12, 0.12])
+xlabel('wavenumber'); 
+ylabel('dTb')
+title('spline minus ref, 49 profile std');
 grid on; zoom on
 

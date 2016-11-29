@@ -6,12 +6,14 @@ airs_test1 - compare CrIS AIRS with true AIRS
 airs_test2 - browse SRF tabulations
 airs_test3 - channel shift with decon to the channel grid
 airs_test4 - channel shift with decon to an intemediate grid
+airs_diffs - first and second differences of SRF shifts
 
 jpl_shift  - JPL AIRS channel shifting
-jpl_test   - test script for jpl_shift
+jpl_test1  - test script for JPL 1b shift
+jpl_test2  - test script for JPL 1c shift
+jpl_coeffs - new coefficents for 1c shift
 
 cris_test6 - AIRS to CrIS translation benchmark
-
 cris_test7 - compare deconvolved AIRS with 0.2 cm-1 sinc ILS
 
 cris_test4 - processes all the fitting profiles and plots the means

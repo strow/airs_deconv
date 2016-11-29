@@ -1,3 +1,6 @@
+%
+% basic JPL shift
+%
 
 function Tb_resamp = jpl_shift(Tb_in, v_in, v_nom, ix)
 
