@@ -1,0 +1,17 @@
+
+CrIS to AIRS and AIRS channel shift tests
+
+airs_test1 - compare CrIS AIRS with true AIRS
+airs_test2 - browse SRF tabulations
+airs_test3 - channel shift with decon to the channel grid
+airs_test4 - channel shift with decon to an intemediate grid
+airs_diffs - first and second differences of SRF shifts
+
+jpl_shift  - JPL AIRS channel shifting
+jpl_test1  - test script for JPL 1b shift
+jpl_test2  - test script for JPL 1c shift
+jpl_coeffs - new coefficents for 1c shift
+
+evan_demo  - example of calling cris2airs in chunks of 240 obs
+evan_run1  - translate CrIS high res to AIRS L1b for Evan Manning
+

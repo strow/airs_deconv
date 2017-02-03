@@ -2,31 +2,20 @@
 Test Scripts
 -------------
 
-airs_test1 - compare CrIS AIRS with true AIRS
-airs_test2 - browse SRF tabulations
-airs_test3 - channel shift with decon to the channel grid
-airs_test4 - channel shift with decon to an intemediate grid
-airs_diffs - first and second differences of SRF shifts
+demo1 - AIRS to CrIS translation demo
+demo2 - CrIS to AIRS translation demo
 
-jpl_shift  - JPL AIRS channel shifting
-jpl_test1  - test script for JPL 1b shift
-jpl_test2  - test script for JPL 1c shift
-jpl_coeffs - new coefficents for 1c shift
-
-cris_test6 - AIRS to CrIS translation benchmark
-cris_test7 - compare deconvolved AIRS with 0.2 cm-1 sinc ILS
+cris_test5 - processes all the fitting profiles and plots the means
+    of residuals.  Derived frim cris_test4, drops the interpolation
+    tests and adds some stats.  This is the current test script.
 
 cris_test4 - processes all the fitting profiles and plots the means
     of residuals.  Derived frim cris_test3, calls airs2cris instead
     of airs_decon and adds an option for hamming apodization of the
     test radiances.
 
-cris_test5 - processes all the fitting profiles and plots the means
-    of residuals.  Derived frim cris_test4, drops the interpolation
-    tests and adds some stats.  This is the current test script.
-
-demo1 - AIRS to CrIS translation demo
-demo2 - CrIS to AIRS translation demo
+cris_test7 - compare deconvolved AIRS with 0.2 cm-1 sinc ILS
+cris_test6 - AIRS to CrIS translation benchmark
 
 
 Functions and Support

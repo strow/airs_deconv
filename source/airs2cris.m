@@ -73,7 +73,8 @@ crad = []; cfrq = [];
 bpts = []; bv1 = []; bv2 = [];
 
 % deconvolve the AIRS radiances
-[afrq, ifrq] = trim_chans(afrq);
+% [afrq, ifrq] = trim_chans(afrq);
+  [afrq, ifrq] = sort(afrq);
 arad = arad(ifrq, :);
 [brad, bfrq] = airs_decon(arad, afrq, sfile, bfile, dvb);
 
