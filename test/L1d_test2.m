@@ -1,12 +1,18 @@
 %
-% jpl_test -- test JPL L1b channel shift
+% L1d_test2 - try deconvolution to the L1d SRF set
+%
+%  L1d is used here as a new reference truth.  We calculate true
+%  L1d AIRS, convolved directly from kcarta, and L1c to L1d AIRS
+%  (via de- and reconvolution) and compare them
 %
 
 % set paths to libs
-addpath ./data
 addpath ../source
 addpath ../h4tools
 addpath /asl/packages/ccast/source
+
+% L1d resolution scaling factor
+s_fact = 1;      
 
 % turn off HDF 4 update warnings
 warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
@@ -15,26 +21,34 @@ warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
 flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 
-% specify SRF tabulations
+% get the kcarta to L1c AIRS convolution matrix
 sdir = '/asl/matlab2012/srftest/';
-  srf1 = fullfile(sdir, 'srftables_m130f_withfake_mar08.hdf');
-  srf2 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
-% srf2 = fullfile(sdir, 'srftables_m150f_withfake_mar08.hdf');
+srf1 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
 
-% get channel frequencies
-tf1 = srf_read(srf1);
-tf2 = srf_read(srf2);
+v_tmp = load('freq2645.txt');
+dvk = 0.0025;    % kcarta dv
+dvb = 0.1;       % decon dv
 
-% use the 1b channel set
-  [~, i1b] = sort(tf1(1:2378));
-% [~, i1b] = trim_chans(tf1(1:2378));
-tf1 = tf1(i1b);
-tf2 = tf2(i1b);
+% L1c convolution matrices
+[S1, vScol, v_L1c] = mksconv2(srf1, v_tmp, dvk);
+[A1, vAcol, vArow] = mksconv2(srf1, v_tmp, dvb);
 
-% convolution matrices for reference truth
-dvk = 0.0025; 
-[S1, sfS1, tfS1] = mksconv(srf1, i1b, dvk);
-[S2, sfS2, tfS2] = mksconv(srf2, i1b, dvk);
+% L1d convolution matrices
+[D1, vDcol, v_L1d] = L1d_conv(s_fact, dvk);
+[B1, vBcol, VBrow] = L1d_conv(s_fact, dvb);
+
+% match intermediate grids
+[ix, jx] = seq_match(vAcol, vBcol);
+vAcol = vAcol(ix);  A1 = A1(:, ix);
+vBcol = vBcol(jx);  B1 = B1(:, jx);
+
+% build the decon/recon matrix
+fprintf(1, 'inverting A ...\n')
+tic
+CtoD = B1 * pinv(full(A1));
+toc
+
+return
 
 % loop on kcarta files
 rad1 = []; rad2 = []; rad3 = []; rad4 = [];
@@ -49,11 +63,8 @@ for i = 1 : length(flist)
   ix = interp1(vkc, 1:length(rkc), sfS2, 'nearest');
   r2 = S2 * rkc(ix);  rad2 = [rad2, r2];
 
-  % apply the JPL shift 
-  tb1 = real(rad2bt(tf1, r1));
-  tb3 = jpl_shift(tb1, tf1, tf2, i1b);
-  r3 = bt2rad(tf2, tb3);
-  rad3 = [rad3, r3];
+  % apply the SRF shift transform
+  r3 = Bshift * r1;  rad3 = [rad3, r3];
 
   % try a simple spline shift
   r4 = interp1(tf1, r1, tf2, 'spline');  
@@ -77,14 +88,14 @@ figure(1); clf;
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(frq2, mean(bt3 - bt2, 2))
-axis([600, 2700, -0.1, 0.1])
+axis([600, 2700, -0.12, 0.12])
 ylabel('dTb')
-title('JPL shift minus ref, 49 profile mean');
+title('decon minus ref, 49 profile mean');
 grid on; zoom on
 
 subplot(2,1,2)
 plot(frq2, mean(bt4 - bt2, 2))
-axis([600, 2700, -0.1, 0.1])
+axis([600, 2700, -0.12, 0.12])
 xlabel('wavenumber'); 
 ylabel('dTb')
 title('spline minus ref, 49 profile mean');
@@ -92,21 +103,22 @@ grid on; zoom on
 
 return
 
-% 49 profile mean std
-figure(2); clf; 
+% single profile mean difference
+figure(1); clf; 
+j = 1; 
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
-plot(frq2, std(bt3 - bt2, 0, 2))
+plot(frq2, bt3(:, j) - bt2(:,j))
 axis([600, 2700, -0.12, 0.12])
 ylabel('dTb')
-title('JPL shift minus ref, 49 profile std');
+title(sprintf('decon minus ref, profile %d', j));
 grid on; zoom on
 
 subplot(2,1,2)
-plot(frq2, std(bt4 - bt2, 0, 2))
+plot(frq2, bt4(:, j) - bt2(:,j))
 axis([600, 2700, -0.12, 0.12])
 xlabel('wavenumber'); 
 ylabel('dTb')
-title('spline minus ref, 49 profile std');
+title(sprintf('spline minus ref, profile %d', j));
 grid on; zoom on
 

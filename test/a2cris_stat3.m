@@ -3,6 +3,7 @@
 %
 
 addpath ../source
+addpath /asl/packages/ccast/source
 addpath /asl/matlib/h4tools
 
 % load profiles
@@ -71,6 +72,7 @@ o3rms = rms(corind(o3ch, :) -  tcind(o3ch, :));
 o3tot = sum(prof.gas_3(:, iind));
 h2otot = sum(prof.gas_1(:, iind));
 
+% plot lat, total col, residual
 figure(1); clf
 subplot(3,1,1)
 plot(prof.rlat(iind))
@@ -78,10 +80,10 @@ title('latitude')
 grid on;
 
 subplot(3,1,2)
-% plot(o3tot)
-% title('total colunn ozone')
-plot(h2otot)
-title('total colunn water')
+plot(o3tot)
+title('total colunn ozone')
+% plot(h2otot)
+% title('total colunn water')
 grid on;
 
 subplot(3,1,3)
@@ -90,23 +92,12 @@ title('1000 to 1090 cm-1 residual')
 xlabel('obs index')
 grid on
 
-% saveas(gcf, 'h2o_resids_1', 'png')
-
-return
-
-figure(1);clf
-subplot(2,1,1)
-plot(tcfrq, mcorind)
-axis([650, 1100, -2e-3, 2e-3])
-title('mean residual corrected independent set')
-ylabel('dTb')
+% plot total resid by lat
+figure(2); clf
+plot(prof.rlat(iind), o3rms, 'o')
+title('1000 to 1090 cm-1 residual by latitude')
+xlabel('latitude')
+ylabel('rms residual')
 grid on
-
-subplot(2,1,2)
-plot(tcfrq, scorind)
-axis([650, 1100, 0, 0.1])
-title('std residual corrected independent set')
-ylabel('dTb')
-grid on
-% saveas(gcf, 'fig_3_ham_cloudy', 'png')
+% saveas(gcf, 'resid_by_lat', 'png')
 

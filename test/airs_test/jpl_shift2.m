@@ -13,10 +13,11 @@ d1 = load('jpl_shift2');
 a = d1.a(jx);
 b = d1.b(jx);
 
-if ~(isclose(v_in, d1.frq1(jx)) && isclose(v_nom, d1.frq2(jx)))
-  keyboard
-  error('frequency mismatch')
-end
+% if ~(isclose(v_in, d1.frq1(jx)) && isclose(v_nom, d1.frq2(jx)))
+%   fprintf(1, 'frequency mismatch\n')
+%   keyboard
+%   error('frequency mismatch')
+% end
 
 dv = v_nom - v_in;
 

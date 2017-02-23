@@ -1,5 +1,5 @@
 %
-% AIRS to CrIS stats on the big cloudy and clear sets
+% AIRS to CrIS stats for the big cloudy and clear sets
 %
 
 addpath ../source

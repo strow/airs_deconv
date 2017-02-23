@@ -25,7 +25,7 @@ band = 'LW';            % cris band
 hapod = 0;              % flag for Hamming apodization
 dvb = 0.1;              % deconvolution frequency step
 dvs = 0.2;              % karta to sinc ILS resolution
-bfile = 'bconv4.mat';   % deconvolution temp file
+bfile = 'bconv7.mat';   % deconvolution temp file
 
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
@@ -34,7 +34,7 @@ flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 % get the kcarta to AIRS convolution matrix
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 cfreq = load('freq2645.txt');
-cfreq = trim_chans(cfreq);
+% cfreq = trim_chans(cfreq);
 dvk = 0.0025; 
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);
 
@@ -124,7 +124,7 @@ pname = sprintf('airs_cris_spec_%s_%s', band, app);
 figure(2); clf
 set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 % plot(frq3, bt3, vkc, bkc)
-plot(frq3, bt3, frq5, bt5)
+plot(frq3, bt3, frq5, bt5, 'linewidth', 2)
 axis([660, 680, 200, 260])
 legend('deconvolved AIRS', sprintf('%.2f cm-1 sinc ILS', dvs))
 title(sprintf('deconvolved AIRS and sinc ILS at %.2f cm-1', dvs))

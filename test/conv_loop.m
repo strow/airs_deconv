@@ -10,8 +10,10 @@ addpath ../source
 warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
 % path to kcarta data
-kcdir = '/asl/s1/motteler/kc7377/cloudy';
-nkcrad = 7377;
+% kcdir = '/asl/s1/motteler/kc7377/cloudy';
+% nkcrad = 7377;
+  kcdir = '/home/motteler/cris/sergio/JUNK2012';
+  nkcrad = 49;
 
 %-------------
 % CrIS params
@@ -50,7 +52,6 @@ radSW = zeros(nSW, nkcrad);
 
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 cfreq = load('freq2645.txt');
-% cfreq = trim_chans(cfreq);
 dvk = 0.0025; 
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);
 
@@ -64,11 +65,16 @@ arad = zeros(length(afrq), nkcrad);
 
 for i = 1 : nkcrad
 
-  % CrIS convolutions
-  kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
-  d1 = load(kcmat);
-  rkc = d1.rad; vkc = d1.frq; clear d1
+  % get kcarta radiances
+% kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
+% d1 = load(kcmat);
+% rkc = d1.rad; vkc = d1.frq; clear d1
 
+  kcmat = fullfile(kcdir, sprintf('convolved_kcarta%d.mat', i));
+  d1 = load(kcmat);
+  rkc = d1.r; vkc = d1.w; clear d1
+ 
+  % CrIS convolutions
   [rtmp, frqLW] = kc2cris(userLW, rkc, vkc, optLW);
   radLW(:, i) = rtmp;
 
@@ -91,8 +97,18 @@ fprintf(1, '\n')
 % save the convolutions
 %-----------------------
 
-save cris_cloudy radLW radMW radSW frqLW frqMW frqSW ...
-            userLW userMW userSW optLW optMW optSW
+% save cris_cloudy radLW radMW radSW frqLW frqMW frqSW ...
+%           userLW userMW userSW optLW optMW optSW
+%
+% save airs_cloudy arad afrq sfile
+%
 
-save airs_cloudy arad afrq sfile
+% save cris_fit49 radLW radMW radSW frqLW frqMW frqSW ...
+%          userLW userMW userSW optLW optMW optSW
+%
+% save airs_fit49 arad afrq sfile
+
+  save crisHR_fit49 radLW radMW radSW frqLW frqMW frqSW ...
+           userLW userMW userSW optLW optMW optSW
+
 

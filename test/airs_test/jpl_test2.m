@@ -1,5 +1,5 @@
 %
-% jpl_test2 -- test 1c version of the jpl shift
+% jpl_test2c -- test UMBC 1c version of the jpl shift
 %
 
 % set paths to libs
@@ -17,33 +17,35 @@ flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 
 % specify SRF tabulations
 sdir = '/asl/matlab2012/srftest/';
-  srf1 = fullfile(sdir, 'srftables_m130f_withfake_mar08.hdf');
-  srf2 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
+srf1 = fullfile(sdir, 'srftables_m130f_withfake_mar08.hdf');
+srf2 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
 
-% read the SRF files
-[tf1, tg1, sv1, id1] = srf_read(srf1);
-[tf2, tg2, sv2, id2] = srf_read(srf2);
-[tf1, if1] = sort(tf1); 
-[tf2, if2] = sort(tf2);
-isequal(if1, if2)
+% get SRF channel frequencies
+tf1 = srf_read(srf1);
+tf2 = srf_read(srf2);
 
-% use the JPL L1C channel set
-cfreq = load('freq2645.txt');
+% use the L1b subset
+% tf1 = tf1(1:2378);
+% tf2 = tf2(1:2378);
 
-% use the L1B channel set
-% cfreq = srf_read(srf1);
-% cfreq = trim_chans(cfreq(1:2378));
+% sort the full SRF channel set
+[~, i1c] = sort(tf1); 
+tf1 = tf1(i1c);
+tf2 = tf2(i1c);
+
+% get the JPL L1C channel set
+c2645 = load('freq2645.txt');
 
 % match L1C and SRF channel sets
-[ix1, jx1] = seq_match(tf1, cfreq, 0.04);
-tf1 = tf1(ix1);  if1 = if1(ix1);  
-tf2 = tf2(ix1);  if2 = if2(ix1);
-cfreq = cfreq(jx1);
+[ix, jind] = seq_match(tf1, c2645, 0.04);
+i1c = i1c(ix);  
+tf1 = tf1(ix);  
+tf2 = tf2(ix);
 
 % convolution matrices for reference truth
 dvk = 0.0025; 
-[S1, sfS1, tfS1] = mksconv(srf1, if1, dvk);
-[S2, sfS2, tfS2] = mksconv(srf2, if2, dvk);
+[S1, sfS1, tfS1] = mksconv(srf1, i1c, dvk);
+[S2, sfS2, tfS2] = mksconv(srf2, i1c, dvk);
 
 % loop on kcarta files
 rad1 = []; rad2 = []; rad3 = []; rad4 = [];
@@ -60,7 +62,7 @@ for i = 1 : length(flist)
 
  % apply the JPL shift 
   tb1 = real(rad2bt(tf1, r1));
-  tb3 = jpl_shift2(tb1, tf1, tf2);
+  tb3 = jpl_shift2(tb1, tf1, tf2, jind);
   r3 = bt2rad(tf2, tb3);
   rad3 = [rad3, r3];
 
