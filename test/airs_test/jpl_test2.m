@@ -1,5 +1,5 @@
 %
-% jpl_test2c -- test UMBC 1c version of the jpl shift
+% jpl_test2 -- test UMBC 1c version of the jpl shift
 %
 
 % set paths to libs
@@ -11,14 +11,18 @@ addpath /asl/packages/ccast/source
 % turn off HDF 4 update warnings
 warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
+% chose shift coefficients
+coeff = 'umbc_1c';
+
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
 flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 
 % specify SRF tabulations
 sdir = '/asl/matlab2012/srftest/';
-srf1 = fullfile(sdir, 'srftables_m130f_withfake_mar08.hdf');
-srf2 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
+  srf1 = fullfile(sdir, 'srftables_m130f_withfake_mar08.hdf');
+  srf2 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
+% srf3 = fullfile(sdir, 'srftables_m150f_withfake_mar08.hdf');
 
 % get SRF channel frequencies
 tf1 = srf_read(srf1);
@@ -62,7 +66,7 @@ for i = 1 : length(flist)
 
  % apply the JPL shift 
   tb1 = real(rad2bt(tf1, r1));
-  tb3 = jpl_shift2(tb1, tf1, tf2, jind);
+  tb3 = jpl_shift(tb1, tf1, tf2, coeff, jind);
   r3 = bt2rad(tf2, tb3);
   rad3 = [rad3, r3];
 
@@ -83,21 +87,21 @@ bt2 = real(rad2bt(frq2, rad2));   % SRF set 2
 bt3 = real(rad2bt(frq2, rad3));   % 1 shifted to 2
 bt4 = real(rad2bt(frq2, rad4));   % 1 interpolated to 2
 
-% 49 profile mean difference
+% jpl shift residuals
 figure(1); clf; 
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(frq2, mean(bt3 - bt2, 2))
 axis([600, 2700, -0.1, 0.1])
-ylabel('dTb')
 title('JPL shift minus ref, 49 profile mean');
+ylabel('dTb')
 grid on; zoom on
 
 subplot(2,1,2)
-plot(frq2, mean(bt4 - bt2, 2))
-axis([600, 2700, -0.1, 0.1])
+plot(frq2, std(bt3 - bt2, 0, 2))
+axis([600, 2700, 0, 0.12])
+title('JPL shift minus ref, 49 profile std');
 xlabel('wavenumber'); 
 ylabel('dTb')
-title('spline minus ref, 49 profile mean');
 grid on; zoom on
 

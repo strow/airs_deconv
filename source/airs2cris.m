@@ -15,6 +15,8 @@
 %   dvb    - deconv grid step, default 0.1
 %   bfile  - pinv temp file, default 'bconv.mat'
 %   hapod  - 0 = default, 1 = Hamming apodization
+%   inst_res - 'lowres' (default), 'hires1-3', 'hi3to2'
+%   user_res - 'lowres' (default), 'hires'
 %
 % OUTPUTS
 %   crad   - simulated CrIS radiances, n x k array
@@ -83,7 +85,7 @@ for bi = 1 : 3
 
   % get the CrIS user grid
   band = bstr{bi};
-  [inst, user] = inst_params(band, wlaser);
+  [inst, user] = inst_params(band, wlaser, opt1);
 
   % find AIRS and CrIS band intersection
   ftmp = user.v1 : user.dv : user.v2;
