@@ -3,10 +3,10 @@
 %   L1d_conv -- build a sparse AIRS L1d convolution matrix
 %
 % SYNOPSIS
-%   [dconv, v_tab, v_L1d] = L1d_conv(s_fact, dv_tab)
+%   [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab)
 %
 % INPUTS
-%   s_fact - scaling factor for reference AIRS FWHM
+%   res    - resolving power, v/FWHM, default 1200
 %   dv_tab - step size for the SRF tabulation grid
 % 
 % OUTPUTS
@@ -15,27 +15,20 @@
 %   v_L1d  - m-vector, sconv rows, output channel grid
 % 
 % DESCRIPTION
-%   L1d_conv takes an FWHM scaling factor and a tabulation spacing
-%   and returns the tabulation of "super Gaussian" SRFs in an m x n
-%   sparse convolution matrix.  v_tab is chosen to span the SRFs of
-%   the requested channels.  Then for r radiance at the v_tab grid,
-%   c = dconv * r is L1d channel radiances.
-%
-%   s_fact = 1 gives an approximation of regularized AIRS L1c FWMH
-%   resolution, with channel FWHM and spacing set to regular fitted
-%   rather than the actual L1c values.  s_fact = 0.8 gives a higher
-%   resolution version of the regularized SRFS, decreasing both the
-%   FWHM and channel spacing by a factor of 0.8.
+%   L1d_conv returns a tabulation of "generalized Gaussian" SRFs
+%   with FWHM = v/res and channel spacing dv = FWHM/2 in an m x n
+%   sparse convolution matrix.  v_tab is chosen to span the SRFs 
+%   of the requested channels.
 %
 % AUTHOR
 %   H. Motteler, 21 Feb 2017
 %
 
-function [dconv, v_tab, v_L1d] = L1d_conv(s_fact, dv_tab)
+function [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab)
 
 % defaults
 if nargin < 2,  dv_tab = 0.1;  end
-if nargin < 1,  s_fact = 1;  end
+if nargin < 1,  res = 1200;  end
 
 % get the L1c channel set
 v_L1c = load('freq2645.txt');
@@ -48,11 +41,12 @@ v1b2 = v_L1c(2163);
 v2b2 = v_L1c(end);
 
 % build L1d channel grid
-k = 5000; 
+k = 6000; 
 v_L1d = zeros(k, 1);
-v_L1d(1) = v_L1c(1);
+v_L1d(1) = v_L1c(1); % + (v_L1c(2) - v_L1c(1)) * 0.18;
 for i = 2 : k
-  v_L1d(i) = v_L1d(i-1) + s_fact * airs_dv(v_L1d(i-1));
+  v_L1d(i) = v_L1d(i-1) + v_L1d(i-1) / (2*res);
+  if v_L1d(i) > v2b2, break, end
 end
 
 % trim v_L1d to the two L1c bands
@@ -62,8 +56,8 @@ n_L1d = length(v_L1d);
 
 % get spanning frequencies for the L1d SRF set
 span = 4;
-v1 = v_L1d(1) - span * s_fact * airs_fwhm(v_L1d(1));
-v2 = v_L1d(end) + span * s_fact * airs_fwhm(v_L1d(end));
+v1 = v_L1d(1) - span * v_L1d(1) / res;
+v2 = v_L1d(end) + span * v_L1d(end) / res;
 
 % get the dconv column grid
 n = round((v2 - v1) / dv_tab);
@@ -78,7 +72,7 @@ for i = 1 : n_L1d
 
   % eval span for SRF i
   vc = v_L1d(i);                  % current channel center
-  vs = s_fact * airs_fwhm(vc);    % current channel FWHM 
+  vs = vc / res;                  % current channel FWHM 
   v1 = vc - span * vs;            % low end of tabulation span
   v2 = vc + span * vs;            % high end of tabulation span
   jx = find(v1 <= v_tab & v_tab <= v2);  % tabulation index
@@ -99,23 +93,10 @@ dconv = sparse(si, sj, sd, n_L1d, n_tab, length(sd));
 
 end % L1d_conv definition
 
-% higher order Gaussian
-function y = sup_gauss(x, b, c)
-  c = c / 2.35482;
-% y = exp(-(x - b).^2 / (2*c^2));
-  y = exp(-((x - b).^2 / (2*c^2)).^1.5);
-end
+% % higher order Gaussian
+% function y = sup_gauss(x, b, c)
+%   c = c / 2.35482;
+% % y = exp(-(x - b).^2 / (2*c^2));
+%   y = exp(-((x - b).^2 / (2*c^2)).^1.5);
+% end
 
-% 2-point linear fit for channel spacing
-function y = airs_dv(x)
-  x1 =  700;   y1 = 0.24;
-  x2 = 2183;   y2 = 0.88;
-  y = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
-end
-
-% 2-point linear fit for channel widths
-function y = airs_fwhm(x)
-  x1 =  700;   y1 = 0.5;
-  x2 = 2183;   y2 = 1.7;
-  y = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
-end

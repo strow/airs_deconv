@@ -1,9 +1,9 @@
 %
 % L1d_test2 - try deconvolution to the L1d SRF set
 %
-%  L1d is used here as a new reference truth.  We calculate true
-%  L1d AIRS, convolved directly from kcarta, and L1c to L1d AIRS
-%  (via de- and reconvolution) and compare them
+%  calculate true L1c and L1d AIRS, convolved directly from kcarta,
+%  and L1c to L1d AIRS "C to D" AIRS (via de- and reconvolution) and
+%  compare them
 %
 
 % set paths to libs
@@ -11,8 +11,9 @@ addpath ../source
 addpath ../h4tools
 addpath /asl/packages/ccast/source
 
-% L1d resolution scaling factor
-s_fact = 1;      
+% L1d resolution, dv = v / res
+% res = 1200;  % L1c nominal
+  res =  700;  % best for L1d
 
 % turn off HDF 4 update warnings
 warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
@@ -30,12 +31,12 @@ dvk = 0.0025;    % kcarta dv
 dvb = 0.1;       % decon dv
 
 % L1c convolution matrices
-[S1, vScol, v_L1c] = mksconv2(srf1, v_tmp, dvk);
+[C1, vCcol, v_L1c] = mksconv2(srf1, v_tmp, dvk);
 [A1, vAcol, vArow] = mksconv2(srf1, v_tmp, dvb);
 
 % L1d convolution matrices
-[D1, vDcol, v_L1d] = L1d_conv(s_fact, dvk);
-[B1, vBcol, VBrow] = L1d_conv(s_fact, dvb);
+[D1, vDcol, v_L1d] = L1d_conv(res, dvk);
+[B1, vBcol, VBrow] = L1d_conv(res, dvb);
 
 % match intermediate grids
 [ix, jx] = seq_match(vAcol, vBcol);
@@ -48,77 +49,50 @@ tic
 CtoD = B1 * pinv(full(A1));
 toc
 
-return
-
 % loop on kcarta files
-rad1 = []; rad2 = []; rad3 = []; rad4 = [];
+trueCrad = []; trueDrad = [];
 for i = 1 : length(flist)
   d1 = load(fullfile(kcdir, flist(i).name));
   vkc = d1.w(:); rkc = d1.r(:);
 
-  % apply the S1 and S2 convolutions
-  ix = interp1(vkc, 1:length(rkc), sfS1, 'nearest');
-  r1 = S1 * rkc(ix);  rad1 = [rad1, r1];
+  % apply the S1 and D1 convolutions
+  ix = interp1(vkc, 1:length(rkc), vCcol, 'nearest');
+  r1 = C1 * rkc(ix);  trueCrad = [trueCrad, r1];
 
-  ix = interp1(vkc, 1:length(rkc), sfS2, 'nearest');
-  r2 = S2 * rkc(ix);  rad2 = [rad2, r2];
-
-  % apply the SRF shift transform
-  r3 = Bshift * r1;  rad3 = [rad3, r3];
-
-  % try a simple spline shift
-  r4 = interp1(tf1, r1, tf2, 'spline');  
-  rad4 = [rad4, r4];
+  ix = interp1(vkc, 1:length(rkc), vDcol, 'nearest');
+  r2 = D1 * rkc(ix);  trueDrad = [trueDrad, r2];
 
   fprintf(1, '.');
 end
 fprintf(1, '\n')
-frq1 = tf1(:);
-frq2 = tf2(:);
-clear d1
+
+% de/reconvolve L1C to L1d
+CtoDrad = CtoD * trueCrad;
 
 % take radiances to brightness temps
-bt1 = real(rad2bt(frq1, rad1));   % SRF set 1
-bt2 = real(rad2bt(frq2, rad2));   % SRF set 2
-bt3 = real(rad2bt(frq2, rad3));   % 1 shifted to 2
-bt4 = real(rad2bt(frq2, rad4));   % 1 interpolated to 2
+trueCbt = real(rad2bt(v_L1c, trueCrad));
+trueDbt = real(rad2bt(v_L1d, trueDrad));
+CtoDbt  = real(rad2bt(v_L1d, CtoDrad));
 
-% 49 profile mean difference
+% plot residuals
 figure(1); clf; 
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
-plot(frq2, mean(bt3 - bt2, 2))
-axis([600, 2700, -0.12, 0.12])
+plot(v_L1d, mean(CtoDbt - trueDbt, 2))
+  axis([650, 2700, -0.3, 0.3])
+% axis([650, 2700, -1, 1])
+% axis([650, 2700, -2, 2])
+title('C to D minus true L1d , 49 profile mean');
 ylabel('dTb')
-title('decon minus ref, 49 profile mean');
 grid on; zoom on
 
 subplot(2,1,2)
-plot(frq2, mean(bt4 - bt2, 2))
-axis([600, 2700, -0.12, 0.12])
-xlabel('wavenumber'); 
+plot(v_L1d, std(CtoDbt - trueDbt, 0, 2))
+  axis([650, 2700, 0, 0.1])
+% axis([650, 2700, 0, 0.3])
+% axis([650, 2700, 0, 0.6])
+title('C to D minus true L1d , 49 profile std');
 ylabel('dTb')
-title('spline minus ref, 49 profile mean');
-grid on; zoom on
-
-return
-
-% single profile mean difference
-figure(1); clf; 
-j = 1; 
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(2,1,1)
-plot(frq2, bt3(:, j) - bt2(:,j))
-axis([600, 2700, -0.12, 0.12])
-ylabel('dTb')
-title(sprintf('decon minus ref, profile %d', j));
-grid on; zoom on
-
-subplot(2,1,2)
-plot(frq2, bt4(:, j) - bt2(:,j))
-axis([600, 2700, -0.12, 0.12])
-xlabel('wavenumber'); 
-ylabel('dTb')
-title(sprintf('spline minus ref, profile %d', j));
+xlabel('wavenumber')
 grid on; zoom on
 

@@ -1,5 +1,5 @@
 %
-% plot and save a list of AIRS synthetic channels
+% plot and save a list of AIRS L1c synthetic channels
 %
 
 addpath ../h4tools
@@ -39,7 +39,7 @@ nL1b = length(L1b_frq);
 ind_syn = setdiff((1:nL1c)', ic);
 L1c_syn = L1c_frq(ind_syn);
 
-save L1c_syn L1b_frq L1c_frq L1c_syn ind_syn
+save L1c_synth L1b_frq L1c_frq L1c_syn ind_syn
 
 figure(1); clf
 plot(1:nL1c, L1c_frq, ind_syn, L1c_syn, 'o')
@@ -49,7 +49,7 @@ legend('full L1c set', 'synthetic channels', 'location', 'northwest')
 xlabel('index')
 ylabel('frequency')
 grid on;
-saveas(gcf, 'AIRS_L1c_synth', 'png')
+% saveas(gcf, 'AIRS_L1c_synth', 'png')
 
 
 

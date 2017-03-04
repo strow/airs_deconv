@@ -108,7 +108,7 @@ else psf = 2.0; app = 'noap'; end
 
 % AIRS and CrIS spectra
 figure(1); clf;
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 plot(frq1, bt1, frq2, bt2, frq3, bt3, frq4, bt4)
 ax(1)=pv1; ax(2)=pv2; ax(3)=180; ax(4)=320; axis(ax)
 legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
@@ -122,7 +122,7 @@ pname = sprintf('airs_cris_spec_%s_%s', band, app);
 
 % deconvolved AIRS and sinc ILS 
 figure(2); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 % plot(frq3, bt3, vkc, bkc)
 plot(frq3, bt3, frq5, bt5, 'linewidth', 2)
 axis([660, 680, 200, 260])

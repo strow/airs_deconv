@@ -1,5 +1,5 @@
 %
-% jpl_coeffs -- get new "a" and "b" coeffs for jpl_shift2
+% jpl_coeffs -- get new "a" and "b" coeffs for jpl_shift
 %
 
 % set paths to libs

@@ -105,3 +105,23 @@ xlabel('wavenumber');
 ylabel('dTb')
 grid on; zoom on
 
+return
+
+% spline fit residuals
+figure(2); clf; 
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(2,1,1)
+plot(frq2, mean(bt4 - bt2, 2))
+axis([600, 2700, -0.1, 0.1])
+title('spline minus ref, 49 profile mean');
+ylabel('dTb')
+grid on; zoom on
+
+subplot(2,1,2)
+plot(frq2, std(bt4 - bt2, 0, 2))
+axis([600, 2700, 0, 0.12])
+title('spline minus ref, 49 profile std');
+xlabel('wavenumber'); 
+ylabel('dTb')
+grid on; zoom on
+

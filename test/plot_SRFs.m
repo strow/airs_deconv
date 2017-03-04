@@ -10,9 +10,9 @@ warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
 % sample decon basis functions
 load bconv.mat
-load L1c_syn
+load L1c_synth
 figure(1); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 % plot(bfrq, binv(:, 201:202), afrq, 0, 'ok', 'linewidth', 2)
 % axis([697, 706, -2, 3])
 % plot(bfrq, binv(:, 2401:2402), afrq, 0, 'ok', 'linewidth', 2)
@@ -33,7 +33,7 @@ cfreq = load('freq2645.txt');
 dvk = 0.0025; 
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);
 figure(2)
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 % plot(sfreq, sconv(201:207, :), 'linewidth', 2)
 % axis([700, 704, 0, 5e-3])
   plot(sfreq, sconv(2414:2417, :), 'linewidth', 2)

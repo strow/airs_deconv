@@ -14,6 +14,10 @@ cfreq = load('freq2645.txt');
 dvk = 0.0025; 
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);
 
+%------------------
+% fitted AIRS SRFs
+%------------------
+
 % SRF set 1
 ix = 201 : 206;
 vwid = 0.48;
@@ -66,32 +70,38 @@ ylabel('weight')
 grid on; zoom on
 % saveas(gcf, 'AIRS_sample_SRFs', 'png')
 
+%-------------------------------
+% AIRS FWHM and channel spacing
+%-------------------------------
+
 % linearized AIRS L1c channel spacing
 x = cfreq(2:end);
 y = diff(cfreq);
-z1 = (x - x(1)) * 4.3e-4 + 0.22;
 x1 =  700;   y1 = 0.24;
 x2 = 2183;   y2 = 0.88;
-z2 = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
+z1 = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
+z2 = x / 2500;
 
 figure(2); clf
 subplot(2,1,1)
 plot(x, y, x, z1, x, z2)
 axis([650, 2800, 0.2, 1.2])   
 title('AIRS L1c channel spacing')
-legend('L1c', 'linear fit', 'location', 'southeast')
+legend('L1c', '2 pt fit', 'v/2500', 'location', 'southeast')
 ylabel('spacing')
 grid on
 
 % approximately linearized AIRS L1c channel widths
 x1 =  700;   y1 = 0.5;
 x2 = 2183;   y2 = 1.7;
-w = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
+w1 = ((x - x1) ./ (x2 - x1)) .* (y2 - y1) + y1;
+w2 = x / 1250;
+
 subplot(2,1,2)
-plot(x, w)
+plot(x, w1, x, w2)
 title('AIRS L1c FWHM')
 axis([650, 2800, 0.2, 2.5])   
-legend('linear fit', 'location', 'southeast')
+legend('2 pt fit', '2*v/2500', 'location', 'southeast')
 xlabel('wavenumber')
 ylabel('width')
 grid on
