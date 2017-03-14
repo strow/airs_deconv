@@ -3,11 +3,12 @@
 %   L1d_conv -- build a sparse AIRS L1d convolution matrix
 %
 % SYNOPSIS
-%   [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab)
+%   [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base)
 %
 % INPUTS
-%   res    - resolving power, v/FWHM, default 1200
+%   res    - resolving power, v/FWHM
 %   dv_tab - step size for the SRF tabulation grid
+%   v_base - start of output grid, i.e., v_L1d(1)
 % 
 % OUTPUTS
 %   dconv  - m x n sparse convolution matrix
@@ -24,11 +25,7 @@
 %   H. Motteler, 21 Feb 2017
 %
 
-function [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab)
-
-% defaults
-if nargin < 2,  dv_tab = 0.1;  end
-if nargin < 1,  res = 1200;  end
+function [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base)
 
 % get the L1c channel set
 v_L1c = load('freq2645.txt');
@@ -43,7 +40,7 @@ v2b2 = v_L1c(end);
 % build L1d channel grid
 k = 6000; 
 v_L1d = zeros(k, 1);
-v_L1d(1) = v_L1c(1); % + (v_L1c(2) - v_L1c(1)) * 0.18;
+v_L1d(1) = v_base;
 for i = 2 : k
   v_L1d(i) = v_L1d(i-1) + v_L1d(i-1) / (2*res);
   if v_L1d(i) > v2b2, break, end

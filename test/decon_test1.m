@@ -1,5 +1,5 @@
 %
-% decon_test1 - direct vs decon to intermediate grid
+% decon_test2 - oversampling with varying resolving power
 %
 %   C1 takes kcarta to the L1c channel grid,
 %   B1 takes kcarta to the 0.1 cm-1 decon grid
@@ -16,6 +16,7 @@
 addpath ../source
 addpath ../h4tools
 addpath /asl/packages/ccast/source
+addpath /home/motteler/matlab/export_fig
 
 % turn off HDF 4 update warnings
 warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
@@ -30,8 +31,8 @@ srf1 = fullfile(sdir, 'srftables_m140f_withfake_mar08.hdf');
 
 v_tmp = load('freq2645.txt');
 dvk = 0.0025;    % kcarta dv
-dvb = 0.1;       % direct convolution and decon spacing
-span = 4;        % direct convolution FWHM = span * dvb 
+dvb = 0.1;       % deconvolution spacing
+res = 2000;      % set resolving power
 
 % L1c convolution matrices
 [C1, vCcol, v_L1c] = mksconv2(srf1, v_tmp, dvk);
@@ -43,7 +44,7 @@ A1inv = pinv(full(A1));
 toc
 
 % intermediate grid convolution matrix
-[B1, vBcol, vBrow] = mkBconv(dvb, span);
+[B1, vBcol, vBrow] = mkBconv(dvb, res);
 
 % loop on kcarta files
 trueCrad = []; trueBrad = [];
@@ -78,7 +79,8 @@ vAcol = vAcol(jx); CtoBbt = CtoBbt(jx, :);
 
 % profile 1 spectra and zoom
 figure(1); clf
-subplot(2,1,1)
+set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(3,1,1)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([650, 2650, 200, 310])
 title('direct and deconvolution comparison')
@@ -87,17 +89,28 @@ legend('gauss', 'decon', 'location', 'north')
 ylabel('Tb, K')
 grid on; zoom on
 
-subplot(2,1,2)
+subplot(3,1,2)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([660, 680, 200, 260])
 title('direct and deconvolution detail')
 legend('gauss', 'decon', 'location', 'northeast')
-xlabel('wavenumber')
+% xlabel('wavenumber')
 ylabel('Tb, K')
 grid on; zoom on
 
+subplot(3,1,3)
+plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
+axis([2280, 2340, 220, 260])
+title('direct and deconvolution detail')
+legend('gauss', 'decon', 'location', 'northwest')
+xlabel('wavenumber')
+ylabel('Tb, K')
+grid on; zoom on
+export_fig('airs_decon_spec.pdf', '-m2', '-transparent')
+
 % mean and std residuals
 figure(2); clf
+set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(vBrow, mean(CtoBbt - trueBbt, 2))
 axis([650, 2650, -15, 15])
@@ -113,4 +126,5 @@ title('std decon minus gauss')
 xlabel('wavenumber')
 ylabel('dTb, K')
 grid on; zoom on
+export_fig('airs_decon_diff.pdf', '-m2', '-transparent')
 

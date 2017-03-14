@@ -3,11 +3,11 @@
 %   mkBconv - build a sparse gaussian convolution matrix
 %
 % SYNOPSIS
-%   [Bconv, vcol, vrow] = mkBconv(dvb, span)
+%   [Bconv, vcol, vrow] = mkBconv(dvb, res)
 %
 % INPUTS
 %   dvb    - output grid spacing
-%   span   - output FWHM as a multiple of dvb
+%   res    - output resolving power, FWHM = v / res
 % 
 % OUTPUTS
 %   Bconv  - m x n sparse convolution matrix
@@ -15,19 +15,19 @@
 %   vrow   - m-vector, Bconv rows, output channel grid
 % 
 % DESCRIPTION
-%   mkBconv returns a tabulation of "generalized Gaussian" SRFs
-%   with channel spacing dvb and FWHM = dvb * span in an m x n
-%   sparse convolution matrix.  vcol is chosen to span the SRFs 
-%   of the vrow channels.
+%   mkBconv returns a tabulation of "generalized Gaussian" SRFs 
+%   with channel spacing dvb and FWHM = v / res, in an m x n sparse
+%   convolution matrix.  vcol is chosen to span the SRFs of the m
+%   output channels.
 %
 %   typical parameters for convolution of kcarta radiances to the
-%   AIRS deconvolution grid are dvb = 0.1 cm-1 and span = 4
+%   AIRS deconvolution grid are dvb = 0.1 cm-1 and res = 2000
 %
 % AUTHOR
 %   H. Motteler, 3 Mar 2017
 %
 
-function [Bconv, vcol, vrow] = mkBconv(dvb, span)
+function [Bconv, vcol, vrow] = mkBconv(dvb, res)
 
 % kcarta grid spacing
 dvk = 0.0025;
@@ -52,7 +52,8 @@ for i = 1 : nrow
 
   % eval span for SRF i
   vc = vrow(i);         % current channel center
-  fwhm = span * dvb;    % current channel FWHM 
+% fwhm = res * dvb;     % mod for fixed FWHM
+  fwhm = vc / res;      % current channel FWHM 
   v1 = vc - 4 * fwhm;   % low end of tabulation span
   v2 = vc + 4 * fwhm;   % high end of tabulation span
   jx = find(v1 <= vcol & vcol <= v2);  % tabulation index
