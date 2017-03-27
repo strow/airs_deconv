@@ -5,6 +5,25 @@ Demos
 demo1 - AIRS to CrIS translation demo
 demo2 - CrIS to AIRS translation demo
 
+Recent tests
+-------------
+
+regr_test1 -- chan shift regression with a large dependent set
+
+plot_SRF2  - plot sample AIRS SRFs with gauss fit and channel spacing
+plot_Binv  - plot sample SRFs and columns of inverse SRF matrix
+decon_test1 - compare true decon with decon AIRS
+
+L1d_test2  - try deconvolution to the L1d SRF set
+L1d_test3  - compare L1c to L1d de/recon vs regression
+L1d_stat4  - AIRS L1c to L1d regression tests
+
+a2cris_test1 - compare AIRS CrIS with true CrIS
+a2cris_plot1 - combined apodized resiual plots from a2cris_tes1
+a2cris_stat4 - AIRS to CrIS regression tests
+
+conv_loop2 - tabulate true L1c, L1c to L1d, and true L1d
+
 
 AIRS to CrIS tests
 -------------------
