@@ -1,6 +1,8 @@
 
 CrIS to AIRS and AIRS channel shift tests
 
+regr_test1 -- chan shift regression with a large dependent set
+
 airs_test1 - compare CrIS AIRS with true AIRS
 airs_test2 - browse SRF tabulations
 airs_test3 - channel shift with decon to the channel grid

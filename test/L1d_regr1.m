@@ -1,5 +1,7 @@
 %
-% AIRS L1c to L1d regression tests
+% L1d_regr1 - regression corrrection for L1c to L1d decon/recon
+%
+% uses data from conv_loop2
 %
 % radiance data (from load)
 %   v_L1c, v_L1d, res
@@ -16,8 +18,7 @@
 % tDbi, tCbd - true L1d ind and dep set brightness temps
 % CDbi, CDbd - L1c to L1d ind and dep set brightness temps
 %
-% derived from a2cris_stat4 and L1d_test3, uses data from
-% conv_loop2
+% derived from a2cris_regr1 and L1d_test3
 %
 
 % set paths to libs

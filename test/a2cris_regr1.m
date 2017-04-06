@@ -1,5 +1,7 @@
 %
-% AIRS to CrIS regression tests
+% a2cris_regr1- regression corrrection for AIRS to CrIS decon/recon
+%
+% uses data from conv_loop1 and a2cris_loop
 %
 
 addpath ../source

@@ -29,18 +29,18 @@ sdir = '/asl/matlab2012/srftest/';
 v1srf = srf_read(f1srf);
 
 % use the L1b subset
-v1srf = v1srf(1:2378);
+% v1srf = v1srf(1:2378);
 
 % sort the SRF channel set
 [~, i1srf] = sort(v1srf); 
 v1srf = v1srf(i1srf);
 
 % get the JPL L1C channel set
-% c2645 = load('freq2645.txt');
+c2645 = load('freq2645.txt');
 
 % match L1C and SRF channel sets
-% [ix, ~] = seq_match(v1srf, c2645, 0.04);
-% i1srf = i1srf(ix);  
+[ix, ~] = seq_match(v1srf, c2645, 0.04);
+i1srf = i1srf(ix);  
 
 % convolution matrices for reference truth
 dvk = 0.0025; 

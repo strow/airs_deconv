@@ -1,5 +1,5 @@
 %
-% plot sample SRFs and columns of inverse SRF matrix
+% plot_Binv - plot sample deconvolution basis functions
 %
 
 % set paths to libs
@@ -30,7 +30,7 @@ toc
 % load L1c_synth
 
 figure(1); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
   plot(vAcol, Ainv(:, 201:202), vArow, 0, 'ok', 'linewidth', 2)
   axis([697, 706, -2, 3])
 % plot(bfrq, binv(:, 2401:2402), afrq, 0, 'ok', 'linewidth', 2)
