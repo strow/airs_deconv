@@ -138,16 +138,37 @@ bkc = real(rad2bt(vkc, rkc));
 
 figure(3); clf
 set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(2,1,1)
 plot(vkc, bkc, vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1), ...
      v_L1c, trueCbt(:,1), 'linewidth', 2)
+% axis([650, 2650, 180, 310])   % used for overview
 % axis([1012, 1016, 230, 300])
+% axis([669, 672, 180, 280])
+  axis([1312, 1316, 220, 280])  % used for sample zoom 1
+% axis([812, 817, 260, 300])    % used for sample zoom 2
+
+title('kcarta, AIRS, and deconvolutions')
+legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'southeast')
+% xlabel('wavenumber')
+ylabel('Tb, K')
+grid on; zoom on
+
+subplot(2,1,2)
+plot(vkc, bkc, vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1), ...
+     v_L1c, trueCbt(:,1), 'linewidth', 2)
+% axis([650, 2650, 180, 310])   % used for overview
+% axis([1012, 1016, 230, 300])
+% axis([669, 672, 180, 280])
 % axis([1312, 1316, 220, 280])  % used for sample zoom 1
-% axis([669, 672, 180, 280])    % used for sample zoom 2
-  axis([650, 2650, 180, 310])   % used for overview
-title('kcarta, AIRS, and deconvolution')
-legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'north')
+  axis([812, 816, 260, 300])    % used for sample zoom 2
+
+% title('kcarta, AIRS, and deconvolution')
+legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'southeast')
 xlabel('wavenumber')
 ylabel('Tb, K')
 grid on; zoom on
-% saveas(gcf, 'kc_airs_decon', 'fig')
+% saveas(gcf, 'airs_decon_zoom', 'fig')
+% export_fig('airs_decon_zoom.pdf', '-m2', '-transparent')
+
+
 

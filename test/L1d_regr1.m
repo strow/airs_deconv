@@ -31,11 +31,10 @@ addpath /home/motteler/matlab/export_fig
 % get radiance data
 %-------------------
 
-% load('L1d700_cldy');
-% load('L1d1200_cldy');
-
-d1 = load('L1d1200_cldy');
-d2 = load('L1d1200_fit49');
+% d1 = load('L1d1200_cldy');
+% d2 = load('L1d1200_fit49');
+  d1 = load('L1d700_cldy');
+  d2 = load('L1d700_fit49');
 CtoDrad  = [d1.CtoDrad, d2.CtoDrad];
 trueCrad = [d1.trueCrad, d2.trueCrad];
 trueDrad = [d1.trueDrad, d2.trueDrad];
@@ -126,8 +125,8 @@ figure(1); clf
   set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(v_L1d, mdifCDbi, v_L1d, mcor2CDbi)
-% axis([650, 2650, -0.2, 0.2]) %  700 res, fit49 ind
-  axis([650, 2650, -1, 1])     % 1200 res, fit49 ind
+  axis([650, 2650, -0.2, 0.2]) %  700 res, fit49 ind
+% axis([650, 2650, -1, 1])     % 1200 res, fit49 ind
 % axis([650, 2650, -1.5e-3, 1.5e-3])
 title('mean residual corrected independent set')
 legend('no correction', 'linear correction', 'location', 'north')
@@ -136,8 +135,8 @@ grid on
 
 subplot(2,1,2)
 plot(v_L1d, sdifCDbi, v_L1d, scor2CDbi)
-% axis([650, 2650, 0, 0.1])    %  700 res, fit49 ind
-  axis([650, 2650, 0, 0.3])    %  700 res, fit49 ind
+  axis([650, 2650, 0, 0.1])    %  700 res, fit49 ind
+% axis([650, 2650, 0, 0.3])    % 1200 res, fit49 ind
 legend('no correction', 'linear correction', 'location', 'north')
 title('std residual corrected independent set')
 ylabel('dTb')

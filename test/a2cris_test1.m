@@ -13,28 +13,27 @@ addpath /home/motteler/matlab/export_fig
 d1 = load('cris_fit49');   % true cris
 d2 = load('airs_fit49');   % true airs
 d3 = load('acris_fit49');  % airs cris
+d4 = load('ac_ap_fit49');  % apodized airs cris
 
-% set band
-band = 'LW';
-switch band % select true cris by band
-  case 'LW', tcrad = d1.radLW;  tcfrq = d1.frqLW;
-  case 'MW', tcrad = d1.radMW;  tcfrq = d1.frqMW;
-  case 'SW', tcrad = d1.radSW;  tcfrq = d1.frqSW;
-end
-tarad = d2.arad;   tafrq = d2.afrq;    % true airs
-acrad = d3.crad;   acfrq = d3.cfrq;    % airs cris
-adrad = d3.brad;   adfrq = d3.bfrq;    % airs decon
-clear d1 d2 d3
+% unapodized radiance
+tcrad = [d1.radLW; d1.radMW; d1.radSW];
+tcfrq = [d1.frqLW; d1.frqMW; d1.frqSW];
+tarad = d2.arad;  tafrq = d2.afrq;  % true airs
+acrad = d3.crad;  acfrq = d3.cfrq;  % airs cris
+adrad = d3.brad;  adfrq = d3.bfrq;  % airs decon
+
+% apodized radiance
+tcrad_ap = [hamm_app(d1.radLW); hamm_app(d1.radMW); hamm_app(d1.radSW)];
+acrad_ap = d4.crad; % apodized airs cris
+clear d1 d2 d3 d4
 
 % get the channel intersection
 [tci, aci] = seq_match(tcfrq, acfrq);
 tcrad = tcrad(tci, :);  tcfrq = tcfrq(tci);
 acrad = acrad(aci, :);  acfrq = acfrq(aci);
+tcrad_ap = tcrad_ap(tci, :);
+acrad_ap = acrad_ap(aci, :);
 [nchan, nobs] = size(tcrad);
-
-% hamming apodization
-tcrad_ap = hamm_app(tcrad);
-acrad_ap = hamm_app(acrad);
 
 % get brightness temps
 tcbt = real(rad2bt(tcfrq, tcrad));
@@ -44,66 +43,66 @@ adbt = real(rad2bt(adfrq, adrad));
 tcbt_ap = real(rad2bt(tcfrq, tcrad_ap));
 acbt_ap = real(rad2bt(tcfrq, acrad_ap));
 
-%----------------------------
-% plot spectra and residuals
-%----------------------------
-
-% plot all data for a selected spectra
-figure(1); clf; j = 1;
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(2,1,1)
-plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
-  axis([650, 1100, 200, 310])
-% axis([1200, 1620, 210, 310])
-% axis([2180, 2550, 210, 310])
-title(sprintf('AIRS and unapodized CrIS %s profile %d', band, j));
-legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', ...
-       'location', 'south')
-ylabel('Tb, K')
-grid on; zoom on
-
-subplot(2,1,2)
-plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
-  axis([660, 680, 200, 260])
-% axis([1320, 1350, 210, 290])
-% axis([2320, 2360, 210, 260])
-title(sprintf('AIRS and CrIS %s profile %d, detail', band, j));
-legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', ...
-       'location', 'northeast')
-xlabel('wavenumber'); ylabel('Tb, K')
-grid on; zoom on
-% export_fig(sprintf('a2cris_spec_%s.pdf', band), '-m2', '-transparent')
+% get band for plots
+band = upper(input('band > ', 's'));
 
 % plot mean and std of AIRS CrIS minus true CrIS
-figure(2); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+figure(1); clf
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(acbt_ap-tcbt_ap,2))
-  axis([650, 1100, -1.0, 1.0])
-% axis([1200, 1620, -0.3, 0.3])
-% axis([2180, 2550, -10, 15])
+switch band
+ case 'LW', axis([650, 1095, -1.0, 1.0]);   loc = 'north';
+ case 'MW', axis([1210, 1605, -0.3, 0.3]);  loc = 'north';
+ case 'SW', axis([2180, 2550, -2, 2]);      loc = 'northeast';
+end
 title(sprintf('AIRS CrIS minus true CrIS %s mean', band));
-  legend('unapodized', 'Hamming ap.', 'location', 'north') 
-% legend('unapodized', 'Hamming ap.', 'location', 'northeast') 
+legend('unapodized', 'Hamming ap.', 'location', loc)
 ylabel('dBT')
 grid on; zoom on
 
 % AIRS CrIS minus true CrIS std
 subplot(2,1,2)
 plot(tcfrq, std(acbt-tcbt,0,2), tcfrq, std(acbt_ap-tcbt_ap,0,2))
-  axis([650, 1100, 0, 0.5])
-% axis([1200, 1620, 0, 0.12])
-% axis([2180, 2550, 0, 10])
+switch band
+  case 'LW', axis([650, 1095, 0, 0.5]);   loc = 'north';
+  case 'MW', axis([1210, 1605, 0, 0.12]); loc = 'north';
+  case 'SW', axis([2180, 2550, 0, 1.2]);  loc = 'northeast';
+end
 title(sprintf('AIRS CrIS minus true CrIS %s std dev', band));
-  legend('unapodized', 'Hamming ap.', 'location', 'north')
-% legend('unapodized', 'Hamming ap.', 'location', 'northeast') 
+  legend('unapodized', 'Hamming ap.', 'location', loc)
 xlabel('wavenumber')
 ylabel('dBT')
 grid on; zoom on
 % export_fig(sprintf('a2cris_diff_%s.pdf', band), '-m2', '-transparent')
 
-% save basic info for combined plots
-save(sprintf('diff_ap_%s', band), 'tcfrq', 'acbt_ap', 'tcbt_ap');
+% plot all data for a selected spectra
+figure(2); clf; j = 1;
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(2,1,1)
+plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
+switch band
+  case 'LW', axis([650, 1095, 200, 310]); loc = 'south';
+  case 'MW', axis([1210, 1605, 210, 310]); loc = 'northeast';
+  case 'SW', axis([2180, 2550, 210, 310]); loc = 'southeast';
+end
+title(sprintf('AIRS and unapodized CrIS %s profile %d', band, j));
+legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', 'location', loc)
+ylabel('Tb, K')
+grid on; zoom on
+
+subplot(2,1,2)
+plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
+switch band
+  case 'LW', axis([660, 680, 200, 260]); loc = 'northeast';
+  case 'MW', axis([1320, 1350, 210, 290]); loc = 'southwest';
+  case 'SW', axis([2320, 2360, 210, 260]); loc = 'south';
+end
+title(sprintf('AIRS and CrIS %s profile %d, detail', band, j));
+legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', 'location', loc)
+xlabel('wavenumber'); ylabel('Tb, K')
+grid on; zoom on
+% export_fig(sprintf('a2cris_spec_%s.pdf', band), '-m2', '-transparent')
 
 return
 
@@ -158,3 +157,4 @@ ylabel('dTb')
 grid on; zoom on
 % export_fig(sprintf('a2cris_interp_%s.pdf', band), '-m2', '-transparent')
 % saveas(gcf, sprintf('a2cris_interp_%s.pdf', band), 'png')
+

@@ -1,6 +1,10 @@
 %
 % a2cris_loop -- call airs2cris in chunks, for large files
 %
+% typically called with hamming apodization off, since that can be
+% applied later as needed.  But statistical correction (scorr = 1)
+% always includes hamming apodization, even if hapod is not set.
+%
 
 addpath ../source
 addpath ../h4tools
@@ -22,6 +26,7 @@ k = 200;
 
 opt1 = struct;
 opt1.hapod = 0;                % flag for Hamming apodization
+opt1.scorr = 0;                % flag for statistical correction
 opt1.dvb = 0.1;                % deconvolution frequency step
 opt1.bfile = 'bconv_tmp.mat';  % deconvolution temp file
 
@@ -54,4 +59,6 @@ bfrq = opt2.bfrq;
 % save acris_cloudy crad cfrq brad bfrq
 % save acrHR_fit49 crad cfrq brad bfrq
   save acris_fit49 crad cfrq brad bfrq
+% save ac_ap_fit49 crad cfrq brad bfrq
+% save ac_cc_fit49 crad cfrq brad bfrq
 

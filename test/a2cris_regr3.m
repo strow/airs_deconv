@@ -1,10 +1,10 @@
 %
-% a2cris_regr2 - AIRS to CrIS Tb regression corrrection
+% a2cris_regr3 - AIRS to CrIS radiance regression corrrection
 %
-% uses data from conv_loop1 and a2cris_loop;
+% uses data from conv_loop1 and a2cris_loop
 %
-% dependent set 7377 profile cloudy, independent set 49 fitting
-% profiles
+% dependent and independents sets of roughly equal size are chosen
+% at random from the 7377 profile cloudy set
 %
 
 addpath ../source
@@ -13,41 +13,42 @@ addpath /home/motteler/matlab/export_fig
 % addpath /asl/matlib/h4tools
 
 % load radiance data
-d1 = load('cris_cloudy');   % true cris big cloudy set
-d2 = load('acris_cloudy');  % airs cris big cloudy set
-d3 = load('cris_fit49');    % true cris 49 fitting profiles
-d4 = load('acris_fit49');   % airs cris 49 fitting profiles
+d1 = load('cris_cloudy');   % true cris
+d2 = load('acris_cloudy');  % airs cris
 
 % set band
-band = 'SW';
+band = 'MW';
 switch band
-  case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;
-  case 'MW', tcfrq = d1.frqMW; tcdep = d1.radMW; tcind = d3.radMW;
-  case 'SW', tcfrq = d1.frqSW; tcdep = d1.radSW; tcind = d3.radSW;  
+  case 'LW', tcrad = d1.radLW;  tcfrq = d1.frqLW;
+  case 'MW', tcrad = d1.radMW;  tcfrq = d1.frqMW;
+  case 'SW', tcrad = d1.radSW;  tcfrq = d1.frqSW;
 end
+acrad = d2.crad;   
 acfrq = d2.cfrq;
-acdep = d2.crad;   
-acind = d4.crad;   
-clear d1 d2 d3 d4
+clear d1 d2
 
 % get the channel intersection
 [tci, aci] = seq_match(tcfrq, acfrq);
-tcfrq = tcfrq(tci); tcdep = tcdep(tci, :); tcind = tcind(tci, :);  
-acfrq = acfrq(aci); acdep = acdep(aci, :); acind = acind(aci, :);  
-[nchan, ndep] = size(tcdep);
-[nchan, nind] = size(tcind);
+tcrad = tcrad(tci, :);  tcfrq = tcfrq(tci);
+acrad = acrad(aci, :);  acfrq = acfrq(aci);
+[nchan, nobs] = size(tcrad);
 
 % optional apodization
-  tcdep = hamm_app(tcdep);
-  acdep = hamm_app(acdep);
-  tcind = hamm_app(tcind);
-  acind = hamm_app(acind);
+tcrad = hamm_app(tcrad);
+acrad = hamm_app(acrad);
 
-% get brightness temps
-tcdep = real(rad2bt(tcfrq, tcdep));
-acdep = real(rad2bt(acfrq, acdep));
-tcind = real(rad2bt(tcfrq, tcind));
-acind = real(rad2bt(acfrq, acind));
+% split into dependent and independent sets
+% load rstate
+  rstate = rng;
+rng(rstate)
+idep = logical(randi([0,1], [1, nobs]));
+iind = ~idep;
+acdep = acrad(:, idep);  % AIRS CrIS dependent set
+acind = acrad(:, iind);  % AIRS CrIS independent set
+tcdep = tcrad(:, idep);  % true CrIS dependent set
+tcind = tcrad(:, iind);  % true CrIS independent set
+[~, ndep] = size(acdep);
+[~, nind] = size(acind);
 
 % mean and std of differences
 mdifdep = mean(acdep - tcdep, 2);
@@ -79,6 +80,16 @@ for i = 1 : nchan
   Pcor3(i, :) = Ptmp;
 end
 
+% convert to brightness temps
+tcdep = real(rad2bt(tcfrq, tcdep));
+tcind = real(rad2bt(tcfrq, tcind));
+cordep1 = real(rad2bt(tcfrq, cordep1));
+corind1 = real(rad2bt(tcfrq, corind1));
+cordep2 = real(rad2bt(tcfrq, cordep2));
+corind2 = real(rad2bt(tcfrq, corind2));
+cordep3 = real(rad2bt(tcfrq, cordep3));
+corind3 = real(rad2bt(tcfrq, corind3));
+
 % residuals of bias correction (dep is zero)
 mcordep1 = mean(cordep1 - tcdep, 2);
 mcorind1 = mean(corind1 - tcind, 2);
@@ -99,9 +110,9 @@ figure(1); clf
 subplot(2,1,1)
 plot(tcfrq, mcorind1, tcfrq, mcorind2, tcfrq, mcorind3)
 switch band
-  case 'LW', axis([650, 1100, -6e-2, 6e-2])
-  case 'MW', axis([1200, 1620, -0.02, 0.02])
-  case 'SW', axis([2180, 2550, -0.1, 0.1])
+  case 'LW', axis([650, 1100, -2e-3, 2e-3])
+  case 'MW', axis([1200, 1620, -1e-3, 1e-3])
+  case 'SW', axis([2180, 2550, -3e-3, 3e-3])
 end
 title('mean residual corrected independent set')
 legend('bias correction', 'linear correction', 'quadratic correction', ...
@@ -112,9 +123,9 @@ grid on
 subplot(2,1,2)
 plot(tcfrq, scorind1, tcfrq, scorind2, tcfrq, scorind3)
 switch band
-  case 'LW', axis([650, 1100, 0, 0.08])
-  case 'MW', axis([1200, 1620, 0, 0.05])
-  case 'SW', axis([2180, 2550, 0, 0.2])
+  case 'LW', axis([650, 1100, 0, 0.1])
+  case 'MW', axis([1200, 1620, 0, 0.1])
+  case 'SW', axis([2180, 2550, 0, 0.1])
 end
 legend('bias correction', 'linear correction', 'quadratic correction', ...
        'location', 'north')

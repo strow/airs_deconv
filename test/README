@@ -8,20 +8,34 @@ demo2 - CrIS to AIRS translation demo
 tests
 ------
 
-rad_svd2    - SVD and associated stats on sample radiance sets
+a2cris_regr1 - AIRS to CrIS Tb regression corrrection, dependent
+   and independents sets of roughly equal size are chosen at random
+   from the 7377 profile cloudy set
+
+a2cris_regr2 - AIRS to CrIS Tb regression corrrection, dependent
+   set 7377 profile cloudy, independent set 49 fitting profiles
+
+a2cris_regr3 - AIRS to CrIS radiance regression corrrection.
+   dependent and independents sets of roughly equal size are chosen
+   at random from the 7377 profile cloudy set
+
+a2cris_test1 - compare AIRS CrIS with true CrIS, derived from
+   a2cris_stat1 and cris_test5, uses convolved data from conv_loop
+   and a2cris_loop
+
+a2cris_test2 - compare AIRS CrIS with true CrIS, test airs2cris
+   statistical correction; uses convolved data from conv_loop1 and
+   a2cris_loop
+
 decon_test1 - compare true decon with decon AIRS
+nedn_test1  - noise estimate for the AIRS to CrIS translation
+rad_svd2    - SVD and associated stats on sample radiance sets
 
 L1d_test1  - basic test of L1d_conv
 L1d_test2  - try deconvolution to the L1d SRF set
 L1d_test3  - compare L1c to L1d de/recon vs regression
 L1d_regr1  - regression corrrection for L1c to L1d decon/recon
 L1d_bbody  - AIRS L1c to L1d with bbody correction
-
-a2cris_test1 - compare AIRS CrIS with true CrIS
-a2cris_plot1 - combined apodized resiual plots from a2cris_tes1
-
-a2cris_regr1 - regression corrrection for AIRS to CrIS decon/recon
-a2cris_regr2 - AIRS L1c to CrIS direct regression tests and plots
 
 a2cris_loop - call airs2cris in chunks, for large files
 conv_loop1  - AIRS and CrIS convolution of kcarta radiances
@@ -33,6 +47,8 @@ L1c_synth  - plot and save a list of AIRS L1c synthetic channels
 plot_Binv  - plot sample deconvolution basis functions
 plot_SRF1  - plot sample SRFs and columns of inverse SRF matrix
 plot_SRF2  - plot sample AIRS SRFs with gauss fit and channel spacing
+
+a2cris_plot1 - combined apodized residual plots from a2cris_test1
 
 functions
 ----------
@@ -66,11 +82,9 @@ cris_test4 - processes all the fitting profiles and plots the means
 cris_test7 - compare deconvolved AIRS with 0.2 cm-1 sinc ILS
 cris_test6 - AIRS to CrIS translation benchmark
 
-
 AIRS-specific tests
 --------------------
 CrIS to AIRS and AIRS channel shift tests, see the README there
-
 
 Functions and Support
 ----------------------
