@@ -1,8 +1,8 @@
 %
 % a2cris_test2 - compare AIRS CrIS with true CrIS
 %
-% test airs2cris statistical correction; uses convolved data 
-% from conv_loop1 and a2cris_loop
+% 3-band summary plots of the airs2cris statistical correction,
+% uses convolved data from conv_loop1 and a2cris_loop
 %
 
 addpath ../source
@@ -41,11 +41,10 @@ ccbt = real(rad2bt(ccfrq, ccrad));
 
 % 3-band mean of AIRS CrIS minus true CrIS
 figure(1); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
-% axis([650, 1095, -0.04, 0.04])
-  axis([650, 1095, -0.2, 0.2])
+axis([650, 1100, -0.2, 0.2])
 title('LW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'north')
 ylabel('dBT')
@@ -53,8 +52,7 @@ grid on; zoom on
 
 subplot(3,1,2)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
-% axis([1210, 1605, -0.01, 0.01])
-  axis([1210, 1605, -0.2, 0.2])
+axis([1210, 1610, -0.2, 0.2])
 title('MW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'north')
 ylabel('dBT')
@@ -62,13 +60,37 @@ grid on; zoom on
 
 subplot(3,1,3)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
-% axis([2180, 2550, -0.06, 0.06])
-  axis([2180, 2550, -0.2, 0.2])
+axis([2180, 2550, -0.2, 0.2])
 title('SW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'northeast')
 xlabel('wavenumber')
 ylabel('dBT')
 grid on; zoom on
+% export_fig(sprintf('a2cris_regr_all.pdf', band), '-m2', '-transparent')
+
+% 3-band mean of corrected residuals, 
+figure(2); clf
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(3,1,1)
+plot(tcfrq, mean(ccbt-tcbt,2))
+axis([650, 1100, -0.04, 0.04])
+title('corrected AIRS CrIS minus true CrIS mean')
+ylabel('dBT')
+grid on; zoom on
+
+subplot(3,1,2)
+plot(tcfrq, mean(ccbt-tcbt,2))
+axis([1210, 1610, -0.01, 0.01])
+ylabel('dBT')
+grid on; zoom on
+
+subplot(3,1,3)
+plot(tcfrq, mean(ccbt-tcbt,2))
+axis([2180, 2550, -0.06, 0.06])
+xlabel('wavenumber')
+ylabel('dBT')
+grid on; zoom on
+% export_fig(sprintf('a2cris_regr_all.pdf', band), '-m2', '-transparent')
 
 return
 

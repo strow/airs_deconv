@@ -19,13 +19,19 @@ a2cris_regr3 - AIRS to CrIS radiance regression corrrection.
    dependent and independents sets of roughly equal size are chosen
    at random from the 7377 profile cloudy set
 
+a2cris_regr4 - AIRS L1c to CrIS direct regression test and plots,
+   uses data from conv_loop4
+
+a2cris_regr5 - AIRS L1c to CrIS principal component regression test
+   and plots, derived from a2cris_regr, uses data from conv_loop4
+
 a2cris_test1 - compare AIRS CrIS with true CrIS, derived from
    a2cris_stat1 and cris_test5, uses convolved data from conv_loop
    and a2cris_loop
 
-a2cris_test2 - compare AIRS CrIS with true CrIS, test airs2cris
-   statistical correction; uses convolved data from conv_loop1 and
-   a2cris_loop
+a2cris_test2 - compare AIRS CrIS with true CrIS; 3-band summary
+   plots of the airs2cris statistical correction, uses convolved
+   data from conv_loop1 and a2cris_loop
 
 decon_test1 - compare true decon with decon AIRS
 nedn_test1  - noise estimate for the AIRS to CrIS translation
@@ -48,8 +54,6 @@ plot_Binv  - plot sample deconvolution basis functions
 plot_SRF1  - plot sample SRFs and columns of inverse SRF matrix
 plot_SRF2  - plot sample AIRS SRFs with gauss fit and channel spacing
 
-a2cris_plot1 - combined apodized residual plots from a2cris_test1
-
 functions
 ----------
 
@@ -61,14 +65,9 @@ band_regr  - banded regression, solve R * B = C for banded R
 more AIRS to CrIS 
 ------------------
 
-a2cris_test1 - compare AIRS CrIS with true CrIS
-a2cris_plot1 - combined residual plots from a2cris_test1
-a2cris_loop  - call airs2cris in chunks, for large files
-
 a2cris_stat1 - AIRS to CrIS stats for big cloudy and clear sets
 a2cris_stat2 - AIRS to CrIS stats on Tsurf - Tb900cm-1 subsets
 a2cris_stat3 - AIRS to CrIS stats ozone vs residuals
-a2cris_stat4 - AIRS to CrIS regression tests
 
 cris_test5 - processes all the fitting profiles and plots the means
     of residuals.  Derived frim cris_test4, drops the interpolation

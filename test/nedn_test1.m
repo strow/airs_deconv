@@ -17,8 +17,11 @@ clear d
 
 % AIRS to CrIS translation options
 opt1 = struct;
-opt1.hapod = 1;
+opt1.hapod = 0;
 opt1.resmode = 'lowres';
+
+% apodized CrIS noise
+% nedn_ccast = nedn_ccast * 0.63;
 
 % AIRS SRF file (for airs2cris)
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';

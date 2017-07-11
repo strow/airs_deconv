@@ -19,7 +19,7 @@ d3 = load('cris_fit49');    % true cris 49 fitting profiles
 d4 = load('acris_fit49');   % airs cris 49 fitting profiles
 
 % set band
-band = 'SW';
+band = 'LW';
 switch band
   case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;
   case 'MW', tcfrq = d1.frqMW; tcdep = d1.radMW; tcind = d3.radMW;
@@ -131,13 +131,13 @@ figure(2)
 set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, Pcor2(:, 1))
-% axis([650, 1100, 0.995, 1.005])
+axis([650, 1100, 0.995, 1.005])
 title('"a" (scaling) weights')
 grid on
 
 subplot(2,1,2)
 plot(tcfrq, Pcor2(:, 2))
-% axis([650, 1100, -1, 1])
+axis([650, 1100, -1, 1])
 title('"b" (bias) weights')
 xlabel('wavenumber')
 grid on

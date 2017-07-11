@@ -1,5 +1,5 @@
 %
-% a2cris_regr4 - AIRS L1c to CrIS direct regression test and plots
+% a2cris_regr4 - AIRS L1c to CrIS PC regression test and plots
 %
 % uses data from conv_loop4
 %   nkcd  - dependent set size
@@ -43,7 +43,7 @@ d1 = load('int_L1c_NEdN.mat');
 nedn_airs = double(d1.nedn);
 % freq_airs = d1.v1c;
 
-% add noise to the true AIRS dependent set
+% add noise to the dependent set
 % a1Crd = a1Crd + randn(na1C, nkcd) .* (nedn_airs * ones(1, nkcd));
 
 % trim CrIS bands to the intersection 
@@ -54,32 +54,43 @@ ncMW = length(vcMW); ncSW = length(vcSW);
 cMWrd = cMWrd(jMW, :); cMWri = cMWri(jMW, :);
 cSWrd = cSWrd(jSW, :); cSWri = cSWri(jSW, :);
 
-% % split the big dependent set 
-% % rstate = rng; save rstate rstate
-% load rstate
-% rng(rstate)
-% % ixd = rand(1, nkcd) > 0.1;
-% ixd = logical(randi([0,1], [1, nkcd]));
-% ixi = ~ixd;
-% nkcd = sum(ixd);
-% nkci = sum(ixi); 
-% 
-% a1Cr = a1Crd; a1Crd = a1Cr(:, ixd);  a1Cri = a1Cr(:, ixi);
-% cLWr = cLWrd; cLWrd = cLWr(:, ixd);  cLWri = cLWr(:, ixi);
-% cMWr = cMWrd; cMWrd = cMWr(:, ixd);  cMWri = cMWr(:, ixi);
-% cSWr = cSWrd; cSWrd = cSWr(:, ixd);  cSWri = cSWr(:, ixi); 
-% clear a1Cr cLWr cMWr cSWr
-
 % AIRS spans for CrIS bands
 iLW = find(vcLW(1)-4 <= va1C & va1C <= vcLW(end)+4);
 iMW = find(vcMW(1)-4 <= va1C & va1C <= vcMW(end)+4);
 iSW = find(vcSW(1)-4 <= va1C & va1C <= vcSW(end)+4);
 
+% LW SVDs
+[aU,~,~] = svd(a1Crd(iLW,:),0);
+[cU,~,~] = svd(cLWrd, 0);
+aU = aU(:, 1:500); % max 1266
+cU = cU(:, 1:500); % max 713
+QLW = (cU' * cLWrd) / (aU' * a1Crd(iLW,:));
+RLW = cU * QLW * aU';
+% RLW =  (cU * cU' * cLWrd) / (aU * aU' * a1Crd(iLW,:));
+
+% MW SVDs
+[aU,~,~] = svd(a1Crd(iMW,:),0);
+[cU,~,~] = svd(cMWrd, 0);
+aU = aU(:, 1:500); % max 692
+cU = cU(:, 1:320); % max 324
+QMW = (cU' * cMWrd) / (aU' * a1Crd(iMW,:));
+RMW = cU * QMW * aU';
+% RMW =  (cU * cU' * cMWrd) / (aU * aU' * a1Crd(iMW,:));
+
+% SW SVDs
+[aU,~,~] = svd(a1Crd(iSW,:),0);
+[cU,~,~] = svd(cSWrd, 0);
+aU = aU(:, 1:100); % max 377
+cU = cU(:, 1:100); % max 148
+QSW = (cU' * cSWrd) / (aU' * a1Crd(iSW,:));
+RSW = cU * QSW * aU';
+% RSW =  (cU * cU' * cSWrd) / (aU * aU' * a1Crd(iSW,:));
+
 % do the regression
 % RLW = band_regr(a1Crd(iLW,:), cLWrd, va1C(iLW), vcLW, 120);
-RLW = (a1Crd(iLW,:)' \ cLWrd')';
-RMW = (a1Crd(iMW,:)' \ cMWrd')';
-RSW = (a1Crd(iSW,:)' \ cSWrd')';
+% RLW = cLWrd / a1Crd(iLW,:);
+% RMW = cMWrd / a1Crd(iMW,:);
+% RSW = cSWrd / a1Crd(iSW,:);
 
 % apply the regression
 acLWrd = RLW * a1Crd(iLW,:);  acLWri = RLW * a1Cri(iLW,:);
@@ -167,25 +178,26 @@ figure(2); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(vcLW, mdifLWai)
-axis([650, 1100, -2e-2, 2e-2])
+% axis([650, 1100, -2e-2, 2e-2])
+  axis([650, 1100, -5e-2, 5e-2])
 title('apodized direct regression mean residuals')
 ylabel('dTb, K')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(vcMW, mdifMWai)
-axis([1210, 1610, -2e-2, 2e-2])
+% axis([1210, 1610, -2e-2, 2e-2])
+  axis([1210, 1610, -5e-2, 5e-2])
 ylabel('dTb, K')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(vcSW, mdifSWai)
-axis([2180, 2550, -2e-2, 2e-2])
+% axis([2180, 2550, -2e-2, 2e-2])
+  axis([2180, 2550, -2e-1, 2e-1])
 xlabel('wavenumber')
 ylabel('dTb, K')
 grid on; zoom on
-
-% return
 
 %--------------------------
 % plot regression matrices

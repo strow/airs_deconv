@@ -46,7 +46,9 @@ acbt_ap = real(rad2bt(tcfrq, acrad_ap));
 % get band for plots
 band = upper(input('band > ', 's'));
 
-% plot mean and std of AIRS CrIS minus true CrIS
+%-----------------------------------
+% apodized and unapodized residuals 
+%-----------------------------------
 figure(1); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
@@ -76,8 +78,39 @@ ylabel('dBT')
 grid on; zoom on
 % export_fig(sprintf('a2cris_diff_%s.pdf', band), '-m2', '-transparent')
 
-% plot all data for a selected spectra
-figure(2); clf; j = 1;
+%----------------------------------
+% 3-band apodized residual summary
+%----------------------------------
+figure(2); clf
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+subplot(3,1,1)
+plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
+axis([650, 1095, -0.2, 0.2]);
+title('apodized AIRS CrIS minus true CrIS LW mean')
+ylabel('dBT')
+grid on; zoom on
+
+subplot(3,1,2)
+plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
+axis([1210, 1605, -0.2, 0.2]); 
+title('apodized AIRS CrIS minus true CrIS MW mean')
+ylabel('dBT')
+grid on; zoom on
+
+subplot(3,1,3)
+plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
+axis([2180, 2550, -0.2, 0.2]);
+title('apodized AIRS CrIS minus true CrIS SW mean')
+ylabel('dBT')
+grid on; zoom on
+ylabel('dBT')
+grid on; zoom on
+% export_fig('a2cris_diff_all.pdf', '-m2', '-transparent')
+
+%---------------------------------
+% all data for a selected spectra
+%---------------------------------
+figure(3); clf; j = 1;
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
@@ -128,8 +161,8 @@ i2rad = i2rad(ici, :);  i2frq = i2frq(ici);
 i1bt = real(rad2bt(tcfrq, i1rad));
 i2bt = real(rad2bt(tcfrq, i2rad));
 
-figure(3); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+figure(4); clf
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 
 subplot(2,1,1)
 y1 = mean(i1bt - tcbt, 2); 

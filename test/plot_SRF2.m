@@ -37,7 +37,7 @@ vg = v1 : 0.02 : v2;
 z = sup_gauss(vg, vcen, vwid);
 
 figure(1); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(sfreq, stmp, vg, z, 'k--', 'linewidth', 2)
 axis([v1, v2, 0, 1.2])
@@ -70,7 +70,7 @@ xlabel('wavenumber')
 ylabel('weight')
 grid on; zoom on
 % saveas(gcf, 'AIRS_sample_SRFs', 'png')
-  export_fig('airs_sample_srfs.pdf', '-m2', '-transparent')
+% export_fig('airs_sample_srfs.pdf', '-m2', '-transparent')
 
 %-------------------------------
 % AIRS FWHM and channel spacing
