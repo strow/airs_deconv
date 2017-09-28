@@ -56,7 +56,6 @@ User Functions
   mksconv1    - create a general-purpose sparse AIRS SRF matrix
   mksconv2    - create a modified SRF matrix for deconvolutions
   seq_match   - find the matching subsequence of two sequences
-  trim_chans  - drop close neighbors from an AIRS channel set
   kc2cris     - convolve kcarta to CrIS channel radiances
 
   mkhamm      - sparse hamming convolution matrix 

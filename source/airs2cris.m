@@ -14,7 +14,6 @@
 % opt1 fields (with defaults) include
 %   hapod  - 0 = unapodized, 1 = Hamming apodization
 %   scorr  - 0 = no correction, 1 = statistical correction
-%   bfile  - 'bconv.mat', inverse temp file cache
 %
 % OUTPUTS
 %   crad   - simulated CrIS radiances, n x k array
@@ -41,10 +40,10 @@
 %   For most applications both input and output opts fields can be
 %   omitted.
 %
-%   Calculating the pseudo-inverse matrix for the deconvolution is
-%   relatively slow so this data is saved in a file.  The matrix is
-%   a function of the SRF tabulation file, channel frequencies, and
-%   deconvolution grid step, and is updated if any of these change.
+%   Calculating the pseudo-inverse is slow, so this data is saved 
+%   in a persistent struct.  The pseudo-inverse is a function of the
+%   SRF tabulation file, channel frequencies, and deconvolution grid
+%   step, and is updated if any of these change.
 %
 % COPYRIGHT
 %   Copyright 2012-2013, Atmospheric Spectroscopy Laboratory.  
@@ -60,7 +59,6 @@ function [crad, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1)
 dvb = 0.1;  % deconv grid step size
 hapod = 0;  % no Hamming apodization
 scorr = 0;  % no statistical correction
-bfile = 'bconv.mat';     % inverse matrix cache file
 cfile = 'lin_corr.mat';  % linear correction weights
 
 % band and filter parameters
@@ -75,7 +73,6 @@ if nargin == 4
   if isfield(opt1, 'dvb'), dvb = opt1.dvb; end
   if isfield(opt1, 'hapod'), hapod = opt1.hapod; end
   if isfield(opt1, 'scorr'), scorr = opt1.scorr; end
-  if isfield(opt1, 'bfile'), bfile = opt1.bfile; end
   if isfield(opt1, 'cfile'), cfile = opt1.cfile; end
   if isfield(opt1, 'pL'), pL = opt1.pL; end
   if isfield(opt1, 'pH'), pH = opt1.pH; end
@@ -103,7 +100,7 @@ crad = [];  cfrq = [];
 arad = arad(ifrq, :);
 
 % deconvolve the AIRS radiances
-[brad, bfrq] = airs_decon(arad, afrq, sfile, bfile, dvb);
+[brad, bfrq] = airs_decon(arad, afrq, sfile, dvb);
 
 % loop on CrIS bands
 for j = 1 : 3
@@ -160,7 +157,6 @@ if nargout == 3
   opt2.bfrq = bfrq;   % deconvolved frequencies
   opt2.afrq = afrq;   % sorted AIRS frequencies
   opt2.dvb = dvb;
-  opt2.bfile = bfile;
   opt2.hapod = hapod;
   opt2.pL = pL;
   opt2.pH = pH;

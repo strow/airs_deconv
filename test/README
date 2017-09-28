@@ -61,7 +61,8 @@ sup_gauss  - higher order gaussian
 mkBconv    - build a sparse gaussian convolution matrix
 L1d_conv   - build a sparse AIRS L1d convolution matrix
 band_regr  - banded regression, solve R * B = C for banded R
-
+trim_chans - drop close neighbors from an AIRS channel set
+ 
 more AIRS to CrIS 
 ------------------
 

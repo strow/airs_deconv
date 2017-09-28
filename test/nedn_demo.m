@@ -18,6 +18,9 @@ nednSW = mean(d1.nSW, 3);
 nedn_ccast = [nednLW; nan(1,9); nednMW; nan(1,9); nednSW];
 freq_ccast = [d1.vLW; nan; d1.vMW; nan; d1.vSW];
 
+% option for apodized noise 
+nedn_ccast = 0.63 * nedn_ccast;
+
 figure(1); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 set(gcf, 'DefaultAxesColorOrder', fovcolors);
