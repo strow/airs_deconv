@@ -17,7 +17,6 @@
 
 % set paths to asl libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 
 % test params
@@ -105,7 +104,6 @@ else psf = 2.0; app = 'noap'; end
 
 % AIRS and CrIS spectra
 figure(1); clf; j = 1; 
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 plot(frq1, bt1(:,j), frq2, bt2(:,j), bfrq, bt3(:,j), frq4, bt4(:,j))
 ax(1)=pv1; ax(2)=pv2; ax(3)=180; ax(4)=320; axis(ax)
 legend('true CrIS', 'true AIRS', 'AIRS dec', 'AIRS CrIS', ...
@@ -114,12 +112,10 @@ xlabel('wavenumber'); ylabel('brighness temp')
 title(sprintf('AIRS 1C and CrIS %s profile %d', band, j));
 grid on; zoom on
 pname = sprintf('airs_cris_spec_%s_%s', band, app);
-% saveas(gcf, pname, 'png')
-% export_fig([pname, '.pdf'], '-m2', '-transparent')
+% saveas(gcf, pname, 'fig')
 
 % AIRS CrIS minus true CrIS mean
 figure(2); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 [i1, i4] = seq_match(frq1, frq4);
 plot(frq1(i1), mean(bt4(i4,:) - bt1(i1,:), 2))
@@ -136,6 +132,5 @@ xlabel('wavenumber'); ylabel('dBT')
 title(sprintf('AIRS CrIS minus true CrIS %s std', band));
 grid on; zoom on
 pname = sprintf('airs_cris_diff_%s_%s', band, app);
-% saveas(gcf, pname, 'png')
-% export_fig([pname, '.pdf'], '-m2', '-transparent')
+% saveas(gcf, pname, 'fig')
 

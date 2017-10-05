@@ -1,16 +1,21 @@
 
-airs2cris -- an quick overview of the AIRS to CrIS translation
+decon_paper - journal paper on AIRS deconvolution and the AIRS to
+CrIS translation
 
-decon -- a more detailed writeup of the AIRS deconvolution and IASI
-to CrIS, IASI to AIRS, AIRS to CrIS, and CrIS to AIRS translations,
+decon_atbd - ATBD and notes for the IASI to CrIS, IASI to AIRS, AIRS
+to CrIS, and CrIS to AIRS translations
 
-finterp.pdf -- the basics of interferometric interpolation.
+finterp.pdf - the basics of interferometric interpolation.
 
 
-Although most relevant material should now be in the decon writeup,
-and they are not generally available, the asl blog posts give a good
-overview of how these ideas were developed.  These are listed in
-chronological order, with the second group probably the most useful.
+older notes and discussion
+---------------------------
+
+zold/airs2cris -- an overview of the AIRS to CrIS translation
+
+The old asl blog posts give a good overview of how these ideas were
+developed.  These are listed below in chronological order, with the
+second group probably the most useful.
 
   http://hyperearth.wordpress.com/2013/07/24/airs-to-cris-translations/
   http://hyperearth.wordpress.com/2013/11/04/airs-to-cris-translation-update/

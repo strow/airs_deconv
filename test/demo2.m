@@ -4,7 +4,6 @@
 
 % set paths to asl libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 
 % get sample CrIS radiances
