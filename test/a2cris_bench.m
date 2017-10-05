@@ -37,19 +37,19 @@ for j = 1 : k : nobs
   
   ix = j : min(j+k-1, nobs);
 
-  [rtmp, cfrq, opt2] = airs2crisX(d1.arad(:, ix), d1.afrq, sfile, opt1);
+  [rtmp, cfrq, opt2] = airs2cris(d1.arad(:, ix), d1.afrq, sfile, opt1);
 
-  [rtmp2, cfrq2, opt3] = airs2cris(d1.arad(:, ix), d1.afrq, sfile, opt1);
+% [rtmp2, cfrq2, opt3] = airs2cris(d1.arad(:, ix), d1.afrq, sfile, opt1);
 
-  if ~isequal(rtmp, rtmp2) || ~isequal(cfrq, cfrq2)
-    keyboard
-  end
+% if ~isequal(rtmp, rtmp2) || ~isequal(cfrq, cfrq2)
+%   keyboard
+% end
 
-  if ~isequal(opt2.brad, opt3.brad) || ...
-     ~isequal(opt2.bfrq, opt3.bfrq) || ...
-     ~isequal(opt2.afrq, opt3.afrq)
-    keyboard
-  end
+% if ~isequal(opt2.brad, opt3.brad) || ...
+%    ~isequal(opt2.bfrq, opt3.bfrq) || ...
+%    ~isequal(opt2.afrq, opt3.afrq)
+%   keyboard
+% end
 
   if j == 1
     [m, ~] = size(rtmp);

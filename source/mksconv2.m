@@ -26,8 +26,6 @@
 %   matched, if the difference is less than 0.04 1/cm.  tfreq may be
 %   shorter than cfreq if there is no match for some channels.
 %
-%   mksconv2 calls seq_match and the 2008 version of h4sdread.
-%
 % AUTHOR
 %   H. Motteler, 20 June 2013
 %
@@ -40,18 +38,11 @@ if nargin < 3
 end
 
 % read the srf data
-[alist, fattr] = h4sdread(sfile);
-
-for i = 1 : length(alist)
-  switch alist{i}{1}
-    case 'chanid', chanid = double(alist{i}{2})';
-    case 'freq',   tfreq   = double(alist{i}{2})';
-    case 'fwgrid', fwgrid = double(alist{i}{2})';
-    case 'srfval', srfval = double(alist{i}{2})';
-    case 'width',  width  = double(alist{i}{2})';
-  end
-end
-clear alist fattr
+chanid = double(hdfread(sfile, 'chanid'));
+tfreq  = double(hdfread(sfile, 'freq'));
+fwgrid = double(hdfread(sfile, 'fwgrid'));
+srfval = double(hdfread(sfile, 'srfval'));
+width  = double(hdfread(sfile, 'width'));
 
 % sort and match channel sets
 cfreq = sort(cfreq(:));
