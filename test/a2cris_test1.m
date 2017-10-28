@@ -50,7 +50,6 @@ band = upper(input('band > ', 's'));
 % apodized and unapodized residuals 
 %-----------------------------------
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(acbt_ap-tcbt_ap,2))
 switch band
@@ -76,13 +75,12 @@ title(sprintf('AIRS CrIS minus true CrIS %s std dev', band));
 xlabel('wavenumber')
 ylabel('dBT')
 grid on; zoom on
-% export_fig(sprintf('a2cris_diff_%s.pdf', band), '-m2', '-transparent')
+saveas(gcf, sprintf('a2cris_diff_%s', band), 'fig')
 
 %----------------------------------
 % 3-band apodized residual summary
 %----------------------------------
 figure(2); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
 axis([650, 1095, -0.2, 0.2]);
@@ -105,13 +103,12 @@ ylabel('dBT')
 grid on; zoom on
 ylabel('dBT')
 grid on; zoom on
-% export_fig('a2cris_diff_all.pdf', '-m2', '-transparent')
+saveas(gcf, 'a2cris_diff_all', 'fig')
 
 %---------------------------------
 % all data for a selected spectra
 %---------------------------------
 figure(3); clf; j = 1;
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tafrq, tabt(:,j), adfrq, adbt(:,j), tcfrq, tcbt(:,j), acfrq, acbt(:,j))
 switch band
@@ -135,13 +132,12 @@ title(sprintf('AIRS and CrIS %s profile %d, detail', band, j));
 legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', 'location', loc)
 xlabel('wavenumber'); ylabel('Tb, K')
 grid on; zoom on
-% export_fig(sprintf('a2cris_spec_%s.pdf', band), '-m2', '-transparent')
-
-return
+saveas(gcf, sprintf('a2cris_spec_%s', band), 'fig')
 
 %---------------------
 % interpolation tests
 %---------------------
+if ~strcmp(band, 'LW'), return, end
 
 % basic interpolation
 i1rad = interp1(tafrq, tarad, tcfrq, 'spline', 'extrap');
@@ -162,8 +158,6 @@ i1bt = real(rad2bt(tcfrq, i1rad));
 i2bt = real(rad2bt(tcfrq, i2rad));
 
 figure(4); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-
 subplot(2,1,1)
 y1 = mean(i1bt - tcbt, 2); 
 y2 = mean(i2bt - tcbt, 2); 
@@ -188,6 +182,5 @@ legend('interpolation', 'AIRS interp/CrIS conv', 'AIRS decon/CrIS conv', ...
 xlabel('wavenumber')
 ylabel('dTb')
 grid on; zoom on
-% export_fig(sprintf('a2cris_interp_%s.pdf', band), '-m2', '-transparent')
-% saveas(gcf, sprintf('a2cris_interp_%s.pdf', band), 'png')
+saveas(gcf, sprintf('a2cris_interp_%s', band), 'fig')
 

@@ -23,7 +23,6 @@
 
 % set paths to libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 
@@ -122,7 +121,6 @@ mcor3CDbi = mean(cor3CDbi - tDbi, 2);
 scor3CDbi = std(cor3CDbi - tDbi, 0, 2);
 
 figure(1); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(v_L1d, mdifCDbi, v_L1d, mcor2CDbi)
   axis([650, 2650, -0.2, 0.2]) %  700 res, fit49 ind
@@ -142,16 +140,15 @@ title('std residual corrected independent set')
 ylabel('dTb')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, 'L1d_cor1_1200', 'png')
-% saveas(gcf, 'L1d_cor1_700', 'png')
+% saveas(gcf, 'L1d_cor1_1200', 'fig')
+  saveas(gcf, 'L1d_cor1_700', 'fig')
 
 figure(2); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(v_L1d, mcor1CDbi, v_L1d, mcor2CDbi, v_L1d, mcor3CDbi);
 % axis([650, 2650, -1.5e-3, 1.5e-3])
-% axis([650, 2650, -0.1, 0.1])  %  700 res, fit49 ind
-  axis([650, 2650, -0.3, 0.3])  % 1200 res, fit49 ind
+  axis([650, 2650, -0.1, 0.1])  %  700 res, fit49 ind
+% axis([650, 2650, -0.3, 0.3])  % 1200 res, fit49 ind
 title('mean residual corrected independent set')
 legend('bias correction', 'linear correction', 'quadratic correction', ...
        'location', 'north')
@@ -160,16 +157,18 @@ grid on
 
 subplot(2,1,2)
 plot(v_L1d, scor1CDbi, v_L1d, scor2CDbi, v_L1d, scor3CDbi);
-% axis([650, 2650, 0, 0.2])   %  700 res, fit49 ind
-  axis([650, 2650, 0, 0.6])   % 1200 res, fit49 ind
+  axis([650, 2650, 0, 0.2])   %  700 res, fit49 ind
+% axis([650, 2650, 0, 0.6])   % 1200 res, fit49 ind
 legend('bias correction', 'linear correction', 'quadratic correction', ...
        'location', 'north')
 title('std residual corrected independent set')
 ylabel('dTb')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, 'L1d_cor2_1200', 'png')
-% saveas(gcf, 'L1d_cor2_700', 'png')
+% saveas(gcf, 'L1d_cor2_1200', 'fig')
+% saveas(gcf, 'L1d_cor2_700', 'fig')
+
+return
 
 %-------------------------
 % direct regression tests
@@ -199,13 +198,12 @@ sreg2Dbd = std(reg2Dbd - tDbd, 0, 2);
 sreg2Dbi = std(reg2Dbi - tDbi, 0, 2);
 
 figure(3); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 % plot(v_L1d, mreg2Dbi, v_L1d, mreg1Dbi)
   plot(v_L1d, mreg1Dbi)
 % axis([650, 2650, -1.5e-5, 1.5e-5])
-% axis([650, 2650, -0.02, 0.02])  % 700 res, fit49 ind
-  axis([650, 2650, -0.15, 0.15])    % 1200 res, fit49 ind
+  axis([650, 2650, -0.02, 0.02])   % 700 res, fit49 ind
+% axis([650, 2650, -0.15, 0.15])   % 1200 res, fit49 ind
 title('mean regression residual independent set')
 % legend('Tb regression', 'rad regression')
   legend('radiance regression')
@@ -215,20 +213,19 @@ grid on
 subplot(2,1,2)
 plot(v_L1d, sreg1Dbi)
 % axis([650, 2650, 0, 0.001])
-% axis([650, 2650, 0, 0.01])   % 700 res, fit49 ind
-  axis([650, 2650, 0, 0.04])    % 1200 res, fit49 ind
+  axis([650, 2650, 0, 0.01])   % 700 res, fit49 ind
+% axis([650, 2650, 0, 0.04])   % 1200 res, fit49 ind
 title('std regression residual independent set')
   legend('radiance regression')
 ylabel('dTb')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, 'L1d_regr_1200', 'png')
-% saveas(gcf, 'L1d_regr_700', 'png')
+% saveas(gcf, 'L1d_regr_1200', 'fig')
+% saveas(gcf, 'L1d_regr_700', 'fig')
   
 return
 
 figure(4)
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, Pcor2(:, 1))
 % axis([650, 1100, 0.995, 1.005])

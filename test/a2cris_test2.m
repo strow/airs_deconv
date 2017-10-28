@@ -39,9 +39,8 @@ acbt = real(rad2bt(acfrq, acrad));
 adbt = real(rad2bt(adfrq, adrad));
 ccbt = real(rad2bt(ccfrq, ccrad));
 
-% 3-band mean of AIRS CrIS minus true CrIS
+% 3-band corrected and uncorrected mean residuals 
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
 axis([650, 1100, -0.2, 0.2])
@@ -66,11 +65,10 @@ legend('uncorrected', 'corrected', 'location', 'northeast')
 xlabel('wavenumber')
 ylabel('dBT')
 grid on; zoom on
-% export_fig(sprintf('a2cris_regr_all.pdf', band), '-m2', '-transparent')
+saveas(gcf, 'a2cris_regr_all', 'fig')
 
-% 3-band mean of corrected residuals, 
+% 3-band corrected mean residual zoom
 figure(2); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(tcfrq, mean(ccbt-tcbt,2))
 axis([650, 1100, -0.04, 0.04])
@@ -90,13 +88,12 @@ axis([2180, 2550, -0.06, 0.06])
 xlabel('wavenumber')
 ylabel('dBT')
 grid on; zoom on
-% export_fig(sprintf('a2cris_regr_all.pdf', band), '-m2', '-transparent')
+saveas(gcf, 'ap_decon_corr', 'fig')
 
 return
 
 % 3-band std of AIRS CrIS minus true CrIS
 figure(2); clf
-  set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(tcfrq, std(acbt-tcbt,0,2), tcfrq, std(ccbt-tcbt,0,2))
 axis([650, 1095, 0, 0.1])

@@ -49,7 +49,6 @@ toc
 CtoD = B1 * Ainv;
 
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(vArow, Ainv(1001:1002, :), 'linewidth', 2)
 axis([740, 752, -2.4, 2.9])
@@ -67,7 +66,7 @@ legend('745.30 cm-1', '745.84 cm-1', '746.37 cm-1', ...
 xlabel('AIRS L1c wavenumber')
 ylabel('weight')
 grid on; zoom on
-% export_fig('airs_decon_basis.pdf', '-m2', '-transparent')
+saveas(gcf, 'airs_decon_basis', 'fig')
 
 return
 
@@ -75,7 +74,6 @@ return
 % load L1c_synth
 
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
   plot(vAcol, Ainv(:, 201:202), vArow, 0, 'ok', 'linewidth', 2)
   axis([697, 706, -2, 3])
 % plot(bfrq, binv(:, 2401:2402), afrq, 0, 'ok', 'linewidth', 2)
@@ -88,5 +86,5 @@ title('sample deconvolution basis functions')
 xlabel('wavenumber')
 ylabel('weight')
 grid on; zoom on
-% export_fig('airs_decon_basis.pdf', '-m2', '-transparent')
+
 

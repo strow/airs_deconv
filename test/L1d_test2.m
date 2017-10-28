@@ -15,7 +15,6 @@
 
 % set paths to libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 
@@ -116,7 +115,6 @@ rms(mean(CtoDbt - trueDbt, 2))
 
 % plot decon residuals
 figure(1); clf; 
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(v_L1d, mean(CtoDbt - trueDbt, 2))
   axis([650, 2700, -0.3, 0.3])
@@ -135,11 +133,10 @@ title('C to D minus true L1d , 49 profile std');
 ylabel('dTb')
 xlabel('wavenumber')
 grid on; zoom on
-% export_fig('CtoD_decon_diff.pdf', '-m2', '-transparent')
+% saveas(gcf, 'CtoD_decon_diff', 'fig')
 
 % summary decon and interp residuals
 figure(2); clf; 
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 x1 = mean(Ci1Dbt - trueDbt, 2);
 x2 = mean(Ci2Dbt - trueDbt, 2);
@@ -164,5 +161,5 @@ legend('spline interpolation', 'L1c interp/L1d conv', ...
 ylabel('dTb')
 xlabel('wavenumber')
 grid on; zoom on
-% export_fig('CtoD_interp_diff.pdf', '-m2', '-transparent')
+  saveas(gcf, 'CtoD_interp_diff', 'fig')
 

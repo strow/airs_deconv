@@ -79,7 +79,6 @@ vAcol = vAcol(jx); CtoBbt = CtoBbt(jx, :);
 
 % profile 1 spectra and zoom
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([650, 2650, 200, 310])
@@ -106,38 +105,14 @@ legend('gauss', 'decon', 'location', 'northwest')
 xlabel('wavenumber')
 ylabel('Tb, K')
 grid on; zoom on
-% export_fig('airs_decon_spec.pdf', '-m2', '-transparent')
-
-% mean and std residuals
-figure(2); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-subplot(2,1,1)
-plot(vBrow, mean(CtoBbt - trueBbt, 2))
-axis([650, 2650, -15, 15])
-title('mean decon minus gauss')
-% xlabel('wavenumber')
-ylabel('dTb, K')
-grid on; zoom on
-
-subplot(2,1,2)
-plot(vBrow, std(CtoBbt - trueBbt, 0, 2))
-axis([650, 2650, 0, 5])
-title('std decon minus gauss')
-xlabel('wavenumber')
-ylabel('dTb, K')
-grid on; zoom on
-% export_fig('airs_decon_diff.pdf', '-m2', '-transparent')
-
-return
+saveas(gcf, 'airs_decon_spec', 'fig')
 
 % profile 1 decon comparison with AIRS
-
 d1 = load(fullfile(kcdir, flist(1).name));
 vkc = d1.w(:); rkc = d1.r(:);
 bkc = real(rad2bt(vkc, rkc));
 
-figure(3); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
+figure(2); clf
 subplot(2,1,1)
 plot(vkc, bkc, vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1), ...
      v_L1c, trueCbt(:,1), 'linewidth', 2)
@@ -167,8 +142,24 @@ legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'southeast')
 xlabel('wavenumber')
 ylabel('Tb, K')
 grid on; zoom on
-% saveas(gcf, 'airs_decon_zoom', 'fig')
-% export_fig('airs_decon_zoom.pdf', '-m2', '-transparent')
+saveas(gcf, 'airs_decon_zoom', 'fig')
 
+% 49 profile mean and std residuals
+figure(3); clf
+subplot(2,1,1)
+plot(vBrow, mean(CtoBbt - trueBbt, 2))
+axis([650, 2650, -15, 15])
+title('mean decon minus gauss')
+% xlabel('wavenumber')
+ylabel('dTb, K')
+grid on; zoom on
 
+subplot(2,1,2)
+plot(vBrow, std(CtoBbt - trueBbt, 0, 2))
+axis([650, 2650, 0, 5])
+title('std decon minus gauss')
+xlabel('wavenumber')
+ylabel('dTb, K')
+grid on; zoom on
+saveas(gcf, 'airs_decon_diff', 'fig')
 

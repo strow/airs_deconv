@@ -12,14 +12,15 @@ addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 % addpath /asl/matlib/h4tools
 
+% get band
+band = upper(input('band > ', 's'));
+
 % load radiance data
 d1 = load('cris_cloudy');   % true cris big cloudy set
 d2 = load('acris_cloudy');  % airs cris big cloudy set
 d3 = load('cris_fit49');    % true cris 49 fitting profiles
 d4 = load('acris_fit49');   % airs cris 49 fitting profiles
 
-% set band
-band = 'LW';
 switch band
   case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;
   case 'MW', tcfrq = d1.frqMW; tcdep = d1.radMW; tcind = d3.radMW;
@@ -95,7 +96,6 @@ mcorind3 = mean(corind3 - tcind, 2);
 scorind3 =  std(corind3 - tcind, 0, 2);
 
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, mcorind1, tcfrq, mcorind2, tcfrq, mcorind3)
 switch band
@@ -122,13 +122,12 @@ title('std residual corrected independent set')
 ylabel('dTb')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, sprintf('a2cris_regr_%s', band), 'png')
-% export_fig(sprintf('a2cris_regr_%s.pdf', band), '-m2', '-transparent')
+saveas(gcf, sprintf('a2cris_regr_%s', band), 'fig')
 
-return
+% just show LW regression coefficients
+if ~strcmp(band, 'LW'), return, end
 
 figure(2)
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(tcfrq, Pcor2(:, 1))
 axis([650, 1100, 0.995, 1.005])
@@ -141,6 +140,5 @@ axis([650, 1100, -1, 1])
 title('"b" (bias) weights')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, 'cor_ind_2', 'png')
-% export_fig(sprintf('a2cris_coef_%s.pdf', band), '-m2', '-transparent')
+saveas(gcf, sprintf('a2cris_coef_%s', band), 'fig')
 

@@ -37,7 +37,6 @@ vg = v1 : 0.02 : v2;
 z = sup_gauss(vg, vcen, vwid);
 
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
 plot(sfreq, stmp, vg, z, 'k--', 'linewidth', 2)
 axis([v1, v2, 0, 1.2])
@@ -69,8 +68,7 @@ axis([v1, v2, 0, 1.2])
 xlabel('wavenumber')
 ylabel('weight')
 grid on; zoom on
-% saveas(gcf, 'AIRS_sample_SRFs', 'png')
-% export_fig('airs_sample_srfs.pdf', '-m2', '-transparent')
+saveas(gcf, 'airs_sample_SRF', 'fig')
 
 %-------------------------------
 % AIRS FWHM and channel spacing
@@ -107,8 +105,7 @@ axis([650, 2800, 1000, 1600])
 title('AIRS L1c approximate resolving power')
 xlabel('wavenumber')
 grid on
-% saveas(gcf, 'AIRS_chan_spacing', 'png')
-% export_fig('airs_L1c_res.pdf', '-m2', '-transparent')
+saveas(gcf, 'airs_L1c_res', 'fig')
 
 % show L1b channel spacing
 % subplot(2,1,2)
