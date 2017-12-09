@@ -14,7 +14,6 @@
 
 % set paths to libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 

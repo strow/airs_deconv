@@ -77,9 +77,12 @@ iSW = find(vcSW(1)-4 <= va1C & va1C <= vcSW(end)+4);
 
 % do the regression
 % RLW = band_regr(a1Crd(iLW,:), cLWrd, va1C(iLW), vcLW, 120);
-RLW = (a1Crd(iLW,:)' \ cLWrd')';
-RMW = (a1Crd(iMW,:)' \ cMWrd')';
-RSW = (a1Crd(iSW,:)' \ cSWrd')';
+% RLW = (a1Crd(iLW,:)' \ cLWrd')';
+% RMW = (a1Crd(iMW,:)' \ cMWrd')';
+% RSW = (a1Crd(iSW,:)' \ cSWrd')';
+RLW = cLWrd / a1Crd(iLW,:);
+RMW = cMWrd / a1Crd(iMW,:);
+RSW = cSWrd / a1Crd(iSW,:);
 
 % apply the regression
 acLWrd = RLW * a1Crd(iLW,:);  acLWri = RLW * a1Cri(iLW,:);
@@ -184,8 +187,7 @@ axis([2180, 2550, -2e-2, 2e-2])
 xlabel('wavenumber')
 ylabel('dTb, K')
 grid on; zoom on
-
-% return
+saveas(gcf, 'ap_dir_regr', 'fig')
 
 %--------------------------
 % plot regression matrices
@@ -198,10 +200,10 @@ caxis([-0.5, 0.5])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS LW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_LW_regr_mat', 'png')
+saveas(gcf, 'LW_dir_regr_mat', 'png')
 
 figure(4); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
@@ -211,10 +213,10 @@ caxis([-1, 1])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS MW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_MW_regr_mat', 'png')
+% saveas(gcf, 'MW_dir_regr_mat', 'png')
 
 figure(5); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
@@ -224,10 +226,10 @@ caxis([-0.5, 0.5])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS SW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_SW_regr_mat', 'png')
+% saveas(gcf, 'SW_dir_regr_mat', 'png')
 
 return
 

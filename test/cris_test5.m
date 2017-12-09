@@ -23,7 +23,6 @@ addpath /asl/packages/ccast/source
 band = 'LW';            % cris band
 hapod = 0;              % flag for Hamming apodization
 dvb = 0.1;              % deconvolution frequency step
-bfile = 'bconv4.mat';   % deconvolution temp file
 
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
@@ -37,7 +36,7 @@ dvk = 0.0025;
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);
 
 % get CrIS inst and user params
-opts.resmode = 'lowres';
+opts.user_res = 'lowres';
 wlaser = 773.1301;  % nominal value
 [inst, user] = inst_params(band, wlaser, opts);
 

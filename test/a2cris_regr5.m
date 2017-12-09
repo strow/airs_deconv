@@ -1,5 +1,5 @@
 %
-% a2cris_regr4 - AIRS L1c to CrIS PC regression test and plots
+% a2cris_regr5 - AIRS L1c to CrIS PC regression test and plots
 %
 % uses data from conv_loop4
 %   nkcd  - dependent set size
@@ -198,6 +198,7 @@ plot(vcSW, mdifSWai)
 xlabel('wavenumber')
 ylabel('dTb, K')
 grid on; zoom on
+saveas(gcf, 'ap_pc_regr', 'fig')
 
 %--------------------------
 % plot regression matrices
@@ -210,10 +211,10 @@ caxis([-0.5, 0.5])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS LW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_LW_regr_mat', 'png')
+saveas(gcf, 'LW_pc_regr_mat', 'png')
 
 figure(4); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
@@ -223,10 +224,10 @@ caxis([-1, 1])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS MW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_MW_regr_mat', 'png')
+saveas(gcf, 'MW_pc_regr_mat', 'png')
 
 figure(5); clf
 % set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
@@ -236,10 +237,10 @@ caxis([-0.5, 0.5])
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS SW regression matrix')
-xlabel('AIRS channels')
-ylabel('CrIS channels')
+xlabel('AIRS wavenumber')
+ylabel('CrIS wavenumber')
 grid on
-% saveas(gcf, 'full_7377_SW_regr_mat', 'png')
+saveas(gcf, 'SW_pc_regr_mat', 'png')
 
 return
 

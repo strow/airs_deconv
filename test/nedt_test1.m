@@ -2,15 +2,17 @@
 % nedt_test1 - AIRS to CrIS NEdT stats
 %
 % subplot 1: NEdT for true AIRS, AIRS to CrIS, and true Cris
-% subplot 2: max of true CrIS and AIRS-to-CrIS NEdN
+% subplot 2: NEdT for max of true CrIS and AIRS-to-CrIS NEdN
+%
+% uses data from conv_loop1, a2cris_loop, and apodized data from
+% nedn_test1
 %
 
 addpath /asl/packages/ccast/source
 addpath ../source
 
 % load NEdN specs
-c1 = load('nedn_noap');
-c2 = load('nedn_hamm');
+c2 = load('nedn_hamm');    % AIRS, apodized CrIS and AIRS-to-CrIS
 
 % load radiances
 d1 = load('cris_fit49');   % true cris
@@ -29,7 +31,7 @@ acrad = d3.crad;  acfrq = d3.cfrq;  % apodized airs cris
 ccrad = d4.crad;  ccfrq = d4.cfrq;  % corrected airs cris
 % clear d1 d2 d3 d4
 
-% match true CrIS grids
+% match CrIS NEdN and radiance grids
 [ix, jx] = seq_match(c2.freq_cris, tcfrq);
 nedn_cris = c2.nedn_cris(ix);
 tcfrq = tcfrq(jx);
@@ -42,30 +44,32 @@ tcrad = tcrad(jx, :);
 figure(1)
 subplot(2,1,1)
 plot(x1, y1, x2, y2, x3, y3)
-axis([650, 2550, 0, 1])
-title('AIRS to apodized CrIS NEdT')
-legend('mean AIRS', 'AIRS to CrIS', 'mean CrIS')
+axis([650, 2550, 0, 0.8])
+title('apodized AIRS to CrIS NEdT')
+legend('mean AIRS', 'AIRS to CrIS', 'mean CrIS', 'location', 'north')
 ylabel('NEdT, K')
-% xlabel('wavenumber')
 grid on
-
-% saveas(gcf, 'a2cris_nedt', 'fig')
-% return
 
 % plot max of true CrIS NEdN and AIRS CrIS NEdn
 subplot(2,1,2)
-d1 = load('nedn_noap');
-d2 = load('nedn_hamm');
-[ix, jx] = seq_match(d2.freq_tran, d2.freq_cris);
-[x1, y1] = pen_lift(d2.freq_tran(ix), ...
-                max(d2.nedn_tran(ix), d2.nedn_cris(jx)));
-[x2, y2] = pen_lift(d2.freq_cris, d2.nedn_cris);
-semilogy(x2, y2, x1, y1, 'linewidth', 2)
-axis([650, 2550, 0, 1])
-title('common record NEdN')
-legend('mean CrIS', 'max (CrIS, AIRS to CrIS)')
+[ix, jx] = seq_match(c2.freq_tran, c2.freq_cris);
+nedn_max = max(c2.nedn_tran(ix), c2.nedn_cris(jx));
+freq_max = c2.freq_tran(ix);
+
+[ix, jx] = seq_match(freq_max, tcfrq);
+nedn_max = nedn_max(ix);
+freq_max = freq_max(ix);
+rad_max = tcrad(jx, :);
+
+[x1, y1] = pen_lift(freq_max, dr2dt(freq_max, rad_max(:, 1), nedn_max));
+[x2, y2] = pen_lift(tcfrq, dr2dt(tcfrq, tcrad(:, 1), nedn_cris));
+
+plot(x2, y2, x1, y1)
+axis([650, 2550, 0, 0.8])
+title('apodized common record NEdT')
+legend('mean CrIS', 'max CrIS, AIRS-to-CrIS', 'location', 'north')
 xlabel('wavenumber')
-ylabel('NEdN')
+ylabel('NEdT, K')
 grid on; zoom on
 
 saveas(gcf, 'a2cris_nedt', 'fig')

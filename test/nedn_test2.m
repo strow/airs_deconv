@@ -1,9 +1,11 @@
 %
 % nedn_test2 - compare apodized and unapodized NEdN 
 %
-% NEdN for true AIRS, AIRS to CrIS, and true CrIS
-% subplot 1: unapodized CrIS
-% subplot 2: apoddized CrIS
+% NEdN plots of true AIRS, AIRS to CrIS, and true CrIS
+% subplot 1: unapodized CrIS and AIRS to CrIS
+% subplot 2: apoddized CrIS and AIRS to CrIS
+%
+% uses data from nedn_test1
 %
 
 d1 = load('nedn_noap');

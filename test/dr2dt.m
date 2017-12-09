@@ -1,3 +1,8 @@
+%
+% dt = dr2dt(v, r, dr), 
+%
+% dt = B(v, r + dr) - B(v, r);
+%
 
 function dt = dr2dt(v, r, dr)
 
