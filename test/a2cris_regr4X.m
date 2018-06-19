@@ -1,5 +1,5 @@
 %
-% a2cris_regr5 - AIRS L1c to CrIS PC regression test and plots
+% a2cris_regr4X - a2cris_regr4 to run from apodized CrIS radiances
 %
 % uses data from conv_loop4
 %   nkcd  - dependent set size
@@ -24,30 +24,7 @@ load llsmap5
 cax = [-0.4, 0.4];
 
 % get radiance data
-load('conv_loop4')
-
-% sample ccast CrIS NEdN estimate
-% d = load('/asl/data/cris/ccast/sdr60_npp_LR/2016/018/SDR_d20160118_t0801033.mat');
-% nedn_crisLW = squeeze(d.nLW(3:end-2, 5, 1));
-% nedn_crisMW = squeeze(d.nMW(3:end-2, 5, 1));
-% nedn_crisSW = squeeze(d.nSW(3:end-2, 5, 1));
-% clear d
-
-% apodized CrIS noise
-% nedn_cris = nedn_cris * 0.63;
-
-% add noise to the true CrIS dependent set
-% cLWrd = cLWrd + randn(ncLW, nkcd) .* (nedn_crisLW * ones(1, nkcd));
-% cMWrd = cMWrd + randn(ncMW, nkcd) .* (nedn_crisMW * ones(1, nkcd));
-% cSWrd = cSWrd + randn(ncSW, nkcd) .* (nedn_crisSW * ones(1, nkcd));
-
-% load the AIRS L1c noise spec
-d1 = load('int_L1c_NEdN.mat');
-nedn_airs = double(d1.nedn);
-% freq_airs = d1.v1c;
-
-% add noise to the dependent set
-% a1Crd = a1Crd + randn(na1C, nkcd) .* (nedn_airs * ones(1, nkcd));
+load('conv_loop4X')
 
 % trim CrIS bands to the intersection 
 jMW = find(vcMW < 1614);
@@ -62,61 +39,38 @@ iLW = find(vcLW(1)-4 <= va1C & va1C <= vcLW(end)+4);
 iMW = find(vcMW(1)-4 <= va1C & va1C <= vcMW(end)+4);
 iSW = find(vcSW(1)-4 <= va1C & va1C <= vcSW(end)+4);
 
-% LW SVDs
-[aU,~,~] = svd(a1Crd(iLW,:),0);
-[cU,~,~] = svd(cLWrd, 0);
-aU = aU(:, 1:500); % max 1266
-cU = cU(:, 1:500); % max 713
-QLW = (cU' * cLWrd) / (aU' * a1Crd(iLW,:));
-RLW = cU * QLW * aU';
-% RLW =  (cU * cU' * cLWrd) / (aU * aU' * a1Crd(iLW,:));
-
-% MW SVDs
-[aU,~,~] = svd(a1Crd(iMW,:),0);
-[cU,~,~] = svd(cMWrd, 0);
-aU = aU(:, 1:500); % max 692
-cU = cU(:, 1:320); % max 324
-QMW = (cU' * cMWrd) / (aU' * a1Crd(iMW,:));
-RMW = cU * QMW * aU';
-% RMW =  (cU * cU' * cMWrd) / (aU * aU' * a1Crd(iMW,:));
-
-% SW SVDs
-[aU,~,~] = svd(a1Crd(iSW,:),0);
-[cU,~,~] = svd(cSWrd, 0);
-aU = aU(:, 1:100); % max 377
-cU = cU(:, 1:100); % max 148
-QSW = (cU' * cSWrd) / (aU' * a1Crd(iSW,:));
-RSW = cU * QSW * aU';
-% RSW =  (cU * cU' * cSWrd) / (aU * aU' * a1Crd(iSW,:));
-
 % do the regression
-% RLW = band_regr(a1Crd(iLW,:), cLWrd, va1C(iLW), vcLW, 120);
-% RLW = cLWrd / a1Crd(iLW,:);
-% RMW = cMWrd / a1Crd(iMW,:);
-% RSW = cSWrd / a1Crd(iSW,:);
+RLW = cLWrd / a1Crd(iLW,:);
+RMW = cMWrd / a1Crd(iMW,:);
+RSW = cSWrd / a1Crd(iSW,:);
 
 % apply the regression
 acLWrd = RLW * a1Crd(iLW,:);  acLWri = RLW * a1Cri(iLW,:);
 acMWrd = RMW * a1Crd(iMW,:);  acMWri = RMW * a1Cri(iMW,:);
 acSWrd = RSW * a1Crd(iSW,:);  acSWri = RSW * a1Cri(iSW,:);
 
-% unapodized brightness temps
-cLWbd = real(rad2bt(vcLW, cLWrd));  cLWbi = real(rad2bt(vcLW, cLWri));
-cMWbd = real(rad2bt(vcMW, cMWrd));  cMWbi = real(rad2bt(vcMW, cMWri));
-cSWbd = real(rad2bt(vcSW, cSWrd));  cSWbi = real(rad2bt(vcSW, cSWri));
+% apply hamming to R for plots
+% RLW = hamm_inv(RLW);
+% RMW = hamm_inv(RMW);
+% RSW = hamm_inv(RSW);
 
-acLWbd = real(rad2bt(vcLW, acLWrd)); acLWbi = real(rad2bt(vcLW, acLWri));
-acMWbd = real(rad2bt(vcMW, acMWrd)); acMWbi = real(rad2bt(vcMW, acMWri));
-acSWbd = real(rad2bt(vcSW, acSWrd)); acSWbi = real(rad2bt(vcSW, acSWri));
+% apodized brightness temps (from tabulation)
+cLWad = real(rad2bt(vcLW, cLWrd));  cLWai = real(rad2bt(vcLW, cLWri));
+cMWad = real(rad2bt(vcMW, cMWrd));  cMWai = real(rad2bt(vcMW, cMWri));
+cSWad = real(rad2bt(vcSW, cSWrd));  cSWai = real(rad2bt(vcSW, cSWri));
 
-% apodized brightness temps
-cLWai =  real(rad2bt(vcLW, hamm_app(cLWri)));
-cMWai =  real(rad2bt(vcMW, hamm_app(cMWri)));
-cSWai =  real(rad2bt(vcSW, hamm_app(cSWri)));
+acLWad = real(rad2bt(vcLW, acLWrd)); acLWai = real(rad2bt(vcLW, acLWri));
+acMWad = real(rad2bt(vcMW, acMWrd)); acMWai = real(rad2bt(vcMW, acMWri));
+acSWad = real(rad2bt(vcSW, acSWrd)); acSWai = real(rad2bt(vcSW, acSWri));
 
-acLWai = real(rad2bt(vcLW, hamm_app(acLWri)));
-acMWai = real(rad2bt(vcMW, hamm_app(acMWri)));
-acSWai = real(rad2bt(vcSW, hamm_app(acSWri)));
+% unapodized brightness temps (via inverse)
+cLWbi =  real(rad2bt(vcLW, hamm_inv(cLWri))); cLWbd =  real(rad2bt(vcLW, hamm_inv(cLWrd)));
+cMWbi =  real(rad2bt(vcMW, hamm_inv(cMWri))); cMWbd =  real(rad2bt(vcMW, hamm_inv(cMWrd)));
+cSWbi =  real(rad2bt(vcSW, hamm_inv(cSWri))); cSWbd =  real(rad2bt(vcSW, hamm_inv(cSWrd)));
+
+acLWbi = real(rad2bt(vcLW, hamm_inv(acLWri))); acLWbd = real(rad2bt(vcLW, hamm_inv(acLWrd)));
+acMWbi = real(rad2bt(vcMW, hamm_inv(acMWri))); acMWbd = real(rad2bt(vcMW, hamm_inv(acMWrd)));
+acSWbi = real(rad2bt(vcSW, hamm_inv(acSWri))); acSWbd = real(rad2bt(vcSW, hamm_inv(acSWrd)));
 
 % unapodized stats
 mdifLWbd = mean(acLWbd - cLWbd, 2);    
@@ -154,7 +108,7 @@ plot(vcLW, mdifLWbi, vcLW, mdifLWbd)
 axis([650, 1100, -0.1, 0.1])
 title('unapodized direct regression mean residuals')
 legend('ind set', 'dep set', 'location', 'north')
-ylabel('\Delta BT(K)')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
@@ -166,10 +120,10 @@ grid on; zoom on
 
 subplot(3,1,3)
 plot(vcSW, mdifSWbi, vcSW, mdifSWbd)
-axis([2180, 2550, -0.4, 0.4])
+axis([2180, 2550, -0.1, 0.1])
 legend('ind set', 'dep set', 'location', 'north')
 xlabel('wavenumber (cm^{-1})')
-ylabel('\Delta BT(K)')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 % dep set max values
@@ -179,24 +133,24 @@ grid on; zoom on
 figure(2); clf
 subplot(3,1,1)
 plot(vcLW, mdifLWai)
-axis([650, 1100, -5e-2, 5e-2])
+axis([650, 1100, -2e-2, 2e-2])
 title('apodized direct regression mean residuals')
 ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(vcMW, mdifMWai)
-axis([1210, 1610, -5e-2, 5e-2])
+axis([1210, 1610, -2e-2, 2e-2])
 ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(vcSW, mdifSWai)
-axis([2180, 2550, -2e-1, 2e-1])
+axis([2180, 2550, -2e-2, 2e-2])
 xlabel('wavenumber (cm^{-1})')
 ylabel('\Delta BT (K)')
 grid on; zoom on
-% saveas(gcf, 'ap_pc_regr', 'fig')
+  saveas(gcf, 'ap_dir_regr', 'fig')
 
 %--------------------------
 % plot regression matrices
@@ -207,11 +161,11 @@ shading flat
 caxis(cax)
 colormap(llsmap5)
 colorbar
-title('AIRS to CrIS LW regression matrix')
+title('LW apodized direct regression transform')
 xlabel('AIRS wavenumber (cm^{-1})')
 ylabel('CrIS wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'LW_pc_regr_mat', 'png')
+% saveas(gcf, 'LW_dir_regr_mat', 'png')
 
 figure(4); clf
 pcolor(va1C(iMW), vcMW, RMW)
@@ -219,11 +173,11 @@ shading flat
 caxis(cax)
 colormap(llsmap5)
 colorbar
-title('AIRS to CrIS MW regression matrix')
+title('MW apodized direct regression transform')
 xlabel('AIRS wavenumber (cm^{-1})')
 ylabel('CrIS wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'MW_pc_regr_mat', 'png')
+  saveas(gcf, 'MW_dir_regr_mat', 'png')
 
 figure(5); clf
 pcolor(va1C(iSW), vcSW, RSW)
@@ -231,10 +185,10 @@ shading flat
 caxis(cax)
 colormap(llsmap5)
 colorbar
-title('AIRS to CrIS SW regression matrix')
+title('SW apodized direct regression transform')
 xlabel('AIRS wavenumber (cm^{-1})')
 ylabel('CrIS wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'SW_pc_regr_mat', 'png')
+% saveas(gcf, 'SW_dir_regr_mat', 'png')
 
 

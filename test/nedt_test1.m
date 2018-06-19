@@ -47,7 +47,7 @@ plot(x1, y1, x2, y2, x3, y3)
 axis([650, 2550, 0, 0.8])
 title('apodized AIRS to CrIS NEdT')
 legend('mean AIRS', 'AIRS to CrIS', 'mean CrIS', 'location', 'north')
-ylabel('NEdT, K')
+ylabel('NEdT (K)')
 grid on
 
 % plot max of true CrIS NEdN and AIRS CrIS NEdn
@@ -68,8 +68,8 @@ plot(x2, y2, x1, y1)
 axis([650, 2550, 0, 0.8])
 title('apodized common record NEdT')
 legend('mean CrIS', 'max CrIS, AIRS-to-CrIS', 'location', 'north')
-xlabel('wavenumber')
-ylabel('NEdT, K')
+xlabel('wavenumber (cm^{-1})')
+ylabel('NEdT (K)')
 grid on; zoom on
 
 saveas(gcf, 'a2cris_nedt', 'fig')

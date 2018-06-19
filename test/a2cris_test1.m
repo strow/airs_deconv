@@ -59,7 +59,7 @@ switch band
 end
 title(sprintf('AIRS CrIS minus true CrIS %s mean', band));
 legend('unapodized', 'Hamming ap.', 'location', loc)
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 % AIRS CrIS minus true CrIS std
@@ -72,10 +72,10 @@ switch band
 end
 title(sprintf('AIRS CrIS minus true CrIS %s std dev', band));
   legend('unapodized', 'Hamming ap.', 'location', loc)
-xlabel('wavenumber')
-ylabel('dBT')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
-saveas(gcf, sprintf('a2cris_diff_%s', band), 'fig')
+% saveas(gcf, sprintf('a2cris_diff_%s', band), 'fig')
 
 %----------------------------------
 % 3-band apodized residual summary
@@ -84,26 +84,25 @@ figure(2); clf
 subplot(3,1,1)
 plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
 axis([650, 1095, -0.2, 0.2]);
-title('apodized AIRS CrIS minus true CrIS LW mean')
-ylabel('dBT')
+title('apodized AIRS CrIS minus true CrIS mean')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
 axis([1210, 1605, -0.2, 0.2]); 
-title('apodized AIRS CrIS minus true CrIS MW mean')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(tcfrq, mean(acbt_ap-tcbt_ap,2))
 axis([2180, 2550, -0.2, 0.2]);
-title('apodized AIRS CrIS minus true CrIS SW mean')
-ylabel('dBT')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
-ylabel('dBT')
+
 grid on; zoom on
-saveas(gcf, 'a2cris_diff_all', 'fig')
+% saveas(gcf, 'a2cris_diff_all', 'fig')
 
 %---------------------------------
 % all data for a selected spectra
@@ -118,7 +117,7 @@ switch band
 end
 title(sprintf('AIRS and unapodized CrIS %s profile %d', band, j));
 legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', 'location', loc)
-ylabel('Tb, K')
+ylabel('BT (K)')
 grid on; zoom on
 
 subplot(2,1,2)
@@ -130,9 +129,10 @@ switch band
 end
 title(sprintf('AIRS and CrIS %s profile %d, detail', band, j));
 legend('true AIRS', 'AIRS decon', 'true CrIS', 'AIRS CrIS', 'location', loc)
-xlabel('wavenumber'); ylabel('Tb, K')
+xlabel('wavenumber (cm^{-1})'); 
+ylabel('BT (K)')
 grid on; zoom on
-saveas(gcf, sprintf('a2cris_spec_%s', band), 'fig')
+% saveas(gcf, sprintf('a2cris_spec_%s', band), 'fig')
 
 %---------------------
 % interpolation tests
@@ -153,34 +153,38 @@ sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
 i2rad = i2rad(ici, :);  i2frq = i2frq(ici);
 % isclose(i2frq, tcfrq)
 
+% apodize the interpolations
+i1rad = hamm_app(i1rad);
+i2rad = hamm_app(i2rad);
+
 % get brightness temps
 i1bt = real(rad2bt(tcfrq, i1rad));
 i2bt = real(rad2bt(tcfrq, i2rad));
 
 figure(4); clf
 subplot(2,1,1)
-y1 = mean(i1bt - tcbt, 2); 
-y2 = mean(i2bt - tcbt, 2); 
-y3 = mean(acbt - tcbt, 2);
+y1 = mean(i1bt - tcbt_ap, 2); 
+y2 = mean(i2bt - tcbt_ap, 2); 
+y3 = mean(acbt_ap - tcbt_ap, 2);
 plot(tcfrq, y1, 'b', tcfrq, y2, 'g', tcfrq, y3, 'r')
-axis([650, 1100, -6, 6])
-title(sprintf('AIRS to unapodized CrIS %s translation residual mean', band));
-legend('interpolation', 'AIRS interp/CrIS conv', 'AIRS decon/CrIS conv', ...
-       'location', 'north');
-ylabel('dTb')
+axis([650, 1100, -2, 2])
+title(sprintf('AIRS to apodized CrIS %s residual mean', band));
+legend('spline interpolation', 'AIRS interp/CrIS conv', ...
+       'AIRS decon/CrIS conv', 'location', 'north');
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(2,1,2)
-z1 = std(i1bt - tcbt, 0, 2); 
-z2 = std(i2bt - tcbt, 0, 2); 
-z3 = std(acbt - tcbt, 0, 2);
+z1 = std(i1bt - tcbt_ap, 0, 2); 
+z2 = std(i2bt - tcbt_ap, 0, 2); 
+z3 = std(acbt_ap - tcbt_ap, 0, 2);
 plot(tcfrq, z1, 'b', tcfrq, z2, 'g', tcfrq, z3, 'r')
-axis([650, 1100, 0, 2])
-title(sprintf('AIRS to unapodized CrIS %s translation residual std dev', band));
-legend('interpolation', 'AIRS interp/CrIS conv', 'AIRS decon/CrIS conv', ...
-       'location', 'north');
-xlabel('wavenumber')
-ylabel('dTb')
+axis([650, 1100, 0, 1])
+title(sprintf('AIRS to apodized CrIS %s residual std dev', band));
+legend('spline interpolation', 'AIRS interp/CrIS conv', ...
+       'AIRS decon/CrIS conv', 'location', 'north');
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
-saveas(gcf, sprintf('a2cris_interp_%s', band), 'fig')
+  saveas(gcf, sprintf('a2cris_interp_%s', band), 'fig')
 

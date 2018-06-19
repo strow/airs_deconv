@@ -4,12 +4,12 @@
 
 % set paths to libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
-addpath /home/motteler/matlab/export_fig
+
+% generalized gaussian exponent
+p = 1.4;
 
 % L1d resolution, dv = v / res
-% res = 2000;  % for direct regression test
 % res = 1200;  % L1c nominal
   res =  700;  % best for L1d
 
@@ -17,9 +17,6 @@ addpath /home/motteler/matlab/export_fig
 % v_base = v_L1c(1);  % default, 649.6620
 % v_base = 649.6620;  % best for res 1200
   v_base = 649.8220;  % best for res 700
-
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
 % get the kcarta to L1c AIRS convolution matrix
 sdir = '/asl/matlab2012/srftest/';
@@ -33,7 +30,7 @@ dvb = 0.1;       % decon dv
 [A1, vAcol, vArow] = mksconv2(srf1, v_tmp, dvb);
 
 % L1d convolution matrix
-[B1, vBcol, vBrow] = L1d_conv(res, dvb, v_base);
+[B1, vBcol, vBrow] = L1d_conv(res, dvb, v_base, p);
 
 % match intermediate grids
 [ix, jx] = seq_match(vAcol, vBcol);
@@ -60,10 +57,10 @@ grid on; zoom on
 subplot(2,1,2)
 plot(vArow, CtoD(193:196, :), 'linewidth', 2)
 axis([740, 752, -0.1, 0.4])
-title('sample C to D matrix rows')
+title('sample L1c to L1d matrix rows')
 legend('745.30 cm-1', '745.84 cm-1', '746.37 cm-1', ...
        '746.90 cm-1', 'location', 'northeast')
-xlabel('AIRS L1c wavenumber')
+xlabel('AIRS L1c wavenumber (cm^{-1})')
 ylabel('weight')
 grid on; zoom on
 saveas(gcf, 'airs_decon_basis', 'fig')

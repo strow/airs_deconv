@@ -46,7 +46,7 @@ plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
 axis([650, 1100, -0.2, 0.2])
 title('LW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'north')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
@@ -54,7 +54,7 @@ plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
 axis([1210, 1610, -0.2, 0.2])
 title('MW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'north')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
@@ -62,8 +62,8 @@ plot(tcfrq, mean(acbt-tcbt,2), tcfrq, mean(ccbt-tcbt,2))
 axis([2180, 2550, -0.2, 0.2])
 title('SW AIRS CrIS minus true CrIS mean')
 legend('uncorrected', 'corrected', 'location', 'northeast')
-xlabel('wavenumber')
-ylabel('dBT')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 saveas(gcf, 'a2cris_regr_all', 'fig')
 
@@ -73,20 +73,20 @@ subplot(3,1,1)
 plot(tcfrq, mean(ccbt-tcbt,2))
 axis([650, 1100, -0.04, 0.04])
 title('corrected AIRS CrIS minus true CrIS mean')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(tcfrq, mean(ccbt-tcbt,2))
 axis([1210, 1610, -0.01, 0.01])
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(tcfrq, mean(ccbt-tcbt,2))
 axis([2180, 2550, -0.06, 0.06])
-xlabel('wavenumber')
-ylabel('dBT')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 saveas(gcf, 'ap_decon_corr', 'fig')
 
@@ -99,7 +99,7 @@ plot(tcfrq, std(acbt-tcbt,0,2), tcfrq, std(ccbt-tcbt,0,2))
 axis([650, 1095, 0, 0.1])
 title('LW AIRS CrIS minus true CrIS std')
 legend('uncorrected', 'corrected', 'location', 'north')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
@@ -107,7 +107,7 @@ plot(tcfrq, std(acbt-tcbt,0,2), tcfrq, std(ccbt-tcbt,0,2))
 axis([1210, 1605, 0, 0.1])
 title('MW AIRS CrIS minus true CrIS std')
 legend('uncorrected', 'corrected', 'location', 'north')
-ylabel('dBT')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
@@ -115,7 +115,7 @@ plot(tcfrq, std(acbt-tcbt,0,2), tcfrq, std(ccbt-tcbt,0,2))
 axis([2180, 2550, 0, 0.1])
 title('SW AIRS CrIS minus true CrIS std')
 legend('uncorrected', 'corrected', 'location', 'northeast')
-xlabel('wavenumber')
-ylabel('dBT')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 

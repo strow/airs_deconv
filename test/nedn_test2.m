@@ -22,7 +22,8 @@ semilogy(x1, y1, x2, y2, x3, y3)
 axis([600, 2600, 0, 1])
 title('AIRS to apodized CrIS NEdN')
 legend('mean AIRS', 'AIRS to CrIS', 'mean CrIS')
-ylabel('NEdN')
+  ylabel('NEdN (mW^{-1}sr^{-1}m^{-2})')
+% ylabel('mW^{-1}sr^{-1}m^{-2}')
 grid on; zoom on
 
 subplot(2,1,2)
@@ -33,10 +34,10 @@ semilogy(x1, y1, x2, y2, x3, y3)
 axis([600, 2600, 0, 1])
 title('AIRS to unapodized CrIS NEdN')
 legend('mean AIRS', 'AIRS to CrIS', 'mean CrIS')
-xlabel('wavenumber')
-ylabel('NEdN')
+xlabel('wavenumber (cm^{-1})')
+  ylabel('NEdN (mW^{-1}sr^{-1}m^{-2})')
+% ylabel('mW^{-1}sr^{-1}m^{-2}')
 grid on; zoom on
-
 saveas(gcf, 'a2cris_nedn', 'fig')
 
 return

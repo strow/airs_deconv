@@ -1,12 +1,8 @@
 %
-% try fitting some real SRFs with z_srf
+% try fitting some AIRS SRFs with sup_gauss
 %
 
-addpath ../h4tools
 addpath ../source
-
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
 % sample AIRS srfs
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
@@ -20,7 +16,8 @@ dvk = 0.0025;
 
 % SRF set 1
 ix = 201 : 206;
-vwid = 0.48;
+vwid = 0.492;
+p = 1.4;
 
 vtmp = ofreq(ix)
 dv = vtmp(2) - vtmp(1);
@@ -34,7 +31,7 @@ stmp = stmp / max(stmp(:));
 vcen = vtmp(3);
 
 vg = v1 : 0.02 : v2;
-z = sup_gauss(vg, vcen, vwid);
+z = sup_gauss(vg, vcen, vwid, p);
 
 figure(1); clf
 subplot(2,1,1)
@@ -46,7 +43,7 @@ grid on; zoom on
 
 % SRF set 2
 ix = 2201 : 2206;
-vwid = 1.7;
+vwid = 1.792;
 
 vtmp = ofreq(ix)
 dv = vtmp(2) - vtmp(1);
@@ -60,7 +57,7 @@ stmp = stmp / max(stmp(:));
 vcen = vtmp(3);
 
 vg = v1 : 0.02 : v2;
-z = sup_gauss(vg, vcen, vwid);
+z = sup_gauss(vg, vcen, vwid, p);
 
 subplot(2,1,2)
 plot(sfreq, stmp, vg, z, '-.', 'linewidth', 2)
@@ -69,6 +66,8 @@ xlabel('wavenumber')
 ylabel('weight')
 grid on; zoom on
 % saveas(gcf, 'AIRS_sample_SRFs', 'png')
+
+return
 
 %-------------------------------
 % AIRS FWHM and channel spacing

@@ -20,15 +20,18 @@ addpath ../source
 % colormap for 2D plots
 load llsmap5
 
+% correlation color axis
+cax = [-0.4, 0.4];
+
 % get radiance data
 load('conv_loop4')
 
 % sample ccast CrIS NEdN estimate
-d = load('/asl/data/cris/ccast/sdr60/2016/018/SDR_d20160118_t0801033.mat');
-nedn_crisLW = squeeze(d.nLW(3:end-2, 5, 1));
-nedn_crisMW = squeeze(d.nMW(3:end-2, 5, 1));
-nedn_crisSW = squeeze(d.nSW(3:end-2, 5, 1));
-clear d
+% d = load('/asl/data/cris/ccast/sdr60_npp_LR/2016/018/SDR_d20160118_t0801033.mat');
+% nedn_crisLW = squeeze(d.nLW(3:end-2, 5, 1));
+% nedn_crisMW = squeeze(d.nMW(3:end-2, 5, 1));
+% nedn_crisSW = squeeze(d.nSW(3:end-2, 5, 1));
+% clear d
 
 % apodized CrIS noise
 % nedn_cris = nedn_cris * 0.63;
@@ -39,8 +42,8 @@ clear d
 % cSWrd = cSWrd + randn(ncSW, nkcd) .* (nedn_crisSW * ones(1, nkcd));
 
 % load the AIRS L1c noise spec
-d1 = load('int_L1c_NEdN.mat');
-nedn_airs = double(d1.nedn);
+% d1 = load('int_L1c_NEdN.mat');
+% nedn_airs = double(d1.nedn);
 % freq_airs = d1.v1c;
 
 % add noise to the true AIRS dependent set
@@ -138,28 +141,27 @@ sdifSWai = std(acSWai - cSWai, 0, 2);
 %---------------------
 % dep and ind mean unapodized residuals
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(vcLW, mdifLWbi, vcLW, mdifLWbd)
 axis([650, 1100, -0.1, 0.1])
 title('unapodized direct regression mean residuals')
 legend('ind set', 'dep set', 'location', 'north')
-ylabel('dTb, K')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(vcMW, mdifMWbi, vcMW, mdifMWbd)
 axis([1210, 1610, -0.1, 0.1])
 legend('ind set', 'dep set', 'location', 'north')
-ylabel('dTb, K')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(vcSW, mdifSWbi, vcSW, mdifSWbd)
 axis([2180, 2550, -0.1, 0.1])
 legend('ind set', 'dep set', 'location', 'north')
-xlabel('wavenumber')
-ylabel('dTb, K')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 % dep set max values
@@ -167,88 +169,64 @@ grid on; zoom on
 
 % ind set mean apodized residuals
 figure(2); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(3,1,1)
 plot(vcLW, mdifLWai)
 axis([650, 1100, -2e-2, 2e-2])
 title('apodized direct regression mean residuals')
-ylabel('dTb, K')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(vcMW, mdifMWai)
 axis([1210, 1610, -2e-2, 2e-2])
-ylabel('dTb, K')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(vcSW, mdifSWai)
 axis([2180, 2550, -2e-2, 2e-2])
-xlabel('wavenumber')
-ylabel('dTb, K')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
-saveas(gcf, 'ap_dir_regr', 'fig')
+% saveas(gcf, 'ap_dir_regr', 'fig')
 
 %--------------------------
 % plot regression matrices
 %--------------------------
 figure(3); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 pcolor(va1C(iLW), vcLW, RLW)
 shading flat
-caxis([-0.5, 0.5])
+caxis(cax)
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS LW regression matrix')
-xlabel('AIRS wavenumber')
-ylabel('CrIS wavenumber')
+xlabel('AIRS wavenumber (cm^{-1})')
+ylabel('CrIS wavenumber (cm^{-1})')
 grid on
-saveas(gcf, 'LW_dir_regr_mat', 'png')
+% saveas(gcf, 'LW_dir_regr_mat', 'png')
 
 figure(4); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 pcolor(va1C(iMW), vcMW, RMW)
 shading flat
-caxis([-1, 1])
+caxis(cax)
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS MW regression matrix')
-xlabel('AIRS wavenumber')
-ylabel('CrIS wavenumber')
+xlabel('AIRS wavenumber (cm^{-1})')
+ylabel('CrIS wavenumber (cm^{-1})')
 grid on
 % saveas(gcf, 'MW_dir_regr_mat', 'png')
 
 figure(5); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 pcolor(va1C(iSW), vcSW, RSW)
 shading flat
-caxis([-0.5, 0.5])
+caxis(cax)
 colormap(llsmap5)
 colorbar
 title('AIRS to CrIS SW regression matrix')
-xlabel('AIRS wavenumber')
-ylabel('CrIS wavenumber')
+xlabel('AIRS wavenumber (cm^{-1})')
+ylabel('CrIS wavenumber (cm^{-1})')
 grid on
 % saveas(gcf, 'SW_dir_regr_mat', 'png')
 
-return
-
-% basic plots
-figure(2); clf
-subplot(2,1,1)
-plot(vcLW, mdifLWbi, vcLW, mdifLWai)
-% axis([650, 1100, -0.1, 0.1])
-title('direct regression mean residuals')
-legend('unapodized', 'Hamming', 'location', 'north')
-ylabel('dTb, K')
-grid on; zoom on
-
-subplot(2,1,2)
-plot(vcLW, sdifLWbi, vcLW, sdifLWai)
-% axis([650, 1100, 0, 0.03])
-title('direct regression std residuals')
-legend('unapodized', 'Hamming', 'location', 'north')
-xlabel('wavenumber')
-ylabel('dTb, K')
-grid on; zoom on
 

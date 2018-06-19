@@ -15,23 +15,20 @@
 
 % set paths to libs
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
-addpath /home/motteler/matlab/export_fig
+
+% generalized gaussian exponent
+p = 1.4;
 
 % L1d resolution, dv = v / res
-% res = 2000;  % for direct regression test
 % res = 1200;  % L1c nominal
   res =  700;  % best for L1d
 
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
-
 % path to kcarta data
-% kcdir = '/asl/s1/motteler/kc7377/cloudy';
-% nkcrad = 7377;
-  kcdir = '/home/motteler/cris/sergio/JUNK2012';
-  nkcrad = 49;
+  kcdir = '/asl/s1/motteler/kc7377/cloudy';
+  nkcrad = 7377;
+% kcdir = '/home/motteler/cris/sergio/JUNK2012';
+% nkcrad = 49;
 
 % get the kcarta to L1c AIRS convolution matrix
 sdir = '/asl/matlab2012/srftest/';
@@ -51,8 +48,8 @@ dvb = 0.1;       % decon dv
   v_base = 649.8220;  % best for res 700
 
 % L1d convolution matrices
-[D1, vDcol, v_L1d] = L1d_conv(res, dvk, v_base);
-[B1, vBcol, VBrow] = L1d_conv(res, dvb, v_base);
+[D1, vDcol, v_L1d] = L1d_conv(res, dvk, v_base, p);
+[B1, vBcol, VBrow] = L1d_conv(res, dvb, v_base, p);
 
 % match intermediate grids
 [ix, jx] = seq_match(vAcol, vBcol);
@@ -75,14 +72,14 @@ trueCrad = zeros(nc, nkcrad);
 % loop on kcarta files
 for i = 1 : nkcrad
 
-  % get kcarta radiances
-% kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
-% d1 = load(kcmat);
-% rkc = d1.rad; vkc = d1.frq; clear d1
-
-  kcmat = fullfile(kcdir, sprintf('convolved_kcarta%d.mat', i));
+% get kcarta radiances
+  kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
   d1 = load(kcmat);
-  rkc = d1.r; vkc = d1.w; clear d1
+  rkc = d1.rad; vkc = d1.frq; clear d1
+
+% kcmat = fullfile(kcdir, sprintf('convolved_kcarta%d.mat', i));
+% d1 = load(kcmat);
+% rkc = d1.r; vkc = d1.w; clear d1
  
   % kcarta to L1c
   ix = interp1(vkc, 1:length(rkc), vCcol, 'nearest');
@@ -103,5 +100,7 @@ end
 fprintf(1, '\n')
 
 % save the convolutions
-save L1d700_fit49 v_L1c v_L1d CtoDrad trueDrad trueCrad res
-
+% save  L1d700_fit49 v_L1c v_L1d CtoDrad trueDrad trueCrad res
+% save L1d1200_fit49 v_L1c v_L1d CtoDrad trueDrad trueCrad res
+  save  L1d700_cldy v_L1c v_L1d CtoDrad trueDrad trueCrad res
+% save L1d1200_cldy v_L1c v_L1d CtoDrad trueDrad trueCrad res

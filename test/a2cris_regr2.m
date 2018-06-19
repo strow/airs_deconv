@@ -99,14 +99,14 @@ figure(1); clf
 subplot(2,1,1)
 plot(tcfrq, mcorind1, tcfrq, mcorind2, tcfrq, mcorind3)
 switch band
-  case 'LW', axis([650, 1100, -6e-2, 6e-2])
-  case 'MW', axis([1200, 1620, -0.02, 0.02])
-  case 'SW', axis([2180, 2550, -0.1, 0.1])
+  case 'LW', axis([650, 1100, -6e-2, 6e-2]), loc = 'north';
+  case 'MW', axis([1200, 1620, -0.02, 0.02]), loc = 'northeast';
+  case 'SW', axis([2180, 2550, -0.1, 0.1]), loc = 'northeast';
 end
-title('mean residual corrected independent set')
+title(sprintf('corrected AIRS CrIS minus true CrIS %s mean', band))
 legend('bias correction', 'linear correction', 'quadratic correction', ...
-       'location', 'north')
-ylabel('dTb')
+       'location', loc)
+ylabel('\Delta BT (K)')
 grid on
 
 subplot(2,1,2)
@@ -117,10 +117,10 @@ switch band
   case 'SW', axis([2180, 2550, 0, 0.2])
 end
 legend('bias correction', 'linear correction', 'quadratic correction', ...
-       'location', 'north')
-title('std residual corrected independent set')
-ylabel('dTb')
-xlabel('wavenumber')
+       'location', loc)
+title(sprintf('corrected AIRS CrIS minus true CrIS %s std dev', band))
+ylabel('\Delta BT (K)')
+xlabel('wavenumber (cm^{-1})')
 grid on
 saveas(gcf, sprintf('a2cris_regr_%s', band), 'fig')
 
@@ -132,13 +132,15 @@ subplot(2,1,1)
 plot(tcfrq, Pcor2(:, 1))
 axis([650, 1100, 0.995, 1.005])
 title('"a" (scaling) weights')
+ylabel('weight')
 grid on
 
 subplot(2,1,2)
 plot(tcfrq, Pcor2(:, 2))
 axis([650, 1100, -1, 1])
 title('"b" (bias) weights')
-xlabel('wavenumber')
+xlabel('wavenumber (cm^{-1})')
+ylabel('weight')
 grid on
 saveas(gcf, sprintf('a2cris_coef_%s', band), 'fig')
 

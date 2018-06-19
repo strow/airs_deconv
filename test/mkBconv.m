@@ -3,11 +3,12 @@
 %   mkBconv - build a sparse gaussian convolution matrix
 %
 % SYNOPSIS
-%   [Bconv, vcol, vrow] = mkBconv(dvb, res)
+%   [Bconv, vcol, vrow] = mkBconv(dvb, res, p)
 %
 % INPUTS
 %   dvb    - output grid spacing
 %   res    - output resolving power, FWHM = v / res
+%   p      - higher-order gaussian exponent
 % 
 % OUTPUTS
 %   Bconv  - m x n sparse convolution matrix
@@ -27,7 +28,7 @@
 %   H. Motteler, 3 Mar 2017
 %
 
-function [Bconv, vcol, vrow] = mkBconv(dvb, res)
+function [Bconv, vcol, vrow] = mkBconv(dvb, res, p)
 
 % kcarta grid spacing
 dvk = 0.0025;
@@ -60,7 +61,7 @@ for i = 1 : nrow
   k = length(jx);
 
   % evaulate and normalize the SRF
-  stmp = sup_gauss(vcol(jx), vc, fwhm);
+  stmp = sup_gauss(vcol(jx), vc, fwhm, p);
   stmp = stmp ./ sum(stmp);
 
   % save sparse indices and data

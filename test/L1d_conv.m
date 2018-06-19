@@ -3,12 +3,13 @@
 %   L1d_conv -- build a sparse AIRS L1d convolution matrix
 %
 % SYNOPSIS
-%   [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base)
+%   [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base, p)
 %
 % INPUTS
 %   res    - resolving power, v/FWHM
 %   dv_tab - step size for the SRF tabulation grid
 %   v_base - start of output grid, i.e., v_L1d(1)
+%   p      - higher-order gaussian exponent
 % 
 % OUTPUTS
 %   dconv  - m x n sparse convolution matrix
@@ -25,7 +26,7 @@
 %   H. Motteler, 21 Feb 2017
 %
 
-function [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base)
+function [dconv, v_tab, v_L1d] = L1d_conv(res, dv_tab, v_base, p)
 
 % get the L1c channel set
 v_L1c = load('freq2645.txt');
@@ -76,7 +77,7 @@ for i = 1 : n_L1d
   k = length(jx);
 
   % evaulate and normalize the SRF
-  stmp = sup_gauss(v_tab(jx), vc, vs);
+  stmp = sup_gauss(v_tab(jx), vc, vs, p);
   stmp = stmp ./ sum(stmp);
 
   % save sparse indices and data
@@ -89,11 +90,4 @@ end
 dconv = sparse(si, sj, sd, n_L1d, n_tab, length(sd));
 
 end % L1d_conv definition
-
-% % higher order Gaussian
-% function y = sup_gauss(x, b, c)
-%   c = c / 2.35482;
-% % y = exp(-(x - b).^2 / (2*c^2));
-%   y = exp(-((x - b).^2 / (2*c^2)).^1.5);
-% end
 

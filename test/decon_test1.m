@@ -1,5 +1,5 @@
 %
-% decon_test1 - compare true decon with decon AIRS
+% decon_test1 - compare AIRS decon with true decon
 %
 % transform matrices
 %   C1 takes kcarta to the L1c channel grid, 
@@ -17,9 +17,6 @@ addpath ../source
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
-
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
 flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
@@ -32,6 +29,7 @@ v_tmp = load('freq2645.txt');
 dvk = 0.0025;    % kcarta dv
 dvb = 0.1;       % deconvolution spacing
 res = 2000;      % set resolving power
+p = 1.4;         % sup gauss exponent
 
 % L1c convolution matrices
 [C1, vCcol, v_L1c] = mksconv2(srf1, v_tmp, dvk);
@@ -43,7 +41,7 @@ A1inv = pinv(full(A1));
 toc
 
 % intermediate grid convolution matrix
-[B1, vBcol, vBrow] = mkBconv(dvb, res);
+[B1, vBcol, vBrow] = mkBconv(dvb, res, p);
 
 % loop on kcarta files
 trueCrad = []; trueBrad = [];
@@ -81,30 +79,30 @@ figure(1); clf
 subplot(3,1,1)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([650, 2650, 200, 310])
-title('direct and deconvolution comparison')
-legend('gauss', 'decon', 'location', 'north')
-% xlabel('wavenumber')
-ylabel('Tb, K')
+title('deconvolution and reference spectra')
+legend('decon ref', 'AIRS decon', 'location', 'north')
+% xlabel('wavenumber (cm^{-1})')
+ylabel('BT (K)')
 grid on; zoom on
 
 subplot(3,1,2)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([660, 680, 200, 260])
-title('direct and deconvolution detail')
-legend('gauss', 'decon', 'location', 'northeast')
-% xlabel('wavenumber')
-ylabel('Tb, K')
+% title('deconvolution and reference detail')
+legend('decon ref', 'AIRS decon', 'location', 'northeast')
+% xlabel('wavenumber (cm^{-1})')
+ylabel('BT (K)')
 grid on; zoom on
 
 subplot(3,1,3)
 plot(vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1))
 axis([2280, 2340, 220, 260])
-title('direct and deconvolution detail')
-legend('gauss', 'decon', 'location', 'northwest')
-xlabel('wavenumber')
-ylabel('Tb, K')
+% title('deconvolution and reference detail')
+legend('decon ref', 'AIRS decon', 'location', 'northwest')
+xlabel('wavenumber (cm^{-1})')
+ylabel('BT (K)')
 grid on; zoom on
-saveas(gcf, 'airs_decon_spec', 'fig')
+% saveas(gcf, 'airs_decon_spec', 'fig')
 
 % profile 1 decon comparison with AIRS
 d1 = load(fullfile(kcdir, flist(1).name));
@@ -121,10 +119,10 @@ plot(vkc, bkc, vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1), ...
   axis([1312, 1316, 220, 280])  % used for sample zoom 1
 % axis([812, 817, 260, 300])    % used for sample zoom 2
 
-title('kcarta, AIRS, and deconvolutions')
-legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'southeast')
+title('kcarta, AIRS, and deconvolution')
+legend('kcarta','decon ref','AIRS decon','true AIRS','location','southeast')
 % xlabel('wavenumber')
-ylabel('Tb, K')
+ylabel('BT (K)')
 grid on; zoom on
 
 subplot(2,1,2)
@@ -136,29 +134,29 @@ plot(vkc, bkc, vBrow, trueBbt(:, 1), vAcol, CtoBbt(:, 1), ...
 % axis([1312, 1316, 220, 280])  % used for sample zoom 1
   axis([812, 816, 260, 300])    % used for sample zoom 2
 
-% title('kcarta, AIRS, and deconvolution')
-legend('kcarta', 'gauss', 'decon', 'AIRS', 'location', 'southeast')
-xlabel('wavenumber')
-ylabel('Tb, K')
+% title('kcarta, AIRS, and deconvolutions')
+legend('kcarta','decon ref','AIRS decon','true AIRS','location','southeast')
+xlabel('wavenumber (cm^{-1})')
+ylabel('BT (K)')
 grid on; zoom on
-saveas(gcf, 'airs_decon_zoom', 'fig')
+% saveas(gcf, 'airs_decon_zoom', 'fig')
 
 % 49 profile mean and std residuals
 figure(3); clf
 subplot(2,1,1)
 plot(vBrow, mean(CtoBbt - trueBbt, 2))
 axis([650, 2650, -15, 15])
-title('mean decon minus gauss')
-% xlabel('wavenumber')
-ylabel('dTb, K')
+title('mean decon minus ref')
+% xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(2,1,2)
 plot(vBrow, std(CtoBbt - trueBbt, 0, 2))
 axis([650, 2650, 0, 5])
-title('std decon minus gauss')
-xlabel('wavenumber')
-ylabel('dTb, K')
+title('std decon minus ref')
+xlabel('wavenumber (cm^{-1})')
+ylabel('\Delta BT (K)')
 grid on; zoom on
-saveas(gcf, 'airs_decon_diff', 'fig')
+% saveas(gcf, 'airs_decon_diff', 'fig')
 

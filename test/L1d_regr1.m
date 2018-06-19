@@ -26,14 +26,17 @@ addpath ../source
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 
+% set resolving power (700 or 1200)
+R = 700;
+
 %-------------------
 % get radiance data
 %-------------------
 
-% d1 = load('L1d1200_cldy');
-% d2 = load('L1d1200_fit49');
-  d1 = load('L1d700_cldy');
-  d2 = load('L1d700_fit49');
+switch (R)
+  case 1200, d1 = load('L1d1200_cldy'); d2 = load('L1d1200_fit49');
+  case 700,  d1 = load('L1d700_cldy');  d2 = load('L1d700_fit49');
+end
 CtoDrad  = [d1.CtoDrad, d2.CtoDrad];
 trueCrad = [d1.trueCrad, d2.trueCrad];
 trueDrad = [d1.trueDrad, d2.trueDrad];
@@ -122,51 +125,67 @@ scor3CDbi = std(cor3CDbi - tDbi, 0, 2);
 
 figure(1); clf
 subplot(2,1,1)
-plot(v_L1d, mdifCDbi, v_L1d, mcor2CDbi)
-  axis([650, 2650, -0.2, 0.2]) %  700 res, fit49 ind
-% axis([650, 2650, -1, 1])     % 1200 res, fit49 ind
-% axis([650, 2650, -1.5e-3, 1.5e-3])
-title('mean residual corrected independent set')
+[x1, y1] = pen_lift(v_L1d, mdifCDbi);
+[x2, y2] = pen_lift(v_L1d, mcor2CDbi);
+plot(x1, y1, x2, y2);
+switch(R)
+ case 700,
+   axis([650, 2650, -0.2, 0.2]); % 700 res, fit49 ind
+   title('AIRS-to-L1d minus true L1d mean, R = 700');
+ case 1200
+   axis([650, 2650, -1, 1]);     % 1200 res, fit49 ind
+   title('AIRS-to-L1d minus true L1d mean, R = 1200');
+end
 legend('no correction', 'linear correction', 'location', 'north')
-ylabel('dTb')
+ylabel('\Delta BT (K)')
 grid on
 
 subplot(2,1,2)
-plot(v_L1d, sdifCDbi, v_L1d, scor2CDbi)
-  axis([650, 2650, 0, 0.1])    %  700 res, fit49 ind
-% axis([650, 2650, 0, 0.3])    % 1200 res, fit49 ind
+[x1, y1] = pen_lift(v_L1d, sdifCDbi);
+[x2, y2] = pen_lift(v_L1d, scor2CDbi);
+plot(x1, y1, x2, y2);
+switch (R)
+  case 700,
+    axis([650, 2650, 0, 0.1]);  % 700 res, fit49 ind
+    title('AIRS-to-L1d minus true L1d std dev, R = 700');
+  case 1200,
+    axis([650, 2650, 0, 0.3]);   % 1200 res, fit49 ind
+    title('AIRS-to-L1d minus true L1d std dev, R = 1200');
+end
 legend('no correction', 'linear correction', 'location', 'north')
-title('std residual corrected independent set')
-ylabel('dTb')
-xlabel('wavenumber')
+ylabel('\Delta BT (K)')
+xlabel('wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'L1d_cor1_1200', 'fig')
-  saveas(gcf, 'L1d_cor1_700', 'fig')
+switch (R)
+  case 700, saveas(gcf, 'L1d_cor1_700', 'fig');
+  case 1200, saveas(gcf, 'L1d_cor1_1200', 'fig');
+end
+
+return
 
 figure(2); clf
 subplot(2,1,1)
 plot(v_L1d, mcor1CDbi, v_L1d, mcor2CDbi, v_L1d, mcor3CDbi);
-% axis([650, 2650, -1.5e-3, 1.5e-3])
-  axis([650, 2650, -0.1, 0.1])  %  700 res, fit49 ind
-% axis([650, 2650, -0.3, 0.3])  % 1200 res, fit49 ind
+% axis([650, 2650, -0.1, 0.1])  %  700 res, fit49 ind
+  axis([650, 2650, -0.3, 0.3])  % 1200 res, fit49 ind
 title('mean residual corrected independent set')
 legend('bias correction', 'linear correction', 'quadratic correction', ...
        'location', 'north')
-ylabel('dTb')
+ylabel('\Delta BT (K)')
 grid on
 
 subplot(2,1,2)
 plot(v_L1d, scor1CDbi, v_L1d, scor2CDbi, v_L1d, scor3CDbi);
-  axis([650, 2650, 0, 0.2])   %  700 res, fit49 ind
-% axis([650, 2650, 0, 0.6])   % 1200 res, fit49 ind
+% axis([650, 2650, 0, 0.2])   %  700 res, fit49 ind
+  axis([650, 2650, 0, 0.6])   % 1200 res, fit49 ind
 legend('bias correction', 'linear correction', 'quadratic correction', ...
        'location', 'north')
 title('std residual corrected independent set')
-ylabel('dTb')
-xlabel('wavenumber')
+ylabel('\Delta BT (K)')
+xlabel('wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'L1d_cor2_1200', 'fig')
 % saveas(gcf, 'L1d_cor2_700', 'fig')
+% saveas(gcf, 'L1d_cor2_1200', 'fig')
 
 return
 
@@ -201,30 +220,26 @@ figure(3); clf
 subplot(2,1,1)
 % plot(v_L1d, mreg2Dbi, v_L1d, mreg1Dbi)
   plot(v_L1d, mreg1Dbi)
-% axis([650, 2650, -1.5e-5, 1.5e-5])
-  axis([650, 2650, -0.02, 0.02])   % 700 res, fit49 ind
-% axis([650, 2650, -0.15, 0.15])   % 1200 res, fit49 ind
+% axis([650, 2650, -0.02, 0.02])   % 700 res, fit49 ind
+  axis([650, 2650, -0.15, 0.15])   % 1200 res, fit49 ind
 title('mean regression residual independent set')
 % legend('Tb regression', 'rad regression')
   legend('radiance regression')
-ylabel('dTb')
+ylabel('\Delta BT (K)')
 grid on
 
 subplot(2,1,2)
 plot(v_L1d, sreg1Dbi)
-% axis([650, 2650, 0, 0.001])
-  axis([650, 2650, 0, 0.01])   % 700 res, fit49 ind
-% axis([650, 2650, 0, 0.04])   % 1200 res, fit49 ind
+% axis([650, 2650, 0, 0.01])   % 700 res, fit49 ind
+  axis([650, 2650, 0, 0.04])   % 1200 res, fit49 ind
 title('std regression residual independent set')
   legend('radiance regression')
-ylabel('dTb')
-xlabel('wavenumber')
+ylabel('\Delta BT (K)')
+xlabel('wavenumber (cm^{-1})')
 grid on
-% saveas(gcf, 'L1d_regr_1200', 'fig')
 % saveas(gcf, 'L1d_regr_700', 'fig')
+% saveas(gcf, 'L1d_regr_1200', 'fig')
   
-return
-
 figure(4)
 subplot(2,1,1)
 plot(tcfrq, Pcor2(:, 1))
@@ -236,8 +251,7 @@ subplot(2,1,2)
 plot(tcfrq, Pcor2(:, 2))
 % axis([650, 1100, -1, 1])
 title('"b" (bias) weights')
-xlabel('wavenumber')
+xlabel('wavenumber (cm^{-1})')
 grid on
 % saveas(gcf, 'cor_ind_2', 'png')
-% export_fig(sprintf('a2cris_coef_%s.pdf', band), '-m2', '-transparent')
 

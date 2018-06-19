@@ -16,14 +16,13 @@
 % set paths to libs
 addpath ../source
 addpath /asl/packages/ccast/source
-addpath /home/motteler/matlab/export_fig
+
+% generalized gaussian exponent
+p = 1.4;
 
 % L1d resolution, dv = v / res
 % res = 1200;  % L1c nominal
   res =  700;  % best for L1d
-
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 
 % kcarta test data
 kcdir = '/home/motteler/cris/sergio/JUNK2012/';
@@ -51,8 +50,8 @@ dvb = 0.1;       % decon dv
 % for v_base = v_L1c(1) : .02 :  v_L1c(2)
 
 % L1d convolution matrices
-[D1, vDcol, v_L1d] = L1d_conv(res, dvk, v_base);
-[B1, vBcol, VBrow] = L1d_conv(res, dvb, v_base);
+[D1, vDcol, v_L1d] = L1d_conv(res, dvk, v_base, p);
+[B1, vBcol, VBrow] = L1d_conv(res, dvb, v_base, p);
 
 % match intermediate grids
 [ix, jx] = seq_match(vAcol, vBcol);
@@ -138,28 +137,34 @@ grid on; zoom on
 % summary decon and interp residuals
 figure(2); clf; 
 subplot(2,1,1)
-x1 = mean(Ci1Dbt - trueDbt, 2);
-x2 = mean(Ci2Dbt - trueDbt, 2);
-x3 = mean(CtoDbt - trueDbt, 2);
-plot(v_L1d, x1, v_L1d, x2, v_L1d, x3) 
+y1 = mean(Ci1Dbt - trueDbt, 2);
+y2 = mean(Ci2Dbt - trueDbt, 2);
+y3 = mean(CtoDbt - trueDbt, 2);
+[x1, y1] = pen_lift(v_L1d, y1);
+[x2, y2] = pen_lift(v_L1d, y2);
+[x3, y3] = pen_lift(v_L1d, y3);
+plot(x1, y1, x2, y2, x3, y3)
 axis([650, 2700, -6, 6])
-title('L1c to L1d residual mean');
+title('AIRS L1c to L1d residual mean, R = 700');
 legend('spline interpolation', 'L1c interp/L1d conv', ...
        'L1c decon/L1d conv', 'location', 'northeast');
-ylabel('dTb')
+ylabel('\Delta BT (K)')
 grid on; zoom on
 
 subplot(2,1,2)
-x1 = std(Ci1Dbt - trueDbt, 0, 2);
-x2 = std(Ci2Dbt - trueDbt, 0, 2);
-x3 = std(CtoDbt - trueDbt, 0, 2);
-plot(v_L1d, x1, v_L1d, x2, v_L1d, x3) 
+y1 = std(Ci1Dbt - trueDbt, 0, 2);
+y2 = std(Ci2Dbt - trueDbt, 0, 2);
+y3 = std(CtoDbt - trueDbt, 0, 2);
+[x1, y1] = pen_lift(v_L1d, y1);
+[x2, y2] = pen_lift(v_L1d, y2);
+[x3, y3] = pen_lift(v_L1d, y3);
+plot(x1, y1, x2, y2, x3, y3)
 axis([650, 2700, 0, 3])
-title('L1c to L1d residual std dev');
+title('AIRS L1c to L1d residual std dev, R = 700');
 legend('spline interpolation', 'L1c interp/L1d conv', ...
        'L1c decon/L1d conv', 'location', 'northeast');
-ylabel('dTb')
-xlabel('wavenumber')
+ylabel('\Delta BT (K)')
+xlabel('wavenumber (cm^{-1})')
 grid on; zoom on
   saveas(gcf, 'CtoD_interp_diff', 'fig')
 
