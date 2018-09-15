@@ -1,12 +1,20 @@
 
-Demos
+demos
 ------
-
 demo1 - AIRS to CrIS translation demo
 demo2 - CrIS to AIRS translation demo
 
 tests
 ------
+decon_test1  - compare true decon with decon AIRS
+
+a2cris_test1 - compare AIRS CrIS with true CrIS, derived from
+   a2cris_stat1 and cris_test5, uses convolved data from conv_loop
+   and a2cris_loop
+
+a2cris_test2 - compare AIRS CrIS with true CrIS; 3-band summary
+   plots of the airs2cris statistical correction, uses convolved
+   data from conv_loop1 and a2cris_loop
 
 a2cris_regr1 - AIRS to CrIS Tb regression corrrection, dependent
    and independents sets of roughly equal size are chosen at random
@@ -25,23 +33,16 @@ a2cris_regr4 - AIRS L1c to CrIS direct regression test and plots,
 a2cris_regr5 - AIRS L1c to CrIS principal component regression test
    and plots, derived from a2cris_regr, uses data from conv_loop4
 
-a2cris_test1 - compare AIRS CrIS with true CrIS, derived from
-   a2cris_stat1 and cris_test5, uses convolved data from conv_loop
-   and a2cris_loop
-
-a2cris_test2 - compare AIRS CrIS with true CrIS; 3-band summary
-   plots of the airs2cris statistical correction, uses convolved
-   data from conv_loop1 and a2cris_loop
-
-decon_test1 - compare true decon with decon AIRS
-nedn_test1  - noise estimate for the AIRS to CrIS translation
-rad_svd2    - SVD and associated stats on sample radiance sets
-
 L1d_test1  - basic test of L1d_conv
 L1d_test2  - try deconvolution to the L1d SRF set
 L1d_test3  - compare L1c to L1d de/recon vs regression
 L1d_regr1  - regression corrrection for L1c to L1d decon/recon
 L1d_bbody  - AIRS L1c to L1d with bbody correction
+
+nedn_test1  - noise estimate for the AIRS to CrIS translation
+nedn_test2  - compare apodized and unapodized NEdN 
+nedt_test1  - AIRS to CrIS NEdT stats
+rad_svd2    - SVD and associated stats on sample radiance sets
 
 a2cris_loop - call airs2cris in chunks, for large files
 conv_loop1  - AIRS and CrIS convolution of kcarta radiances
@@ -49,54 +50,86 @@ conv_loop2  - tabulate true L1c, L1c to L1d, and true L1d
 conv_loop3  - generate a few black body spectra
 conv_loop4  - convolutions for AIRS to CrIS direct regression tests
 
-L1c_synth  - plot and save a list of AIRS L1c synthetic channels
 plot_Binv  - plot sample deconvolution basis functions
 plot_SRF1  - plot sample SRFs and columns of inverse SRF matrix
 plot_SRF2  - plot sample AIRS SRFs with gauss fit and channel spacing
+L1c_synth  - plot and save a list of AIRS L1c synthetic channels
 
-functions
-----------
+interp_test3 - compare old and new kc2cris with finterp
+interp_test4 - check interpolation from sensor to user gird
+sconv_test   - compare mksconv with mksconv1 and mksconv2
+guard_test   - test kc2cris with added guard channels
 
-sup_gauss  - higher order gaussian
-mkBconv    - build a sparse gaussian convolution matrix
-L1d_conv   - build a sparse AIRS L1d convolution matrix
-band_regr  - banded regression, solve R * B = C for banded R
+functions and support
+----------------------
+srf_read  - read an HDF4 SRF file
+sup_gauss - higher order gaussian
+dr2dt     - radiance delta to BT delta
+pen_lift  - add NaNs for pen lift at frequency gaps
+round2n   - round to n significant digits
+trunc2n   - truncate to n significant digits
+kc2inst   - convolve kcarta to CrIS sensor grid
+mkBconv   - build a sparse gaussian convolution matrix
+L1d_conv  - build a sparse AIRS L1d convolution matrix
+
+mksconv - build a sparse AIRS convolution matrix from channel indices 
+          and a spacing parameter for the input grid.
+
 trim_chans - drop close neighbors from an AIRS channel set
- 
-more AIRS to CrIS 
-------------------
+plot_chans1 - find a lower bound for AIRS 1b channel step size
+plot_chans2 - show channels step sizes before and after trimming
 
+AIRS-specific tests
+--------------------
+airs_test has CrIS to AIRS and AIRS channel shift tests, see the
+README there for more info
+
+moved to zold
+--------------
 a2cris_stat1 - AIRS to CrIS stats for big cloudy and clear sets
 a2cris_stat2 - AIRS to CrIS stats on Tsurf - Tb900cm-1 subsets
 a2cris_stat3 - AIRS to CrIS stats ozone vs residuals
-
-cris_test5 - processes all the fitting profiles and plots the means
-    of residuals.  Derived frim cris_test4, drops the interpolation
-    tests and adds some stats.  This is the current test script.
 
 cris_test4 - processes all the fitting profiles and plots the means
     of residuals.  Derived frim cris_test3, calls airs2cris instead
     of airs_decon and adds an option for hamming apodization of the
     test radiances.
 
+cris_test5 - processes all the fitting profiles and plots the means
+    of residuals.  Derived frim cris_test4, drops the interpolation
+    tests and adds some stats.  This is the current test script.
+
 cris_test7 - compare deconvolved AIRS with 0.2 cm-1 sinc ILS
 cris_test6 - AIRS to CrIS translation benchmark
 
-AIRS-specific tests
---------------------
-CrIS to AIRS and AIRS channel shift tests, see the README there
+band_regr - banded regression, solve R * B = C for banded R
 
-Functions and Support
-----------------------
+mkaconv - build a sparse AIRS convolution matrix from channel indices 
+          and an explicit input frequency grid, typicaly a channel set
 
-srf_read - read an hdf4 format SRF file
-
-mkaconv -- build a sparse AIRS convolution matrix from channel indices 
-           and an explicit input frequency grid, typicaly a channel set
-
-mksconv -- build a sparse AIRS convolution matrix from channel indices 
-           and a spacing parameter for the input grid.
-
-plot_chans1 - find a lower bound for AIRS 1b channel step size
-plot_chans2 - show channels step sizes before and after trimming
-
+used for decon paper
+---------------------
+../decon_paper > grep '\.m' decon_paper.tex
+\begin{figure} % source plot_SRF2.m
+\begin{figure} % source plot_SRF2.m
+\begin{figure} % source decon_test1.m
+\begin{figure} % source decon_test1.m 
+\begin{figure} % source plot_Binv.m
+% \begin{figure} % source decon_test1.m
+\begin{figure} % source a2cris_regr2.m
+\begin{figure} % source a2cris_regr2.m
+\begin{figure} % source a2cris_regr2.m
+\begin{figure} % source a2cris_regr2.m
+\begin{figure} % source a2cris_test2.m
+% \begin{figure} % source a2cris_test2.m
+\begin{figure} % source nedn_test2.m
+\begin{figure} % source nedt_test1.m
+\begin{figure} % source L1d_regr1.m
+\begin{figure} % source L1d_regr1.m
+\begin{figure} % source a2cris_regr4X.m
+\begin{figure} % source  a2cris_regr4X.m
+\begin{figure} % source slackfigs a2cris_regr5.m
+% \begin{figure} % source slackfigs a2cris_regr5.m
+\begin{figure} % source slackfigs a2cris_regr5X.m
+% \begin{figure} % source slackfigs a2cris_regr5.m
+\begin{figure} % source L1d_test2.m
