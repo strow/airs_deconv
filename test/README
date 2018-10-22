@@ -2,11 +2,15 @@
 demos
 ------
 demo1 - AIRS to CrIS translation demo
-demo2 - CrIS to AIRS translation demo
+demo2 - AIRS to CrIS chunking benchmark
+demo3 - CrIS to AIRS translation demo
 
 tests
 ------
 decon_test1  - compare true decon with decon AIRS
+
+a2cris_test - compare AIRS CrIS with true CrIS, basic AIRS-to-CrIS
+   test using the 49 fitting profiles
 
 a2cris_test1 - compare AIRS CrIS with true CrIS, derived from
    a2cris_stat1 and cris_test5, uses convolved data from conv_loop
@@ -44,11 +48,11 @@ nedn_test2  - compare apodized and unapodized NEdN
 nedt_test1  - AIRS to CrIS NEdT stats
 rad_svd2    - SVD and associated stats on sample radiance sets
 
-a2cris_loop - call airs2cris in chunks, for large files
 conv_loop1  - AIRS and CrIS convolution of kcarta radiances
 conv_loop2  - tabulate true L1c, L1c to L1d, and true L1d
 conv_loop3  - generate a few black body spectra
 conv_loop4  - convolutions for AIRS to CrIS direct regression tests
+a2cris_loop - call airs2cris in chunks, for large files
 
 plot_Binv  - plot sample deconvolution basis functions
 plot_SRF1  - plot sample SRFs and columns of inverse SRF matrix
@@ -79,6 +83,25 @@ trim_chans - drop close neighbors from an AIRS channel set
 plot_chans1 - find a lower bound for AIRS 1b channel step size
 plot_chans2 - show channels step sizes before and after trimming
 
+used for decon paper
+---------------------
+scripts are listed in the order in which some figure from the script
+first appears in the AIRS decon paper
+
+  plot_SRF2.m
+  decon_test1.m
+  plot_Binv.m
+  a2cris_test1.m
+  a2cris_regr2.m
+  a2cris_test2.m
+  nedn_test2.m
+  nedt_test1.m
+  L1d_regr1.m
+  a2cris_regr4X.m
+  a2cris_regr5.m
+  a2cris_regr5X.m
+  L1d_test2.m
+
 AIRS-specific tests
 --------------------
 airs_test has CrIS to AIRS and AIRS channel shift tests, see the
@@ -107,29 +130,3 @@ band_regr - banded regression, solve R * B = C for banded R
 mkaconv - build a sparse AIRS convolution matrix from channel indices 
           and an explicit input frequency grid, typicaly a channel set
 
-used for decon paper
----------------------
-../decon_paper > grep '\.m' decon_paper.tex
-\begin{figure} % source plot_SRF2.m
-\begin{figure} % source plot_SRF2.m
-\begin{figure} % source decon_test1.m
-\begin{figure} % source decon_test1.m 
-\begin{figure} % source plot_Binv.m
-% \begin{figure} % source decon_test1.m
-\begin{figure} % source a2cris_regr2.m
-\begin{figure} % source a2cris_regr2.m
-\begin{figure} % source a2cris_regr2.m
-\begin{figure} % source a2cris_regr2.m
-\begin{figure} % source a2cris_test2.m
-% \begin{figure} % source a2cris_test2.m
-\begin{figure} % source nedn_test2.m
-\begin{figure} % source nedt_test1.m
-\begin{figure} % source L1d_regr1.m
-\begin{figure} % source L1d_regr1.m
-\begin{figure} % source a2cris_regr4X.m
-\begin{figure} % source  a2cris_regr4X.m
-\begin{figure} % source slackfigs a2cris_regr5.m
-% \begin{figure} % source slackfigs a2cris_regr5.m
-\begin{figure} % source slackfigs a2cris_regr5X.m
-% \begin{figure} % source slackfigs a2cris_regr5.m
-\begin{figure} % source L1d_test2.m

@@ -18,8 +18,8 @@
 %   opt1   - optional input parameters
 %
 % opt1 fields
-%   dvb     - deconvolution grid step (default 0.1 cm-1)
-%   resmode - ccast resolution mode (default hires2)
+%   dvb       - deconvolution grid step, default 0.1 cm-1
+%   user_res  - ccast user res, default here is 'hires'
 %
 % OUTPUTS
 %   arad   - simulated AIRS radiances, n x k array
@@ -46,17 +46,19 @@ function [arad, afrq, brad, bfrq] = ...
 
 % defaults
 dvb = 0.1;            % deconv grid step size
-wlaser = 773.1301;    % nominal value is OK here
-resmode = 'hires2';   % ccast resolution mode
+user_res = 'hires';   % ccast user resolution mode
 
 % process input options
 if nargin == 9
-  if isfield(opt1, 'dvb'), dvb = opt1.dvb; end
-  if isfield(opt1, 'wlaser'), wlaser = opt1.wlaser; end
+  if isfield(opt1, 'dvb'),      dvb = opt1.dvb; end
+  if isfield(opt1, 'user_res'), user_res = opt1.user_res; end
 else
   opt1 = struct;
-  opt1.resmode = resmode;
 end
+
+% options for inst_params
+wlaser = 773.1301;    % nominal value is OK here
+opt1.user_res = user_res;
 
 % check that array sizes match
 vLW = vLW(:); vMW = vMW(:); vSW = vSW(:); 

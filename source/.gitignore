@@ -2,5 +2,7 @@
 # allow selected .mat files
 #
 
-!lin_corr.mat
+!corr_hires.mat
+!corr_lowres.mat
+!corr_midres.mat
 

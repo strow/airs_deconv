@@ -14,6 +14,7 @@
 % opt1 fields (with defaults) include
 %   hapod  - 0 = unapodized, 1 = Hamming apodization
 %   scorr  - 0 = no correction, 1 = statistical correction
+%   cfile  - correction weights (must match res mode)
 %
 % OUTPUTS
 %   crad   - simulated CrIS radiances, n x k array
@@ -37,13 +38,13 @@
 %   the other values should be the same.
 %
 %   The code is vectorized, so k obs can be processed with 1 call.
-%   For most applications both input and output opts fields can be
-%   omitted.
-%
 %   Calculating the pseudo-inverse is slow, so this data is saved 
 %   in a persistent struct.  The pseudo-inverse is a function of the
 %   SRF tabulation file, channel frequencies, and deconvolution grid
 %   step, and is updated if any of these change.
+%
+%   Note that setting opt1.scorr = 1 (statistical correction) forces
+%   opt1.hapod = 1 (Hamming apodization) as well
 %
 % COPYRIGHT
 %   Copyright 2012-2013, Atmospheric Spectroscopy Laboratory.  
@@ -55,11 +56,11 @@
 
 function [crad, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1)
 
-% general defaults
-dvb = 0.1;  % deconv grid step size
-hapod = 0;  % no Hamming apodization
-scorr = 0;  % no statistical correction
-cfile = 'lin_corr.mat';  % linear correction weights
+% translation defaults
+dvb = 0.1;                  % deconv grid step size
+hapod = 0;                  % no Hamming apodization
+scorr = 0;                  % no statistical correction
+cfile = 'corr_lowres.mat';  % low res correction file
 
 % band and filter parameters
 %         LW     MW      SW
@@ -85,7 +86,7 @@ end
 % setup for statistical correction
 if scorr
   hapod = 1; 
-  load lin_corr
+  load(cfile)
 end
 
 % CrIS params

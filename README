@@ -11,6 +11,9 @@ the AIRS spectral response functions.
 airs2cris.m is the main function for AIRS to CrIS translations.
 test/demo1.m gives an example of calling it.  The translation has
 been tested extensively with both real and simulated AIRS 1c data.
+See test/README for more info on the test scripts.  test/airs_test
+has CrIS to AIRS translation and AIRS channel shift tests, see the
+README there for more info.
 
 The package includes functions to convolve high resolution kcarta
 radiances (at a 0.0025 cm-1 grid) to AIRS and CrIS channel radiance,
@@ -38,8 +41,8 @@ Application running in the test directory set the following paths
   /asl/packages/ccast/source
 
 Paths are set in the calling routines, the demo and test routines
-here.  ccast provides bandpass, finterp, inst_params, rad2bt and
-bt2rad.  ccast is available at https://github.com/strow/ccast.git
+here.  The ccast repo provides bandpass, finterp, inst_params, rad2bt 
+and bt2rad.  ccast is available at https://github.com/strow/ccast.git
 
 User Functions
 ---------------
@@ -58,11 +61,4 @@ User Functions
 
 The hamming functions are called as an option in airs2cris, and may
 be useful for other applications.
-
-Validation
------------
-
-The function test/cris_test5.m has the most recent AIRS to CrIS
-validation tests.  Similar tests for the CrIS to AIRS translation
-are in test/airs_test1.m
 

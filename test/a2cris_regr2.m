@@ -16,10 +16,15 @@ addpath /home/motteler/matlab/export_fig
 band = upper(input('band > ', 's'));
 
 % load radiance data
-d1 = load('cris_cloudy');   % true cris big cloudy set
-d2 = load('acris_cloudy');  % airs cris big cloudy set
-d3 = load('cris_fit49');    % true cris 49 fitting profiles
-d4 = load('acris_fit49');   % airs cris 49 fitting profiles
+% d1 = load('cris_cloudy');   % true cris big cloudy set
+% d2 = load('acris_cloudy');  % airs cris big cloudy set
+% d3 = load('cris_fit49');    % true cris 49 fitting profiles
+% d4 = load('acris_fit49');   % airs cris 49 fitting profiles
+
+d1 = load('crisHR_cloudy');   % true cris big cloudy set
+d2 = load('ac_HR_cloudy');  % airs cris big cloudy set
+d3 = load('crisHR_fit49');    % true cris 49 fitting profiles
+d4 = load('ac_HR_fit49');   % airs cris 49 fitting profiles
 
 switch band
   case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;

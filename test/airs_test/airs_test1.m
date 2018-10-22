@@ -1,20 +1,18 @@
 % 
-% airs_test1 -- compare CrIS AIRS with true AIRS
+% airs_test1 -- compare CrIS-to-AIRS with true AIRS
 % 
-% true AIRS: kcarta radiances convolved with AIRS SRFs
-% 
-% true CrIS: kcarta radiances convolved to CrIS channels
+% key variables
+%   rad1, bt1 - true AIRS, kcarta radiance convolved with AIRS SRFs
+%   rad2, bt2 - true CrIS, kcarta radiance convolved to CrIS channels
+%   rad3, bt3 - decon CrIS, true CrIS interpolated to a 0.1 cm-1 grid
+%   rad4, bt4 - CrIS-to-AIRS, decon CrIS reconvolved with AIRS SRFs
 %
-% CrIS AIRS: interpolate CrIS to an intermediate grid, typically at
-% a 0.1 cm-1 spacing, and reconvolve to AIRS.  Compare CrIS AIRS vs
-% true AIRS.
 
 %-----------------
 % test parameters
 %-----------------
 
 addpath ../source
-addpath ../h4tools
 addpath /asl/packages/ccast/source
 
 dvb = 0.1;       % deconvolution frequency step
@@ -25,14 +23,14 @@ kcdir = '/home/motteler/cris/sergio/JUNK2012/';
 flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
 
 % AIRS 1C channel frequencies
-% cfrq = load('freq2645.txt');  
+cfrq = load('freq2645.txt');  
 
 % AIRS 1b channel frequencies
-d2 = load('freqL1b');
-cfrq = sort(d2.freqL1b);
+% d2 = load('freqL1b');
+% cfrq = sort(d2.freqL1b);
 
 % specify an AIRS SRF tabulation
-sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
+sfile = 'data/airs_demo_srf.hdf';
 
 % build the AIRS convolution matrix
 [sconv, sfreq, tfreq] = mksconv1(sfile, cfrq, dvk);
@@ -43,11 +41,8 @@ opt1.ng = 2;
 
 % opts for inst_params
 opt2 = struct;
-  opt2.resmode = 'hires2';
-% opt2.resmode = 'lowres';
+opt2.user_res = 'hires';
 wlaser = 773.1301;
-
-% cris user grid structs
 [instLW, userLW] = inst_params('LW', wlaser, opt2);
 [instMW, userMW] = inst_params('MW', wlaser, opt2);
 [instSW, userSW] = inst_params('SW', wlaser, opt2);
@@ -93,7 +88,8 @@ clear d1 vkc rkc
 
 [rad4, frq4, rad3, frq3] = ...
   cris2airs(rad1LW, rad1MW, rad1SW, frq1LW, frq1MW, frq1SW, ...
-            sfile, cfrq, opt1);
+            sfile, cfrq, opt2);
+
 %-----------------
 % stats and plots
 %-----------------
@@ -106,16 +102,18 @@ bt4 = real(rad2bt(frq4, rad4));   % CrIS to AIRS
 
 % CrIS and AIRS spectra
 figure(1); clf; j = 1; 
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-plot(frq1, bt1(:,j), frq2, bt2(:,j), frq3, bt3(:,j), frq4, bt4(:,j))
-axis([600, 2800, 140, 320])
-legend('true CrIS', 'true AIRS', 'CrIS decon', 'CrIS AIRS', ...
-       'location', 'south')
-xlabel('wavenumber'); ylabel('brighness temp')
+[x1, y1] = pen_lift(frq1, bt1(:,j));
+[x2, y2] = pen_lift(frq2, bt2(:,j));
+[x3, y3] = pen_lift(frq3, bt3(:,j));
+[x4, y4] = pen_lift(frq4, bt4(:,j));
+plot(x1, y1, x2, y2, x3, y3, x4, y4)
+axis([600, 2700, 200, 300])
+legend('true CrIS', 'true AIRS', 'CrIS decon', 'CrIS-to-AIRS', ...
+       'location', 'north')
+xlabel('wavenumber (cm-1)'); ylabel('BT (K)')
 title(sprintf('CrIS and AIRS profile %d', j));
 grid on; zoom on
 % saveas(gcf, 'cris_airs_spec', 'png')
-% export_fig('cris_airs_spec.pdf', '-m2', '-transparent')
 
 % match true AIRS and CrIS AIRS channels
 [ix, jx] = seq_match(frq2, frq4);
@@ -126,21 +124,23 @@ bt4 = bt4(jx, :);
 
 % CrIS AIRS minus true AIRS mean
 figure(2); clf
-set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 subplot(2,1,1)
-plot(frq2, mean(bt4 - bt2, 2))
-axis([600, 2800, -5, 5])
-xlabel('wavenumber'); ylabel('dBT')
-title('CrIS AIRS minus true AIRS mean');
+[x1, y1] = pen_lift(frq2, mean(bt4 - bt2, 2));
+plot(x1, y1)
+axis([600, 2700, -4, 4])
+ylabel('dBT (K)')
+title('CrIS-to-AIRS minus true AIRS mean');
 grid on; zoom on
 
 % CrIS AIRS minus true AIRS std
 subplot(2,1,2)
-plot(frq2, std(bt4 - bt2, 0, 2))
-axis([600, 2800, 0, 2])
-xlabel('wavenumber'); ylabel('dBT')
-title('CrIS AIRS minus true AIRS std');
+[x2, y2] = pen_lift(frq2, std(bt4 - bt2, 0, 2));
+plot(x2, y2)
+axis([600, 2700, 0, 1.5])
+xlabel('wavenumber (cm-1)'); 
+ylabel('dBT (K)')
+title('CrIS-to-AIRS minus true AIRS std');
 grid on; zoom on
 % saveas(gcf, 'cris_airs_diff', 'png')
-% export_fig('cris_airs_diff.pdf', '-m2', '-transparent')
+
 

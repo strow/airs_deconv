@@ -2,38 +2,44 @@
 % demo1 -- AIRS to CrIS translation demo
 % 
 
-% set paths to asl libs
+% local libs
 addpath ../source
 addpath /asl/packages/ccast/source
 
-% specify an SRF tabulation file
-sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
+% AIRS SRF tabulation file
+sfile = 'data/airs_demo_srf.hdf';
 
-% load some sample AIRS data
-afile = 'data/demo_L1c';
-d1 = load(afile);
-afrq = d1.arsNomFr;     % AIRS channel frequencies, an m-vector
-arad = d1.catRad';      % AIRS channel radiances, an m x k array
-arad = arad(:, 1:20);   % optional subsetting
+% AIRS sample radiance data
+% arad - nchan x nobs AIRS radiances
+% afrq - nchan AIRS channel frequencies
+load data/airs_demo_rad
 
-% do the basic translation
-[crad, cfrq, opt2] = airs2cris(arad, afrq, sfile);
-
-% translation with apodization
+% basic translation 
 opt1 = struct;
-opt1.hapod = 1;
-[crad_hamm, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1);
+opt1.user_res = 'midres';  % target resolution
+[crad1, cfrq1] = airs2cris(arad, afrq, sfile, opt1);
 
-% select and plot a sample obs
-iobs = 3;
-abt = real(rad2bt(afrq, arad(:,iobs)));
-cbt = real(rad2bt(cfrq, crad(:,iobs)));
-cbt_hamm = real(rad2bt(cfrq, crad_hamm(:,iobs)));
+% apodized translation
+opt1.hapod = 1;  % Hamming apodization
+opt1.scorr = 1;  % statistical correction
+opt1.cfile = 'corr_midres.mat';  % correction weights
+[crad2, cfrq2] = airs2cris(arad, afrq, sfile, opt1);
+
+% plot a selected obs
+iobs = 101;
+abt = real(rad2bt(afrq, arad(:, iobs)));
+cbt1 = real(rad2bt(cfrq1, crad1(:, iobs)));
+cbt2 = real(rad2bt(cfrq2, crad2(:, iobs)));
 figure(1); clf
-plot(afrq, abt, cfrq, cbt, cfrq, cbt_hamm)
+[x1, y1] = pen_lift(afrq, abt);
+[x2, y2] = pen_lift(cfrq1, cbt1);
+[x3, y3] = pen_lift(cfrq2, cbt2);
+plot(x1, y1, x2, y2, x3, y3)
+axis([600, 2500, 200, 300])
 title('AIRS to CrIS demo')
-legend('true airs', 'airs to cris', 'airs cris hamm', 'location', 'best')
-xlabel('wavenumber')
-ylabel('brightness temp')
+legend('AIRS', 'AIRS to CrIS', 'apodized AIRS to CrIS', ...
+       'location', 'southeast')
+xlabel('wavenumber (cm-1)')
+ylabel('BT (K)')
 grid on; zoom on
 

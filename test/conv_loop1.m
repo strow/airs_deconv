@@ -1,19 +1,15 @@
 %
-% conv_loop - AIRS and CrIS convolution of kcarta radiances
+% conv_loop1 - AIRS and CrIS convolution of kcarta radiances
 % 
 
 addpath /asl/packages/ccast/source
-addpath ../h4tools
 addpath ../source
 
-% turn off HDF 4 update warnings
-warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
-
 % path to kcarta data
-% kcdir = '/asl/s1/motteler/kc7377/cloudy';
-% nkcrad = 7377;
-  kcdir = '/home/motteler/cris/sergio/JUNK2012';
-  nkcrad = 49;
+  kcdir = '/asl/s1/motteler/kc7377/cloudy';
+  nkcrad = 7377;
+% kcdir = '/home/motteler/cris/sergio/JUNK2012';
+% nkcrad = 49;
 
 %-------------
 % CrIS params
@@ -22,7 +18,7 @@ warning('off', 'MATLAB:imagesci:hdf:removalWarningHDFSD')
 ng = 0;
 opt1 = struct;
 opt1.inst_res = 'hires3';
-opt1.user_res = 'hires';
+opt1.user_res = 'lowres';
 wlaser = 773.1307;
 [instLW, userLW] = inst_params('LW', wlaser, opt1);
 [instMW, userMW] = inst_params('MW', wlaser, opt1);
@@ -66,13 +62,13 @@ arad = zeros(length(afrq), nkcrad);
 for i = 1 : nkcrad
 
   % get kcarta radiances
-% kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
-% d1 = load(kcmat);
-% rkc = d1.rad; vkc = d1.frq; clear d1
-
-  kcmat = fullfile(kcdir, sprintf('convolved_kcarta%d.mat', i));
+  kcmat = fullfile(kcdir, sprintf('kc%04d.mat', i));
   d1 = load(kcmat);
-  rkc = d1.r; vkc = d1.w; clear d1
+  rkc = d1.rad; vkc = d1.frq; clear d1
+
+% kcmat = fullfile(kcdir, sprintf('convolved_kcarta%d.mat', i));
+% d1 = load(kcmat);
+% rkc = d1.r; vkc = d1.w; clear d1
  
   % CrIS convolutions
   [rtmp, frqLW] = kc2cris(userLW, rkc, vkc, optLW);
@@ -97,18 +93,19 @@ fprintf(1, '\n')
 % save the convolutions
 %-----------------------
 
-% save cris_cloudy radLW radMW radSW frqLW frqMW frqSW ...
-%           userLW userMW userSW optLW optMW optSW
+% save airs_fit49 arad afrq sfile
 %
+% save cris_fit49 radLW radMW radSW frqLW frqMW frqSW ...
+%        userLW userMW userSW optLW optMW optSW
+%
+% save crisLR_fit49 radLW radMW radSW frqLW frqMW frqSW ...
+%        userLW userMW userSW optLW optMW optSW opt1
+
 % save airs_cloudy arad afrq sfile
 %
-
-% save cris_fit49 radLW radMW radSW frqLW frqMW frqSW ...
-%          userLW userMW userSW optLW optMW optSW
+% save cris_cloudy radLW radMW radSW frqLW frqMW frqSW ...
+%        userLW userMW userSW optLW optMW optSW
 %
-% save airs_fit49 arad afrq sfile
-
-  save crisHR_fit49 radLW radMW radSW frqLW frqMW frqSW ...
-           userLW userMW userSW optLW optMW optSW
-
+  save crisLR_cloudy radLW radMW radSW frqLW frqMW frqSW ...
+         userLW userMW userSW optLW optMW optSW opt1
 
