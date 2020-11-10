@@ -1,5 +1,9 @@
 %
-% nedn_demo - ccast NEdN estimate plots
+% nedn_demo - plot sample ccast unsmoothed measured NEdN 
+%
+% the ccast values are simply the std of the measured ICT,
+% without any added smoothing, and so will look noisier than 
+% other estimates.
 %
 
 addpath /asl/packages/ccast/source
@@ -7,57 +11,77 @@ addpath /asl/packages/ccast/motmsc/utils
 addpath ../source
 
 % sample ccast CrIS NEdN estimate
-% d1 = load('/asl/data/cris/ccast/sdr60_hr/2016/018/SDR_d20160118_t0801033.mat');
-% d1 = load('/asl/data/cris/ccast/sdr60_hr/2017/031/SDR_d20170131_t0749521.mat');
-% d1 = load('/asl/data/cris/ccast/sdr60_hr/2017/031/SDR_d20170131_t2149474.mat');
-% d1 = load('/asl/data/cris/ccast/sdr60_hr/2016/091/SDR_d20160331_t0807119.mat');
-  d1 = load('/asl/data/cris/ccast/sdr60_hr/2016/301/SDR_d20161027_t0650511.mat');
-nednLW = mean(d1.nLW, 3);
-nednMW = mean(d1.nMW, 3);
-nednSW = mean(d1.nSW, 3);
+p1 = '/asl/cris/ccast/sdr45_npp_HR/2015/121';
+g1 = 'CrIS_SDR_npp_s45_d20150501_t2106020_g212_v20a.mat';
+d1 = load(fullfile(p1,g1));
+
+%---------------------
+% summary 3-band plot
+%---------------------
+ap_ind = 1;  % 1 = unapodized, 2 = apodized
+nednLW = d1.nLW(:,:,ap_ind);
+nednMW = d1.nMW(:,:,ap_ind);
+nednSW = d1.nSW(:,:,ap_ind);
 nedn_ccast = [nednLW; nan(1,9); nednMW; nan(1,9); nednSW];
 freq_ccast = [d1.vLW; nan; d1.vMW; nan; d1.vSW];
 
-% option for apodized noise 
-nedn_ccast = 0.63 * nedn_ccast;
-
 figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
 set(gcf, 'DefaultAxesColorOrder', fovcolors);
 semilogy(freq_ccast, nedn_ccast);
 axis([600, 2600, 0, 1])
-title('CrIS full res NEdN estimates')
+title('CrIS ccast unapodized full res NEdN estimates')
 legend(fovnames, 'location', 'northeast')
 xlabel('wavenumber')
 ylabel('NEdN, mw sr-1 m-2')
 grid on; zoom on
 
-return
+%---------------------
+% single band and FOV
+%---------------------
+iFOV = 5;
 
-figure(1); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-set(gcf, 'DefaultAxesColorOrder', fovcolors);
-plot(d1.vLW, mean(d1.nLW, 3))
-legend(fovnames, 'location', 'north')
-xlabel('wavenumber')
-ylabel('NEdN, mw sr-1 m-2')
-grid on
+% LW detail
+nedn_unap = d1.nLW(:,iFOV,1);
+nedn_apod = d1.nLW(:,iFOV,2);
+nedn_apxx = d1.nLW(:,iFOV,1) * 0.63;
+freq = d1.vLW;
 
 figure(2); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-set(gcf, 'DefaultAxesColorOrder', fovcolors);
-plot(d1.vMW, mean(d1.nMW, 3))
-legend(fovnames, 'location', 'north')
+semilogy(freq, nedn_unap, freq, nedn_apod, freq,nedn_apxx);
+ax = axis; axis([650. 1100, ax(3), ax(4)])
+title('CrIS ccast LW unapodized and apodized NEdN')
+legend('unapodized', 'apodized', 'apod est', 'location', 'north')
 xlabel('wavenumber')
 ylabel('NEdN, mw sr-1 m-2')
-grid on
+grid on; zoom on
+
+% MW detail
+nedn_unap = d1.nMW(:,iFOV,1);
+nedn_apod = d1.nMW(:,iFOV,2);
+nedn_apxx = d1.nMW(:,iFOV,1) * 0.63;
+freq = d1.vMW;
 
 figure(3); clf
-% set(gcf, 'Units','centimeters', 'Position', [4, 10, 24, 16])
-set(gcf, 'DefaultAxesColorOrder', fovcolors);
-plot(d1.vSW, mean(d1.nSW, 3))
-legend(fovnames, 'location', 'north')
+semilogy(freq, nedn_unap, freq, nedn_apod, freq,nedn_apxx);
+ax = axis; axis([1200. 1750, ax(3), ax(4)])
+title('CrIS ccast MW unapodized and apodized NEdN')
+legend('unapodized', 'apodized', 'apod est', 'location', 'north')
 xlabel('wavenumber')
 ylabel('NEdN, mw sr-1 m-2')
-grid on
+grid on; zoom on
+
+% SW detail
+nedn_unap = d1.nSW(:,iFOV,1);
+nedn_apod = d1.nSW(:,iFOV,2);
+nedn_apxx = d1.nSW(:,iFOV,1) * 0.63;
+freq = d1.vSW;
+
+figure(4); clf
+semilogy(freq, nedn_unap, freq, nedn_apod, freq,nedn_apxx);
+ax = axis; axis([2150. 2550, ax(3), ax(4)])
+title('CrIS ccast SW unapodized and apodized NEdN')
+legend('unapodized', 'apodized', 'apod est', 'location', 'north')
+xlabel('wavenumber')
+ylabel('NEdN, mw sr-1 m-2')
+grid on; zoom on
 

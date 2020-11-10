@@ -3,15 +3,16 @@
 %
 
 % local libs
-addpath /asl/packages/ccast/source
+addpath ../data
 addpath ../source
+addpath /asl/packages/ccast/source
 
 % AIRS SRF tabulation file
-sfile = 'data/airs_demo_srf.hdf';
+sfile = 'airs_l1c_srf_tables_lls_20181205.hdf';
 
 % load an AIRS granule
-apath = '/asl/data/airs/L1C/2018/091';
-agran = 'AIRS.2018.04.01.226.L1C.AIRS_Rad.v6.1.2.0.G18092114905.hdf';
+apath = '/asl/airs/l1c_v672/2018/091';
+agran = 'AIRS.2018.04.01.222.L1C.AIRS_Rad.v6.7.2.0.G20008080043.hdf';
 afile = fullfile(apath, agran);
 arad = hdfread(afile, 'radiances');
 arad = permute(arad, [3,2,1]);
@@ -21,11 +22,10 @@ afrq = load('freq2645.txt');
 
 % translation options
 opt1 = struct;
-opt1.user_res = 'lowres';        % target resolution
-opt1.hapod = 0;                  % Hamming apodization
-opt1.scorr = 0;                  % statistical correction
-opt1.cfile = 'corr_lowres.mat';  % optional correction weights
-k = 400;                         % translation chunk size
+opt1.user_res = 'lowres';   % target resolution
+opt1.hapod = 0;             % no Hamming apodization
+opt1.scorr = 0;             % no statistical correction
+k = 400;                    % translation chunk size
 
 % profile clear
 % profile on

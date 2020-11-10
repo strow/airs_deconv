@@ -31,12 +31,14 @@ Top Level Directories
   doc      - documentation
   source   - user source directory
   test     - test source directory
+  data     - SRFs and correction weights
 
 User Paths
 -----------
   
 Application running in the test directory set the following paths
 
+  ../data
   ../source
   /asl/packages/ccast/source
 

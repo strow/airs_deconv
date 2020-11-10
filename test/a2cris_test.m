@@ -18,10 +18,10 @@ addpath /asl/packages/ccast/source
 %-------------
 
 % CrIS params
-band = 'SW';
+band = 'MW';
 wlaser = 773.1307;
 opt1 = struct;
-opt1.user_res = 'hires';
+opt1.user_res = 'midres';
 opt1.inst_res = 'hires3';
 [inst, user] = inst_params(band, wlaser, opt1);
 
@@ -36,6 +36,7 @@ end
 
 % AIRS params
 sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
+sfile = '/home/sergio/MATLABCODE/airs_l1c_srf_tables_lls_20181205.hdf';
 cfreq = load('freq2645.txt');
 dvk = 0.0025; 
 [sconv, sfreq, ofreq] = mksconv2(sfile, cfreq, dvk);

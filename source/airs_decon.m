@@ -48,7 +48,7 @@ bcOK = ~isempty(bc) && ...
 % if cache is empty or invalid, recreate the pseudo-inverse
 if ~bcOK
   bc = struct;
-  fprintf(1, 'calculating the pseudo-inverse...\n')
+  fprintf(1, 'airs_decon: calculating the pseudo-inverse...\n')
   [bconv, bfrq, fx] = mksconv2(sfile, afrq, dvb);
   bc.binv = pinv(full(bconv));
   bc.sfile = sfile;

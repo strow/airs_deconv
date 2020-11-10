@@ -44,7 +44,8 @@
 %   step, and is updated if any of these change.
 %
 %   Note that setting opt1.scorr = 1 (statistical correction) forces
-%   opt1.hapod = 1 (Hamming apodization) as well
+%   opt1.hapod = 1 (Hamming apodization) as well.  Coefficient files
+%   for the statistical correction are in airs_decon/data.
 %
 % COPYRIGHT
 %   Copyright 2012-2013, Atmospheric Spectroscopy Laboratory.  
@@ -57,10 +58,10 @@
 function [crad, cfrq, opt2] = airs2cris(arad, afrq, sfile, opt1)
 
 % translation defaults
-dvb = 0.1;                  % deconv grid step size
-hapod = 0;                  % no Hamming apodization
-scorr = 0;                  % no statistical correction
-cfile = 'corr_lowres.mat';  % low res correction file
+dvb = 0.1;   % deconv grid step size
+hapod = 0;   % no Hamming apodization
+scorr = 0;   % no statistical correction
+cfile = 'corr_lowres_v2.mat';  % low res stat corr file
 
 % band and filter parameters
 %         LW     MW      SW

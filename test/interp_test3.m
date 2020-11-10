@@ -1,127 +1,121 @@
 %
-% interp_test3 -- compare old and new kc2cris with finterp
+% compare ccast low res SDRs with high res interpolated to low
 %
-% rad1 - old kc2cris (now kc2inst)
-% rad2 - old finterp
-% rad3 - new kc2cris
-% rad4 - new finterp
 
-% use my libs for tests
-addpath /home/motteler/cris/ccast/source
-addpath /home/motteler/cris/airs_decon/source
+addpath /asl/packages/ccast/source
+addpath /asl/packages/ccast/motmsc/time
+addpath /asl/packages/ccast/motmsc/utils
+addpath /asl/packages/airs_decon/source
 
-% kcarta test data
-kcdir = '/home/motteler/cris/sergio/JUNK2012/';
-flist =  dir(fullfile(kcdir, 'convolved_kcart*.mat'));
+p1 = '/asl/cris/ccast/sdr45_npp_LR/2019/196';
+p2 = '/asl/cris/ccast/sdr45_npp_HR/2019/196';
+gran = 'CrIS_SDR_npp_s45_d20190715_t0218080_g024_v20a.mat';
+nscan = 45;
 
-% get CrIS inst and user params
-band = 'LW';              % CrIS band
-wlaser = 773.1301;        % nominal wlaser value
+f1 = fullfile(p1, gran);
+f2 = fullfile(p2, gran);
+
+d1 = load(f1);
+d2 = load(f2);
+
+t1 = d1.geo.FORTime;
+[datestr(iet2dnum(t1(1))), '  ', datestr(iet2dnum(t1(end)))]
+[d1.geo.Latitude(1), d1.geo.Longitude(1)]
+
+v1MW = d1.vMW; r1MW = d1.rMW;  % low res SDR data
+v2MW = d2.vMW; r2MW = d2.rMW;  % high res SDR data
+
+% specify the target res
 opt1 = struct;
-opt1.resmode = 'hires2';  % resolution mode
-[inst, user] = inst_params(band, wlaser, opt1);
+opt1.user_res = 'lowres';  % 'lowres' or 'midres'
+opt1.inst_res = 'hires3';  % nominal inst res
+wlaser = 773.1301;         % nominal wlaser
 
-% set wlaser so inst grid == user grid
-wlaser = 1e7/(inst.df/(2*user.opd/inst.npts));
-[inst, user] = inst_params(band, wlaser, opt1);
-
-% loop on kcarta files
-rad1 = []; rad2 = []; rad_kc = [];
-for i = 1 : 4
-  d1 = load(fullfile(kcdir, flist(i).name));
-  vkc = d1.w(:); rkc = d1.r(:);
-
-  % trim kcarta radiances to cris sensor grid
-  ix = find(inst.freq(1) <= vkc & vkc <= inst.freq(end));
-  vkc =  vkc(ix); rkc = rkc(ix); 
-
-  % save kcarta radiances in column order
-  rad_kc = [rad_kc, rkc];
-
-  % convolve kcarta radiances with kc2inst
-  [rtmp1, ftmp1] = kc2inst(inst, user, rkc, vkc);
-  rad1 = [rad1, rtmp1];
-  frq1 = ftmp1(:);
-
-% fprintf(1, '.');
+% interpolate high res to the MW low user grid
+[instMW, userMW] = inst_params('MW', wlaser, opt1);
+[riMW, viMW] = finterp(r2MW(:,:), v2MW, userMW.dv);
+ix = find(userMW.v1 <= viMW & viMW <= userMW.v2);
+viMW = viMW(ix);
+riMW = riMW(ix, :); 
+riMW = hamm_app(double(riMW));
+riMW = reshape(riMW, length(viMW), 9, 30, nscan);
+if userMW.v1 ~= viMW(1) | userMW.v2 ~= viMW(end)
+  error('MW grid mismatch')
 end
-% fprintf(1, '\n')
 
-% convolve kcarta radiances with kc2cris
-[rad3, frq3] = kc2cris(user, rad_kc, vkc);
+iy = find(userMW.v1 <= v1MW & v1MW <= userMW.v2);
+v1MW = v1MW(iy);
+r1MW = r1MW(iy, :); 
+r1MW = hamm_app(double(r1MW));
+r1MW = reshape(r1MW, length(v1MW), 9, 30, nscan);
+if userMW.v1 ~= v1MW(1) | userMW.v2 ~= v1MW(end)
+  error('MW gr1d mismatch')
+end
 
-% finterp setup
-opt2 = struct; opt2.info = 1; opt2.tol = 1e-6;
-rad_kc = bandpass(vkc, rad_kc, user.v1, user.v2, user.vr);
+% compare interpolated and regular low res
+b1 = real(rad2bt(v1MW, r1MW));
+bi = real(rad2bt(viMW, riMW));
+bim = mean(bi(:, :, :), 3);
+b1m = mean(b1(:, :, :), 3);
 
-% convolve kcarta radiances with old finterp
-[rad2, frq2] = finterp_old(rad_kc, vkc, user.dv, opt2);
-frq2 = frq2(:);
+figure(1)
+set(gcf, 'DefaultAxesColorOrder', fovcolors);
+plot(v1MW, bim - b1m)
+title('interpolated minus production mean')
+% axis([1200, 1750, -0.5, 0.5])
+  axis([1200, 1750, -0.1, 0.1])
+legend(fovnames, 'location', 'south')
+xlabel('wavenumber (cm-1)')
+ylabel('dBT (K)')
+grid on
+% saveas(gcf, 'interp_resid_MW', 'png')
 
-% convolve kcarta radiances with the new finterp
-[rad4, frq4] = finterp(rad_kc, vkc, user.dv, opt2);
+v1SW = d1.vSW; r1SW = d1.rSW;  % low res SDR data
+v2SW = d2.vSW; r2SW = d2.rSW;  % high res SDR data
 
-% compare old and new versions of finterp
-[ix, jx] = seq_match(frq2, frq4);
-r2 = rad2(ix, :); f2 = frq2(ix, 1);
-r4 = rad4(jx, :); f4 = frq4(jx, 1);
-bt2 = real(rad2bt(f2, r2));
-bt4 = real(rad2bt(f4, r4));
-isclose(f2, f4) 
+% specify the target res
+opt1 = struct;
+opt1.user_res = 'lowres';  % 'lowres' or 'midres'
+opt1.inst_res = 'hires3';  % nominal inst res
+wlaser = 773.1301;         % nominal wlaser
 
-figure(1); clf
-plot(f2, bt4 - bt2)
-title('new minus old finterp')
-xlabel('wavenumber')
-ylabel('dBT')
-grid on; zoom on
+% interpolate high res to the SW low user grid
+[instSW, userSW] = inst_params('SW', wlaser, opt1);
+[riSW, viSW] = finterp(r2SW(:,:), v2SW, userSW.dv);
+ix = find(userSW.v1 <= viSW & viSW <= userSW.v2);
+viSW = viSW(ix);
+riSW = riSW(ix, :); 
+riSW = hamm_app(double(riSW));
+riSW = reshape(riSW, length(viSW), 9, 30, nscan);
+if userSW.v1 ~= viSW(1) | userSW.v2 ~= viSW(end)
+  error('SW grid mismatch')
+end
 
-% compare old and new versions of kc2cris
-[ix, jx] = seq_match(frq1, frq3);
-r1 = rad1(ix, :); f1 = frq1(ix, 1);
-r3 = rad3(jx, :); f3 = frq3(jx, 1);
-bt1 = real(rad2bt(f1, r1));
-bt3 = real(rad2bt(f3, r3));
-isclose(f1, f3) 
+iy = find(userSW.v1 <= v1SW & v1SW <= userSW.v2);
+v1SW = v1SW(iy);
+r1SW = r1SW(iy, :); 
+r1SW = hamm_app(double(r1SW));
+r1SW = reshape(r1SW, length(v1SW), 9, 30, nscan);
+if userSW.v1 ~= v1SW(1) | userSW.v2 ~= v1SW(end)
+  error('SW gr1d mismatch')
+end
 
-figure(2); clf
-plot(f1, bt3 - bt1)
-ax(1) = user.v1; ax(2) = user.v2; 
-ax(3) = -0.15; ax(4) = 0.15;  axis(ax)
-title('new minus old kc2cris')
-xlabel('wavenumber')
-ylabel('dBT')
-grid on; zoom on
+% compare interpolated and regular low res
+b1 = real(rad2bt(v1SW, r1SW));
+bi = real(rad2bt(viSW, riSW));
+bim = mean(bi(:, :, :), 3);
+b1m = mean(b1(:, :, :), 3);
 
-% compare new kc2cris with finterp
-[ix, jx] = seq_match(frq3, frq4);
-r3 = rad3(ix, :); f3 = frq3(ix, :);
-r4 = rad4(jx, :); f4 = frq4(jx, :);
-bt3 = real(rad2bt(f3, r3));
-bt4 = real(rad2bt(f4, r4));
-isclose(f3, f4)
+figure(2)
+set(gcf, 'DefaultAxesColorOrder', fovcolors);
+plot(v1SW, bim - b1m)
+title('interpolated minus production mean')
+% axis([2150, 2550, -0.25, 0.25])
+  axis([2150, 2550, -0.1, 0.1])
+legend(fovnames, 'location', 'southeast')
+xlabel('wavenumber (cm-1)')
+ylabel('dBT (K)')
+grid on
+% saveas(gcf, 'interp_resid_SW', 'png')
 
-figure(3); clf
-plot(f3, bt3 - bt4)
-title('new kc2cris minus finterp')
-xlabel('wavenumber')
-ylabel('dBT')
-grid on; zoom on
-
-% compare old kc2cris with finterp
-[ix, jx] = seq_match(frq1, frq4);
-r1 = rad1(ix, :); f1 = frq1(ix, :);
-r4 = rad4(jx, :); f4 = frq4(jx, :);
-bt1 = real(rad2bt(f1, r1));
-bt4 = real(rad2bt(f4, r4));
-isclose(f1, f4)
-
-figure(4); clf
-plot(f1, bt1 - bt4)
-ax(1) = user.v1; ax(2) = user.v2; 
-ax(3) = -0.15; ax(4) = 0.15;  axis(ax)
-title('old kc2cris minus finterp')
-xlabel('wavenumber')
-ylabel('dBT')
-grid on; zoom on
 

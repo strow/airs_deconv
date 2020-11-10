@@ -1,30 +1,25 @@
 %
 % a2cris_regr2 - AIRS to CrIS Tb regression corrrection
 %
-% uses data from conv_loop1 and a2cris_loop;
+% Uses data from conv_loop1 and a2cris_loop.  Dependent set
+% is 7377 profile cloudy, independent set 49 fitting profiles
 %
-% dependent set 7377 profile cloudy, independent set 49 fitting
-% profiles
+% For new correction coeff's, see the section "save correction
+% coefficients", below.
 %
 
 addpath ../source
 addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
-% addpath /asl/matlib/h4tools
 
 % get band
 band = upper(input('band > ', 's'));
 
 % load radiance data
-% d1 = load('cris_cloudy');   % true cris big cloudy set
-% d2 = load('acris_cloudy');  % airs cris big cloudy set
-% d3 = load('cris_fit49');    % true cris 49 fitting profiles
-% d4 = load('acris_fit49');   % airs cris 49 fitting profiles
-
-d1 = load('crisHR_cloudy');   % true cris big cloudy set
-d2 = load('ac_HR_cloudy');  % airs cris big cloudy set
-d3 = load('crisHR_fit49');    % true cris 49 fitting profiles
-d4 = load('ac_HR_fit49');   % airs cris 49 fitting profiles
+d1 = load('crisLR_7377');    % true cris big cloudy set
+d2 = load('ac_LR_srf_7377'); % airs cris big cloudy set
+d3 = load('crisLR_49');      % true cris 49 fitting profiles
+d4 = load('ac_LR_srf_49');   % airs cris 49 fitting profiles
 
 switch band
   case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;
@@ -43,11 +38,11 @@ acfrq = acfrq(aci); acdep = acdep(aci, :); acind = acind(aci, :);
 [nchan, ndep] = size(tcdep);
 [nchan, nind] = size(tcind);
 
-% optional apodization
-  tcdep = hamm_app(tcdep);
-  acdep = hamm_app(acdep);
-  tcind = hamm_app(tcind);
-  acind = hamm_app(acind);
+% assume unapodized data
+tcdep = hamm_app(tcdep);
+acdep = hamm_app(acdep);
+tcind = hamm_app(tcind);
+acind = hamm_app(acind);
 
 % get brightness temps
 tcdep = real(rad2bt(tcfrq, tcdep));
@@ -129,6 +124,20 @@ xlabel('wavenumber (cm^{-1})')
 grid on
 saveas(gcf, sprintf('a2cris_regr_%s', band), 'fig')
 
+% save correction coefficients
+% stmp = struct;
+switch band
+  case 'LW', stmp.Pcor2LW = Pcor2; stmp.tcfrqLW = tcfrq;
+  case 'MW', stmp.Pcor2MW = Pcor2; stmp.tcfrqMW = tcfrq;
+  case 'SW', stmp.Pcor2SW = Pcor2; stmp.tcfrqSW = tcfrq;
+end
+
+% edit to match initial res selection; 
+% run for each band to get all three bands.
+% save('corr_hires', '-struct', 'stmp')
+% save('corr_midres', '-struct', 'stmp')
+% save('corr_lowres', '-struct', 'stmp')
+
 % just show LW regression coefficients
 if ~strcmp(band, 'LW'), return, end
 
@@ -148,4 +157,5 @@ xlabel('wavenumber (cm^{-1})')
 ylabel('weight')
 grid on
 saveas(gcf, sprintf('a2cris_coef_%s', band), 'fig')
+
 

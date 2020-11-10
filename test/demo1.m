@@ -3,11 +3,12 @@
 % 
 
 % local libs
+addpath ../data
 addpath ../source
 addpath /asl/packages/ccast/source
 
 % AIRS SRF tabulation file
-sfile = 'data/airs_demo_srf.hdf';
+sfile = 'airs_l1c_srf_tables_lls_20181205.hdf';
 
 % AIRS sample radiance data
 % arad - nchan x nobs AIRS radiances
@@ -22,7 +23,7 @@ opt1.user_res = 'midres';  % target resolution
 % apodized translation
 opt1.hapod = 1;  % Hamming apodization
 opt1.scorr = 1;  % statistical correction
-opt1.cfile = 'corr_midres.mat';  % correction weights
+opt1.cfile = 'corr_midres_v2.mat';  % correction weights
 [crad2, cfrq2] = airs2cris(arad, afrq, sfile, opt1);
 
 % plot a selected obs

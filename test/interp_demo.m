@@ -5,7 +5,7 @@
 addpath /asl/packages/ccast/source
 
 % read a ccast high res granule
-cdir = '/asl/data/cris/ccast/sdr45_j01_HR/2018/091';
+cdir = '/asl/cris/ccast/sdr45_j01_HR/2018/091';
 gran = 'CrIS_SDR_j01_s45_d20180401_t2148080_g219_v20a.mat';
 nscan = 45;
 

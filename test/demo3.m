@@ -3,12 +3,13 @@
 % 
 
 % local libs
+addpath ../data
 addpath ../source
 addpath /asl/packages/ccast/source
 
 % sample CrIS SDR granule
-cpath = '/asl/data/cris/ccast/sdr45_npp_HR/2018/091';
-cgran = 'CrIS_SDR_npp_s45_d20180401_t1054080_g110_v20a.mat';
+cpath = '/asl/cris/ccast/sdr45_npp_HR/2018/091';
+cgran = 'CrIS_SDR_npp_s45_d20180401_t2006080_g202_v20d.mat';
 d1 = load(fullfile(cpath, cgran));
 rLW = squeeze(d1.rLW(:, 5, 15, 21:30));
 rMW = squeeze(d1.rMW(:, 5, 15, 21:30));
@@ -17,7 +18,7 @@ vLW = d1.vLW; vMW = d1.vMW; vSW = d1.vSW;
 clear d1
 
 % AIRS SRF tabulation file
-sfile = 'data/airs_demo_srf.hdf';
+sfile = 'airs_l1c_srf_tables_lls_20181205.hdf';
 frq1c = load('data/freq2645.txt');
 
 % translate CrIS to AIRS
