@@ -1,0 +1,46 @@
+
+convolved AIRS and CrIS radiances, from conv_loop1: 
+  airs_srf_7377  new SRFs
+  airs_srf_49    new SRFs
+  crisLR_7377    lowres unapodized
+  crisMR_7377    midres unapodized 
+  crisHR_7377    hires unapodized
+  crisLR_49      lowres unapodized
+  crisMR_49      midres unapodized 
+  crisHR_49      hires unapodized 
+  
+AIRS to CrIS radiances, from a2cris_loop:
+  ac_LR_srf_7377  lowres unapodized, no stat corr, new SRFs
+  ac_LR_srf_49    lowres unapodized, no stat corr, new SRFs
+  ac_MR_srf_7377  midres unapodized, no stat corr, new SRFs
+  ac_MR_srf_49    midres unapodized, no stat corr, new SRFs
+  ac_HR_srf_7377  hires unapodized, no stat corr, new SRFs
+  ac_HR_srf_49    hires unapodized, no stat corr, new SRFs
+
+  ac_ap_LR_srf_49  lowres apodized, no stat corr, new SRFs
+  ac_ap_MR_srf_49  midres apodized, no stat corr, new SRFs
+
+  ac_c2_LR_srf_49  lowres apodized, new stat corr, new SRFs
+  ac_c2_MR_srf_49  midres apodized, new stat corr, new SRFs
+  ac_c1_MR_srf_49  midres apodized, old stat corr, new SRFs
+
+old SRF tests
+  cris_fit49    true cris low res unapodized
+  airs_fit49    true airs old SRFs
+  ac_ap_fit49   airs cris apodized, old SRFs
+  ac_cc_fit49   airs cris apodized, old stat corr, old SRFs
+
+7377 is Sergio's big cloudy set
+
+new runs of a2cris_regr2 agree with the old HR tabulated correction
+
+note: conv_loop1/kc2cris produces unapodized radiances.
+
+a2cris_loop should also produce unapodized radiances, if the goal is
+correction fitting
+
+old SRF file
+  /asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf
+new SRF file
+  /home/sergio/MATLABCODE/airs_l1c_srf_tables_lls_20181205.hdf
+

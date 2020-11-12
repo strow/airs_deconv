@@ -16,10 +16,10 @@ addpath /home/motteler/matlab/export_fig
 band = upper(input('band > ', 's'));
 
 % load radiance data
-d1 = load('crisLR_7377');    % true cris big cloudy set
-d2 = load('ac_LR_srf_7377'); % airs cris big cloudy set
-d3 = load('crisLR_49');      % true cris 49 fitting profiles
-d4 = load('ac_LR_srf_49');   % airs cris 49 fitting profiles
+d1 = load('crisMR_7377');    % true cris big cloudy set
+d2 = load('ac_MR_srf_7377'); % airs cris big cloudy set
+d3 = load('crisMR_49');      % true cris 49 fitting profiles
+d4 = load('ac_MR_srf_49');   % airs cris 49 fitting profiles
 
 switch band
   case 'LW', tcfrq = d1.frqLW; tcdep = d1.radLW; tcind = d3.radLW;
@@ -122,7 +122,7 @@ title(sprintf('corrected AIRS CrIS minus true CrIS %s std dev', band))
 ylabel('\Delta BT (K)')
 xlabel('wavenumber (cm^{-1})')
 grid on
-saveas(gcf, sprintf('a2cris_regr_%s', band), 'fig')
+% saveas(gcf, sprintf('a2cris_regr_%s', band), 'fig')
 
 % save correction coefficients
 % stmp = struct;
@@ -156,6 +156,6 @@ title('"b" (bias) weights')
 xlabel('wavenumber (cm^{-1})')
 ylabel('weight')
 grid on
-saveas(gcf, sprintf('a2cris_coef_%s', band), 'fig')
+% saveas(gcf, sprintf('a2cris_coef_%s', band), 'fig')
 
 

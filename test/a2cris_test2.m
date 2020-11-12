@@ -10,10 +10,15 @@ addpath /asl/packages/ccast/source
 addpath /home/motteler/matlab/export_fig
 
 % load the data
-d1 = load('cris_fit49');   % true cris
-d2 = load('airs_fit49');   % true airs
-d3 = load('ac_ap_fit49');  % airs cris apodized
-d4 = load('ac_cc_fit49');  % airs cris corrected 
+% d1 = load('cris_fit49');   % true cris
+% d2 = load('airs_fit49');   % true airs
+% d3 = load('ac_ap_fit49');  % airs cris apodized
+% d4 = load('ac_cc_fit49');  % airs cris corrected 
+
+d1 = load('crisMR_49');   % true cris
+d2 = load('airs_srf_49');   % true airs
+d3 = load('ac_ap_MR_srf_49');  % airs cris apodized
+d4 = load('ac_c2_MR_srf_49');  % airs cris corrected 
 
 % unapodized radiances
 tarad = d2.arad;  tafrq = d2.afrq;  % true airs

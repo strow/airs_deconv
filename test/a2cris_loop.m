@@ -7,12 +7,13 @@
 % if hapod is not set.
 %
 
+addpath ../data
 addpath ../source
 addpath /asl/packages/ccast/source
 
 % AIRS SRFs for deconvolution
-% sfile = '/asl/matlab2012/srftest/srftables_m140f_withfake_mar08.hdf';
-  sfile = '/home/sergio/MATLABCODE/airs_l1c_srf_tables_lls_20181205.hdf';
+% sfile = 'srftables_m140f_withfake_mar08.hdf';
+  sfile = 'airs_l1c_srf_tables_lls_20181205.hdf';
 
 % load the AIRS data
 % d1 = load('airs_srf_7377');
@@ -26,7 +27,7 @@ opt1 = struct;
 opt1.hapod = 1;
 opt1.scorr = 1;
 opt1.user_res = 'midres';
-opt1.cfile = 'corr_midres.mat';
+opt1.cfile = 'corr_midres_v1.mat';
 
 for j = 1 : k : nobs
   
